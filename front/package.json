@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "nuxt": "^3.13.0",
+    "nuxt": "^3.16.0",
     "vue": "latest",
     "vue-router": "latest"
   },
@@ -18,6 +18,8 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.13.2",
     "@serwist/build": "^9.0.12",
+    "@serwist/nuxt": "^9.0.12",
+    "@serwist/vite": "^9.0.12",
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
     "serwist": "^9.0.12"

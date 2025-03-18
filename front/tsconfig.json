@@ -1,4 +1,12 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    // Other options...
+    "lib": [
+      // Other libs...
+      // Add this! Doing so adds WebWorker and ServiceWorker types to the global.
+      "webworker"
+    ],
+  },
 }
