@@ -19,7 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { LucidePaperclip, LucideClipboardType } from 'lucide-vue-next'
+
+import { LucideClipboardType, LucidePaperclip } from "#components"
 import { motion } from "motion-v"
 const routes = [
     { name: '文件', key: 'file', icon: LucidePaperclip },
