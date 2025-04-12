@@ -14,6 +14,7 @@
     "lucide-vue-next": "^0.487.0",
     "motion-v": "1.0.0-beta.2",
     "nuxt": "^3.16.0",
+    "nuxt-lucide-icons": "1.0.5",
     "vue": "latest",
     "vue-router": "latest"
   },

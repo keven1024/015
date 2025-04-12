@@ -85,6 +85,12 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt', '@serwist/nuxt'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@vueuse/nuxt',
+    '@serwist/nuxt',
+    'motion-v/nuxt',
+    "nuxt-lucide-icons",
+  ],
   serwist: {},
 })
