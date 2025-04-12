@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row bg-white/10 backdrop-blur-xl p-2 rounded-full">
         <div v-for="item in routes" :key="item.key" 
-        class="flex flex-row text-sm px-4 py-2 font-bold rounded-full cursor-pointer relative"
+        class="flex flex-row items-center gap-2 text-sm px-4 py-2 font-bold rounded-full cursor-pointer relative select-none"
         @click="()=>{
             router.push({
                 query: {
@@ -12,17 +12,18 @@
         }"
         >
           <motion.div v-if="item?.key === type" layoutId="navbar-active" class="absolute inset-0 rounded-full w-full h-full bg-black/10"/>
+          <component :is="item.icon" />
           {{ item.name }}
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { cx } from 'class-variance-authority'
+import { LucidePaperclip, LucideClipboardType } from 'lucide-vue-next'
 import { motion } from "motion-v"
 const routes = [
-    { name: '文件', key: 'file' },
-    { name: '文本', key: 'text' }
+    { name: '文件', key: 'file', icon: LucidePaperclip },
+    { name: '文本', key: 'text', icon: LucideClipboardType }
 ]
 const route = useRoute()
 const router = useRouter()
