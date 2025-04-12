@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
+    "lucide-vue-next": "^0.487.0",
+    "motion-v": "1.0.0-beta.2",
     "nuxt": "^3.16.0",
     "vue": "latest",
     "vue-router": "latest"
