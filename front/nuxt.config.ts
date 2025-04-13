@@ -94,6 +94,7 @@ export default defineNuxtConfig({
     "nuxt-lucide-icons",
     "shadcn-nuxt",
     '@vee-validate/nuxt',
+    '@pinia/nuxt',
   ],
   serwist: {},
   vite: {
