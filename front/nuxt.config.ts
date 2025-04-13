@@ -93,6 +93,7 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     "nuxt-lucide-icons",
     "shadcn-nuxt",
+    '@vee-validate/nuxt',
   ],
   serwist: {},
   vite: {
