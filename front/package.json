@@ -12,6 +12,13 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.3",
     "@tailwindcss/vite": "^4.1.3",
+    "@tiptap/extension-blockquote": "^2.11.7",
+    "@tiptap/extension-bold": "^2.11.7",
+    "@tiptap/extension-heading": "^2.11.7",
+    "@tiptap/extension-italic": "^2.11.7",
+    "@tiptap/extension-paragraph": "^2.11.7",
+    "@tiptap/extension-strike": "^2.11.7",
+    "@tiptap/extension-text": "^2.11.7",
     "@tiptap/pm": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
     "@tiptap/vue-3": "^2.11.7",
@@ -28,6 +35,7 @@
     "shadcn-nuxt": "2.0.1",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.3",
+    "tiptap-markdown": "^0.8.10",
     "tw-animate-css": "^1.2.5",
     "vue": "latest",
     "vue-router": "latest"
@@ -38,6 +46,7 @@
     "@serwist/build": "^9.0.12",
     "@serwist/nuxt": "^9.0.12",
     "@serwist/vite": "^9.0.12",
+    "@tailwindcss/typography": "^0.5.16",
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
     "serwist": "^9.0.12"
