@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row bg-white/10 backdrop-blur-xl p-2 rounded-full">
+    <div class="flex flex-row bg-white/50 backdrop-blur-xl p-2 rounded-full">
         <div v-for="item in routes" :key="item.key" 
         class="flex flex-row items-center gap-2 text-sm px-4 py-2 font-bold rounded-full cursor-pointer relative select-none"
         @click="()=>{
