@@ -1,5 +1,8 @@
 <template>
-  <Button @click="() => emit('click', form)" :disabled="!isValid">
+  <Button type="button" @click="(e) => {
+    e.preventDefault()
+    emit('click', form)
+  }" :disabled="!isValid">
     <slot />
   </Button>
 </template>
