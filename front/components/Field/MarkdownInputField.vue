@@ -3,7 +3,10 @@
         <div class="flex flex-col gap-2">
             <Label v-if="props.label">{{ props.label }}</Label>
             <div class="border rounded-md">
-                <Tiptap v-bind="field" />
+                <Tiptap 
+                    :modelValue="field.value" 
+                    @update:modelValue="field.onChange" 
+                />
             </div>
         </div>
     </Field>
