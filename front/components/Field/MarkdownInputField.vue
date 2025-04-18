@@ -1,6 +1,6 @@
 <template>
     <Field :name="name" v-slot="{ field }">
-        <Tiptap :modelValue="field.value" @update:modelValue="field.onChange" />
+        <Tiptap :modelValue="field.value" @update:modelValue="field.onChange" v-bind="$attrs" />
     </Field>
 </template>
 
