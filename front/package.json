@@ -25,6 +25,7 @@
     "@tiptap/vue-3": "^2.11.7",
     "@types/lodash-es": "^4.17.12",
     "@vee-validate/nuxt": "^4.15.0",
+    "@vee-validate/rules": "^4.15.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lodash-es": "^4.17.21",
@@ -38,6 +39,7 @@
     "tailwindcss": "^4.1.3",
     "tiptap-markdown": "^0.8.10",
     "tw-animate-css": "^1.2.5",
+    "vaul-vue": "^0.4.1",
     "vue": "latest",
     "vue-router": "latest"
   },

@@ -1,5 +1,5 @@
 <template>
-    <editor-content :editor="editor" class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none" />
+    <editor-content :editor="editor" class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1" />
 </template>
 
 <script setup lang="ts">
