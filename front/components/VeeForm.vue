@@ -1,6 +1,6 @@
 <template>  
-    <Form>
-        <slot />
+    <Form as="" v-slot="slots">
+        <slot v-bind="slots" />
     </Form>
 </template>
 
