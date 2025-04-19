@@ -1,7 +1,5 @@
 <template>
-    <Field :name="name" v-slot="{ field }" :rules="rules">
-        <Tiptap :modelValue="field.value" @update:modelValue="field.onChange" v-bind="$attrs" />
-    </Field>
+    <Tiptap v-model="value" />
 </template>
 
 <script setup lang="ts">
@@ -11,4 +9,5 @@ const props = defineProps<{
     name: string
     rules?: string
 }>()
+const { value, } = useField<string>(props.name, props.rules)
 </script>
