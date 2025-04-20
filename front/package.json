@@ -29,6 +29,7 @@
     "@vee-validate/rules": "^4.15.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "filesize": "^10.1.6",
     "lodash-es": "^4.17.21",
     "lucide-vue-next": "^0.487.0",
     "motion-v": "1.0.0-beta.2",
