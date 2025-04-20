@@ -18,6 +18,7 @@
     "@tiptap/extension-heading": "^2.11.7",
     "@tiptap/extension-italic": "^2.11.7",
     "@tiptap/extension-paragraph": "^2.11.7",
+    "@tiptap/extension-placeholder": "^2.11.7",
     "@tiptap/extension-strike": "^2.11.7",
     "@tiptap/extension-text": "^2.11.7",
     "@tiptap/pm": "^2.11.7",
