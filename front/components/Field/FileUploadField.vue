@@ -40,8 +40,8 @@ onUnmounted(() => {
             isOverDropZone && '!bg-green-100/50 '
         )">
             <template v-if="!!value">
-                <div v-if="!!imageUrl" class="flex size-16">
-                    <div class="object-contain mx-auto">
+                <div v-if="!!imageUrl" class="flex max-w-30 max-h-20">
+                    <div class="object-contain m-auto h-full">
                         <img :src="imageUrl" class="w-full h-full  border border-black/20 rounded" />
                     </div>
                 </div>
