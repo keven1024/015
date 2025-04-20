@@ -12,22 +12,9 @@ watch(value, (v) => {
     console.log('value', v)
 })
 
-const imageUrl = computed(() => {
-    if (value?.value?.type?.startsWith('image/')) {
-        return URL.createObjectURL(value?.value)
-    }
-    return null
-})
-
 const fileInfo = computed(() => {
-    const [,name, ext] = value?.value?.name?.match(/^(.+)\.(.+)$/) || []
+    const [, name, ext] = value?.value?.name?.match(/^(.+)\.(.+)$/) || []
     return { name, ext }
-})
-
-onUnmounted(() => {
-    if (imageUrl.value) {
-        URL.revokeObjectURL(imageUrl.value)
-    }
 })
 
 </script>
@@ -40,14 +27,7 @@ onUnmounted(() => {
             isOverDropZone && '!bg-green-100/50 '
         )">
             <template v-if="!!value">
-                <div v-if="!!imageUrl" class="flex max-w-30 max-h-20">
-                    <div class="object-contain m-auto h-full">
-                        <img :src="imageUrl" class="w-full h-full  border border-black/20 rounded" />
-                    </div>
-                </div>
-                <div v-if="!imageUrl" class="size-16 flex justify-center items-center rounded-xl bg-white/80">
-                    <LucideFile class="size-10" />
-                </div>
+                <FileIcon :file="value" />
                 <div class="flex flex-col gap-0.5 items-center">
                     <div class="flex max-w-30 w-full">
                         <div class="truncate">{{ fileInfo?.name }}</div>
