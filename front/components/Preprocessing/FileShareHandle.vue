@@ -6,7 +6,9 @@ import FormButton from '../Field/FormButton.vue';
 const props = defineProps<{
     hide: () => void
     file: File
+    onFileHandle: ({ data, type }: { data: any, type: string }) => void
 }>()
+
 </script>
 
 <template>
@@ -40,7 +42,8 @@ const props = defineProps<{
                 <InputField v-if="!!values.has_download_notify" name="download_notify_email" placeholder="请输入邮箱" />
             </div>
             <FormButton @click="(form) => {
-                console.log(form.values)
+                onFileHandle({ data: form?.values?.value, type: 'file-share' })
+                hide()
             }">提交</FormButton>
         </div>
     </VeeForm>
