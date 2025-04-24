@@ -12,7 +12,7 @@ const actions = [
         }
     },
     {
-        label: '生成图文', icon: LucideImage, className: 'bg-red-300', onClick: () => {
+        label: '生成配图', icon: LucideImage, className: 'bg-red-300', onClick: () => {
             console.log('复制链接')
         }
     },
