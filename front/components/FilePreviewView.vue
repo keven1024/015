@@ -16,6 +16,6 @@ const fileInfo = computed(() => {
             <div class="truncate">{{ fileInfo?.name }}</div>
             <div>{{ `.${fileInfo?.ext}` }}</div>
         </div>
-        <div class="text-xs opacity-50">{{ filesize(value?.size) }}</div>
+        <div class="text-xs opacity-50">{{ filesize(value?.size ?? 0) }}</div>
     </div>
 </template>
