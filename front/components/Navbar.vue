@@ -4,6 +4,7 @@
         class="flex flex-row items-center gap-2 text-sm px-4 py-2 font-bold rounded-full relative select-none cursor-pointer"
         @click="()=>{
             router.push({
+                path:'/',
                 query: {
                     ...route.query,
                     type: item.key
