@@ -1,15 +1,23 @@
 package main
 
 import (
-	"net/http"
+	"backend/controllers"
+
+	"backend/middleware"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	e.Use(middleware.ContextMiddleware())
+	e.Use(middleware.SessionMiddleware())
+	e.Use(middleware.AuthMiddleware())
+
+	// e.GET("/file/:id", controllers.GetFile)
+	e.POST("/file/create", controllers.CreateUploadTask)
+	e.POST("/file/slice", controllers.UploadFileSlice)
+	e.POST("/file/finish", controllers.FinishUploadTask)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
