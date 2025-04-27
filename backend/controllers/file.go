@@ -6,11 +6,7 @@ import (
 	"backend/internal/utils"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io"
 	"mime/multipart"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -85,29 +81,7 @@ func UploadFileSlice(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	src, err := r.FileSlice.Open()
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
-	defer src.Close()
-
-	uploadPath, err := service.GetUploadDirPath()
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
-
-	filePath := filepath.Join(uploadPath, r.FileId)
-	if err := os.MkdirAll(filePath, 0755); err != nil {
-		return utils.HTTPErrorHandler(c, errors.New("创建上传目录失败"))
-	}
-
-	dst, err := os.Create(filepath.Join(filePath, fmt.Sprintf("%d", r.FileIndex)))
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
-	defer dst.Close()
-
-	if _, err = io.Copy(dst, src); err != nil {
+	if err := service.CreateFileSlice(r.FileSlice, r.FileId, r.FileIndex); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
@@ -136,7 +110,7 @@ func FinishUploadTask(c echo.Context) error {
 	}
 
 	if fileInfo.FileType != models.FileTypeInit {
-		return utils.HTTPErrorHandler(c, errors.New("task状态错误"))
+		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
 	}
 
 	// 合并文件切片
