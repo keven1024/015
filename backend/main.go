@@ -1,8 +1,7 @@
 package main
 
 import (
-	"backend/controllers"
-
+	"backend/internal/controllers"
 	"backend/middleware"
 
 	"github.com/labstack/echo/v4"

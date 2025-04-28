@@ -4,8 +4,11 @@ import (
 	"backend/internal/models"
 	"backend/internal/service"
 	"backend/internal/utils"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"mime/multipart"
 	"time"
 
@@ -81,7 +84,27 @@ func UploadFileSlice(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	if err := service.CreateFileSlice(r.FileSlice, r.FileId, r.FileIndex); err != nil {
+	// 打开文件
+	file, err := r.FileSlice.Open()
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	defer file.Close()
+
+	// 读取文件内容
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+
+	// 计算 MD5 哈希
+	hash := md5.Sum(fileBytes)
+	// 如果需要十六进制字符串形式
+	hashString := fmt.Sprintf("%x", hash)
+
+	fmt.Printf("hash: %s\n", hashString)
+
+	if err := service.CreateFileSlice(file, r.FileId, r.FileIndex); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
