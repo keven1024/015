@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"fmt"
@@ -7,10 +7,6 @@ import (
 	"path/filepath"
 	"strconv"
 )
-
-func GetFileInfo() {
-
-}
 
 func GetUploadDirPath() (string, error) {
 	basepath, err := os.Getwd()
@@ -22,10 +18,6 @@ func GetUploadDirPath() (string, error) {
 		return "", err
 	}
 	return finalPath, nil
-}
-
-func GetFileId(fileHash string, fileSize int64) string {
-	return fmt.Sprintf("%s_%d", fileHash, fileSize)
 }
 
 func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error {

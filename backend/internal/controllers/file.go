@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"backend/internal/models"
-	"backend/internal/service"
+	"backend/internal/services"
 	"backend/internal/utils"
 	"crypto/md5"
 	"encoding/json"
@@ -26,7 +26,7 @@ func CreateUploadTask(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
 	}
 	rdb, ctx := utils.GetRedisClient()
-	fileId := service.GetFileId(r.FileHash, r.FileSize)
+	fileId := utils.GetFileId(r.FileHash, r.FileSize)
 	fileInfo, _ := models.GetRedisFileInfo(fileId)
 
 	if fileInfo != (models.RedisFileInfo{}) {
@@ -104,7 +104,7 @@ func UploadFileSlice(c echo.Context) error {
 
 	fmt.Printf("hash: %s\n", hashString)
 
-	if err := service.CreateFileSlice(file, r.FileId, r.FileIndex); err != nil {
+	if err := services.CreateFileSlice(file, r.FileId, r.FileIndex); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
@@ -135,15 +135,14 @@ func FinishUploadTask(c echo.Context) error {
 	if fileInfo.FileType != models.FileTypeInit {
 		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
 	}
-
 	// 合并文件切片
-	if err := service.MergeFileSlices(r.FileId); err != nil {
+	if err := services.MergeFileSlices(r.FileId); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	// 更新文件状态
 	// fileInfo.FileType = models.FileTypeComplete
-	if err := service.MergeFileSlices(r.FileId); err != nil {
+	if err := services.MergeFileSlices(r.FileId); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
