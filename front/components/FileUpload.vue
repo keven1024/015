@@ -22,6 +22,9 @@ const { isOverDropZone } = useDropZone(dropZoneRef, {
   dataTypes: (types) => {
     for (const type of types) {
       for (const acceptType of accept.value.split(',')) {
+        if (acceptType === '*') {
+          return true
+        }
         if (acceptType?.endsWith('*')) {
           const [acceptTypePrefix,] = acceptType?.split('/')
           if (!acceptTypePrefix) {
