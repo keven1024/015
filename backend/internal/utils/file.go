@@ -5,14 +5,13 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io"
-	"os"
 )
 
 func GetFileId(fileHash string, fileSize int64) string {
 	return fmt.Sprintf("%s_%d", fileHash, fileSize)
 }
 
-func GetFileMd5(file *os.File) (string, error) {
+func GetFileMd5(file io.Reader) (string, error) {
 
 	const bufferSize = 1024 * 1000 // 1MB
 
