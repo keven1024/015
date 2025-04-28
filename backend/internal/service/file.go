@@ -1,13 +1,8 @@
 package service
 
 import (
-	"backend/internal/models"
-	"backend/internal/utils"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -29,31 +24,11 @@ func GetUploadDirPath() (string, error) {
 	return finalPath, nil
 }
 
-func GetRedisFileInfo(fileId string) (models.RedisFileInfo, error) {
-	rdb, ctx := utils.GetRedisClient()
-	fileInfoUnmarshalData, _ := rdb.HGet(ctx, "015:fileInfoMap", fileId).Result()
-
-	if fileInfoUnmarshalData != "" {
-		var fileInfoData models.RedisFileInfo
-		if err := json.Unmarshal([]byte(fileInfoUnmarshalData), &fileInfoData); err != nil {
-			return models.RedisFileInfo{}, err
-		}
-		return fileInfoData, nil
-	}
-	return models.RedisFileInfo{}, errors.New("db不存在该文件信息")
-}
-
 func GetFileId(fileHash string, fileSize int64) string {
 	return fmt.Sprintf("%s_%d", fileHash, fileSize)
 }
 
-func CreateFileSlice(fileSlice *multipart.FileHeader, fileId string, fileIndex int64) error {
-	src, err := fileSlice.Open()
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
+func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error {
 	uploadPath, err := GetUploadDirPath()
 	if err != nil {
 		return err
@@ -70,7 +45,7 @@ func CreateFileSlice(fileSlice *multipart.FileHeader, fileId string, fileIndex i
 	}
 	defer dst.Close()
 
-	if _, err = io.Copy(dst, src); err != nil {
+	if _, err = io.Copy(dst, fileSlice); err != nil {
 		return err
 	}
 

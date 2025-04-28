@@ -27,7 +27,7 @@ func CreateUploadTask(c echo.Context) error {
 	}
 	rdb, ctx := utils.GetRedisClient()
 	fileId := service.GetFileId(r.FileHash, r.FileSize)
-	fileInfo, _ := service.GetRedisFileInfo(fileId)
+	fileInfo, _ := models.GetRedisFileInfo(fileId)
 
 	if fileInfo != (models.RedisFileInfo{}) {
 		return utils.HTTPSuccessHandler(c, map[string]any{
@@ -78,7 +78,7 @@ func UploadFileSlice(c echo.Context) error {
 	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil {
 		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
 	}
-	_, err := service.GetRedisFileInfo(r.FileId)
+	_, err := models.GetRedisFileInfo(r.FileId)
 
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
@@ -127,7 +127,7 @@ func FinishUploadTask(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, errors.New("文件ID不能为空"))
 	}
 
-	fileInfo, err := service.GetRedisFileInfo(r.FileId)
+	fileInfo, err := models.GetRedisFileInfo(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
