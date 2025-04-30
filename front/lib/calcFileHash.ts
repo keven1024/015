@@ -16,7 +16,7 @@ const calcFileHash = async (props: CalcFileHashProps) => {
 
     const readChunk = (start: number): Promise<ArrayBuffer> => {
         return new Promise((resolve, reject) => {
-            const chunk = file.slice(start, start + chunkSize);
+            const chunk = file.slice(start, start + finalChunkSize);
             fileReader.onload = (e) => resolve(e.target?.result as ArrayBuffer);
             fileReader.onerror = reject;
             fileReader.readAsArrayBuffer(chunk);
