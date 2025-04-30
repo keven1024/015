@@ -27,7 +27,7 @@ func CreateUploadTask(c echo.Context) error {
 	fileId := utils.GetFileId(r.FileHash, r.FileSize)
 	fileInfo, _ := models.GetRedisFileInfo(fileId)
 
-	if fileInfo != (models.RedisFileInfo{}) {
+	if fileInfo != nil {
 		return utils.HTTPSuccessHandler(c, map[string]any{
 			"size":      fileInfo.FileSize,
 			"mime_type": fileInfo.MimeType,
@@ -78,10 +78,18 @@ func UploadFileSlice(c echo.Context) error {
 	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil {
 		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
 	}
-	_, err := models.GetRedisFileInfo(r.FileId)
-
+	fileInfo, err := models.GetRedisFileInfo(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
+	}
+
+	now := time.Now().Unix()
+	if fileInfo.CreatedAt+fileInfo.Expire < now {
+		return utils.HTTPErrorHandler(c, errors.New("上传任务已过期"))
+	}
+
+	if fileInfo.FileType != models.FileTypeInit {
+		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
 	}
 
 	// 打开文件
@@ -123,6 +131,11 @@ func FinishUploadTask(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
 	}
 
+	now := time.Now().Unix()
+	if fileInfo.CreatedAt+fileInfo.Expire < now {
+		return utils.HTTPErrorHandler(c, errors.New("上传任务已过期"))
+	}
+
 	// 合并文件切片
 	uploadPath, _ := services.GetUploadDirPath()
 	slicesPath := filepath.Join(uploadPath, fmt.Sprintf("%s_%s", r.FileId, "tmp"))
@@ -133,11 +146,32 @@ func FinishUploadTask(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	// 更新文件状态
-	// fileInfo.FileType = models.FileTypeComplete
-	if err := services.MergeFileSlices(r.FileId); err != nil {
+	// 计算文件MD5
+	file, err := os.Open(mergeFilePath)
+	if err != nil {
+		file.Close()
+		os.Remove(mergeFilePath)
 		return utils.HTTPErrorHandler(c, err)
 	}
+
+	file_hash, err := utils.GetFileMd5(file)
+
+	if err != nil {
+		file.Close()
+		os.Remove(mergeFilePath)
+		return utils.HTTPErrorHandler(c, err)
+	}
+
+	if file_hash != fileInfo.FileHash {
+		file.Close()
+		os.Remove(mergeFilePath)
+		return utils.HTTPErrorHandler(c, errors.New("文件MD5不一致"))
+	}
+	defer file.Close()
+	// 更新文件信息
+	models.SetRedisFileInfo(r.FileId, models.RedisFileInfo{
+		FileType: models.FileTypeUpload,
+	})
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"message": "文件上传完成并合并成功",

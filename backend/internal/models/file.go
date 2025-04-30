@@ -3,9 +3,9 @@ package models
 import (
 	"backend/internal/utils"
 	"encoding/json"
-	"errors"
 
 	"dario.cat/mergo"
+	"github.com/redis/go-redis/v9"
 )
 
 type FileInfo struct {
@@ -35,18 +35,20 @@ type RedisShareInfo struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-func GetRedisFileInfo(fileId string) (RedisFileInfo, error) {
+func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
-	fileInfoUnmarshalData, _ := rdb.HGet(ctx, "015:fileInfoMap", fileId).Result()
-
-	if fileInfoUnmarshalData != "" {
-		var fileInfoData RedisFileInfo
-		if err := json.Unmarshal([]byte(fileInfoUnmarshalData), &fileInfoData); err != nil {
-			return RedisFileInfo{}, err
-		}
-		return fileInfoData, nil
+	fileInfoUnmarshalData, err := rdb.HGet(ctx, "015:fileInfoMap", fileId).Result()
+	if err == redis.Nil {
+		return nil, nil
 	}
-	return RedisFileInfo{}, errors.New("db不存在该文件信息")
+	if err != nil {
+		return nil, err
+	}
+	var fileInfoData RedisFileInfo
+	if err := json.Unmarshal([]byte(fileInfoUnmarshalData), &fileInfoData); err != nil {
+		return nil, err
+	}
+	return &fileInfoData, nil
 }
 
 func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
@@ -55,7 +57,9 @@ func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
 	if err != nil {
 		return err
 	}
-	mergo.Merge(&fileInfo, old_fileInfo)
+	if old_fileInfo != nil {
+		mergo.Merge(&fileInfo, old_fileInfo)
+	}
 	jsonData, _ := json.Marshal(fileInfo)
 	_, err = rdb.HSet(ctx, "015:fileInfoMap", fileId, string(jsonData)).Result()
 	return err
