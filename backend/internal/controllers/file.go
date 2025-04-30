@@ -174,6 +174,10 @@ func FinishUploadTask(c echo.Context) error {
 	})
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"message": "文件上传完成并合并成功",
+		"size":      fileInfo.FileSize,
+		"mime_type": fileInfo.MimeType,
+		"hash":      fileInfo.FileHash,
+		"type":      models.FileTypeUpload,
+		"id":        r.FileId,
 	})
 }
