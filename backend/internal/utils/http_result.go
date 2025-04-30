@@ -8,8 +8,7 @@ import (
 )
 
 func HTTPErrorHandler(c echo.Context, err error, options ...HTTPBaseResponseProps) error {
-	statusCode := http.StatusInternalServerError
-	return HTTPBaseHandler(c, WithMessage(err.Error()), WithCode(statusCode))
+	return HTTPBaseHandler(c, WithMessage(err.Error()), WithCode(http.StatusBadRequest))
 }
 
 type HTTPBaseResponse struct {
