@@ -26,7 +26,7 @@ func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error 
 		return err
 	}
 
-	filePath := filepath.Join(uploadPath, fmt.Sprintf("%s_%s", fileId, "_tmp"))
+	filePath := filepath.Join(uploadPath, fmt.Sprintf("%s_%s", fileId, "tmp"))
 	if err := os.MkdirAll(filePath, 0755); err != nil {
 		return err
 	}
@@ -45,28 +45,16 @@ func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error 
 }
 
 // MergeFileSlices 合并文件切片
-func MergeFileSlices(fileId string) error {
-	// 获取上传目录路径
-	uploadPath, err := GetUploadDirPath()
-	if err != nil {
-		return err
-	}
-
-	// 切片所在目录
-	slicePath := filepath.Join(uploadPath, fileId)
-
-	// 最终合并后的文件路径
-	finalPath := filepath.Join(uploadPath, fileId+".tmp")
-
+func MergeFileSlices(slicesPath string, mergeFilePath string) error {
 	// 创建最终文件
-	destFile, err := os.Create(finalPath)
+	destFile, err := os.Create(mergeFilePath)
 	if err != nil {
 		return fmt.Errorf("创建合并文件失败: %v", err)
 	}
 	defer destFile.Close()
 
 	// 读取目录下的所有文件
-	files, err := os.ReadDir(slicePath)
+	files, err := os.ReadDir(slicesPath)
 	if err != nil {
 		return fmt.Errorf("读取切片目录失败: %v", err)
 	}
@@ -78,7 +66,7 @@ func MergeFileSlices(fileId string) error {
 		if err != nil {
 			return fmt.Errorf("无效的切片文件名: %v", err)
 		}
-		sliceFiles[index-1] = filepath.Join(slicePath, file.Name())
+		sliceFiles[index-1] = filepath.Join(slicesPath, file.Name())
 	}
 
 	// 合并文件
@@ -107,13 +95,6 @@ func MergeFileSlices(fileId string) error {
 
 		sf.Close()
 	}
-
-	// 清理切片文件夹
-	defer os.RemoveAll(slicePath)
-
-	// 重命名临时文件
-	finalFilePath := filepath.Join(uploadPath, fileId)
-	defer os.Rename(finalPath, finalFilePath)
-
+	defer os.RemoveAll(slicesPath)
 	return nil
 }

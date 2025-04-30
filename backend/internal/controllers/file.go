@@ -4,9 +4,11 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"backend/internal/utils"
-	"encoding/json"
 	"errors"
+	"fmt"
 	"mime/multipart"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -22,7 +24,6 @@ func CreateUploadTask(c echo.Context) error {
 	if r.FileSize == 0 || r.MimeType == "" || r.FileHash == "" {
 		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
 	}
-	rdb, ctx := utils.GetRedisClient()
 	fileId := utils.GetFileId(r.FileHash, r.FileSize)
 	fileInfo, _ := models.GetRedisFileInfo(fileId)
 
@@ -47,8 +48,10 @@ func CreateUploadTask(c echo.Context) error {
 		CreatedAt: time.Now().Unix(),
 		Expire:    3600,
 	}
-	jsonData, _ := json.Marshal(newFileInfo)
-	rdb.HSet(ctx, "015:fileInfoMap", fileId, string(jsonData)).Result()
+	err := models.SetRedisFileInfo(fileId, newFileInfo)
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"size":      newFileInfo.FileSize,
@@ -119,8 +122,14 @@ func FinishUploadTask(c echo.Context) error {
 	if fileInfo.FileType != models.FileTypeInit {
 		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
 	}
+
 	// 合并文件切片
-	if err := services.MergeFileSlices(r.FileId); err != nil {
+	uploadPath, _ := services.GetUploadDirPath()
+	slicesPath := filepath.Join(uploadPath, fmt.Sprintf("%s_%s", r.FileId, "tmp"))
+
+	// 最终合并后的文件路径
+	mergeFilePath := filepath.Join(uploadPath, r.FileId)
+	if err := services.MergeFileSlices(slicesPath, mergeFilePath); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 

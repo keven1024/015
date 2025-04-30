@@ -4,6 +4,8 @@ import (
 	"backend/internal/utils"
 	"encoding/json"
 	"errors"
+
+	"dario.cat/mergo"
 )
 
 type FileInfo struct {
@@ -45,4 +47,16 @@ func GetRedisFileInfo(fileId string) (RedisFileInfo, error) {
 		return fileInfoData, nil
 	}
 	return RedisFileInfo{}, errors.New("db不存在该文件信息")
+}
+
+func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
+	rdb, ctx := utils.GetRedisClient()
+	old_fileInfo, err := GetRedisFileInfo(fileId)
+	if err != nil {
+		return err
+	}
+	mergo.Merge(&fileInfo, old_fileInfo)
+	jsonData, _ := json.Marshal(fileInfo)
+	_, err = rdb.HSet(ctx, "015:fileInfoMap", fileId, string(jsonData)).Result()
+	return err
 }
