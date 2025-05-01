@@ -5,12 +5,14 @@ import { cx } from 'class-variance-authority'
 import calcFileHash from '~/lib/calcFileHash';
 import { filesize } from 'filesize';
 const props = defineProps<{
-    data: any
+    data: { file: File, config: any, file_handle_type: string }
 }>()
 
 const emit = defineEmits<{
     (e: 'change', key: string): void
 }>()
+
+const form = useFormContext()
 
 const step = ref<'hash' | 'upload'>('hash')
 const calcHashTime = ref(0)
@@ -52,6 +54,8 @@ useAsyncState(async () => {
     const { id, chunk_size, type: createType } = createData?.data || {}
     if (createType !== 'init') {
         // 文件存在
+        form.setFieldValue('file_id', id)
+        emit('change', 'result')
         return;
     }
     chunkSize.value = chunk_size
@@ -107,6 +111,7 @@ useAsyncState(async () => {
     if (r?.code !== 200) {
         throw new Error('上传失败')
     }
+    form.setFieldValue('file_id', id)
     emit('change', 'result')
 }, null)
 </script>

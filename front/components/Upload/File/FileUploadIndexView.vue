@@ -7,7 +7,7 @@ import FileUploadResultView from './FileUploadResultView.vue'
 const fileStepList = [
     { component: FileUploadInputFileView, key: 'input' },
     { component: FileUploadProgressView, key: 'progress' },
-    // { component: FileUploadResultView, key: 'result' },
+    { component: FileUploadResultView, key: 'result' },
 ]
 
 const step = ref('input')
