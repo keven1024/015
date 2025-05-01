@@ -8,7 +8,7 @@ import FileShareHandle from '~/components/Preprocessing/FileShareHandle.vue';
 const props = defineProps<{
     hide: () => void
     file: File
-    onFileHandle: ({ data, type }: { data: any, type: string }) => void
+    onFileHandle: ({ type, config }: { type: string, config: any }) => void
 }>()
 
 const isImage = computed(() => props.file.type.startsWith('image/'))
