@@ -9,9 +9,10 @@ import (
 )
 
 type FileInfo struct {
-	FileSize int64  `json:"size"`
-	MimeType string `json:"mime_type"`
-	FileHash string `json:"hash"`
+	FileSize  int64  `json:"size"`
+	MimeType  string `json:"mime_type"`
+	FileHash  string `json:"hash"`
+	ChunkSize int64  `json:"chunk_size"`
 }
 
 type FileType string

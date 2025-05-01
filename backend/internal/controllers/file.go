@@ -29,21 +29,26 @@ func CreateUploadTask(c echo.Context) error {
 
 	if fileInfo != nil {
 		return utils.HTTPSuccessHandler(c, map[string]any{
-			"size":      fileInfo.FileSize,
-			"mime_type": fileInfo.MimeType,
-			"hash":      fileInfo.FileHash,
-			"type":      fileInfo.FileType,
-			"expire":    fileInfo.Expire,
-			"id":        fileId,
+			"size":       fileInfo.FileSize,
+			"mime_type":  fileInfo.MimeType,
+			"hash":       fileInfo.FileHash,
+			"type":       fileInfo.FileType,
+			"expire":     fileInfo.Expire,
+			"id":         fileId,
+			"chunk_size": fileInfo.ChunkSize,
 		})
 	}
-
+	ChunkSize := int64(1 * 1024 * 1024)
+	if r.FileSize > 500*1024*1024 {
+		ChunkSize = r.FileSize / 500
+	}
 	newFileInfo := models.RedisFileInfo{
 		FileType: models.FileTypeInit,
 		FileInfo: models.FileInfo{
-			FileSize: r.FileSize,
-			MimeType: r.MimeType,
-			FileHash: r.FileHash,
+			FileSize:  r.FileSize,
+			MimeType:  r.MimeType,
+			FileHash:  r.FileHash,
+			ChunkSize: ChunkSize,
 		},
 		CreatedAt: time.Now().Unix(),
 		Expire:    3600,
@@ -54,12 +59,13 @@ func CreateUploadTask(c echo.Context) error {
 	}
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"size":      newFileInfo.FileSize,
-		"mime_type": newFileInfo.MimeType,
-		"hash":      newFileInfo.FileHash,
-		"type":      newFileInfo.FileType,
-		"expire":    newFileInfo.Expire,
-		"id":        fileId,
+		"size":       newFileInfo.FileSize,
+		"mime_type":  newFileInfo.MimeType,
+		"hash":       newFileInfo.FileHash,
+		"type":       newFileInfo.FileType,
+		"expire":     newFileInfo.Expire,
+		"id":         fileId,
+		"chunk_size": newFileInfo.ChunkSize,
 	})
 }
 
@@ -90,6 +96,13 @@ func UploadFileSlice(c echo.Context) error {
 
 	if fileInfo.FileType != models.FileTypeInit {
 		return utils.HTTPErrorHandler(c, errors.New("上传任务状态错误"))
+	}
+	if r.FileIndex > ((fileInfo.FileSize / fileInfo.ChunkSize) + 1) {
+		return utils.HTTPErrorHandler(c, errors.New("文件切片索引错误"))
+	}
+
+	if r.FileSlice.Size > fileInfo.ChunkSize {
+		return utils.HTTPErrorHandler(c, errors.New("文件切片大小错误"))
 	}
 
 	// 打开文件
