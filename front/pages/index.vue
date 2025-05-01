@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import FileUploadView from '~/components/Upload/FileUploadView.vue'
+import FileUploadView from '~/components/Upload/File/FileUploadIndexView.vue'
 import TextUploadView from '~/components/Upload/TextUploadView.vue'
 import { isString } from 'lodash-es'
 
