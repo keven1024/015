@@ -13,7 +13,7 @@ func GetUploadDirPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	finalPath := filepath.Join(basepath, "upload")
+	finalPath := filepath.Join(basepath, "uploads")
 	if err := os.MkdirAll(finalPath, 0755); err != nil {
 		return "", err
 	}
