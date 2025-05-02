@@ -29,13 +29,6 @@ type RedisFileInfo struct {
 	Expire    int64    `json:"expire"`
 }
 
-type RedisShareInfo struct {
-	Id        string `json:"id"`
-	Owner     string `json:"owner"`
-	FileId    string `json:"fileId"`
-	CreatedAt int64  `json:"created_at"`
-}
-
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
 	fileInfoUnmarshalData, err := rdb.HGet(ctx, "015:fileInfoMap", fileId).Result()
