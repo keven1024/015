@@ -22,7 +22,7 @@ func CreateUploadTask(c echo.Context) error {
 	}
 
 	if r.FileSize == 0 || r.MimeType == "" || r.FileHash == "" {
-		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
+		return utils.HTTPErrorHandler(c, errors.New("调用接口参数错误"))
 	}
 	fileId := utils.GetFileId(r.FileHash, r.FileSize)
 	fileInfo, _ := models.GetRedisFileInfo(fileId)
@@ -82,7 +82,7 @@ func UploadFileSlice(c echo.Context) error {
 	}
 
 	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil {
-		return utils.HTTPErrorHandler(c, errors.New("上传文件信息不完整"))
+		return utils.HTTPErrorHandler(c, errors.New("调用接口参数错误"))
 	}
 	fileInfo, err := models.GetRedisFileInfo(r.FileId)
 	if err != nil {
