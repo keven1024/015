@@ -52,8 +52,8 @@ const props = defineProps<{
                     <InputField v-if="!!values.has_password" name="password" placeholder="请输入密码" rules="required" />
                 </div>
                 <div class="flex flex-row gap-3 min-h-9">
-                    <SwitchField name="has_download_notify" label="下载通知" />
-                    <InputField v-if="!!values.has_download_notify" name="download_notify_email" placeholder="请输入邮箱"
+                    <SwitchField name="has_notify" label="下载通知" />
+                    <InputField v-if="!!values.has_notify" name="notify_email" placeholder="请输入邮箱"
                         rules="required" />
                 </div>
             </div>
