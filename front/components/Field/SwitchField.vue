@@ -12,6 +12,6 @@ const { value } = useField<boolean>(props.name, props?.rules)
 <template>
   <div class="flex flex-row gap-2 items-center">
     <Label v-if="label">{{ label }}</Label>
-    <Switch v-model="value" />
+    <Switch v-model="value" v-bind="$attrs" />
   </div>
 </template>
