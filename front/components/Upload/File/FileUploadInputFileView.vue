@@ -10,12 +10,11 @@ const emit = defineEmits<{
 }>()
 
 const handleFormSubmit = (form: any) => {
-  const { _file } = form?.values || {}
+  const { file } = form?.values || {}
   showDrawer({
     render: ({ hide }) => h(FileShareDrawer, {
-      hide, file: _file, onFileHandle: ({ type, config }) => {
+      hide, file, onFileHandle: ({ type, config }) => {
         form.setFieldValue('file_handle_type', type)
-        form.setFieldValue('file', _file)
         form.setFieldValue('config', config)
         emit('change', 'progress')
       }
@@ -28,7 +27,7 @@ const handleFormSubmit = (form: any) => {
 <template>
     <div class="gap-5 flex flex-col">
         <div class="text-xl font-normal">上传文件</div>
-        <FileUploadField name="_file" rules="required" />
+        <FileUploadField name="file" rules="required" />
         <div class="flex flex-row gap-3">
             <FormButton @click="handleFormSubmit">
                 <LucideShare class="size-4" />提交

@@ -17,7 +17,7 @@ const renderComponent = computed(() => {
 })
 </script>
 <template>
-    <VeeForm v-slot="{ values }">
+    <VeeForm v-slot="{ values }" :keepValues="true">
         <div class="rounded-xl p-5 bg-white/50 backdrop-blur-xl w-full lg:w-200">
             <component :is="renderComponent" :data="values" @change="(key: string) => {
                 step = key
