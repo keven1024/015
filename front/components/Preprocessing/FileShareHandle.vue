@@ -12,7 +12,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <VeeForm v-slot="{ values }" :initialValues="{ download_nums: 1, expire_time: 1440 }">
+    <VeeForm v-slot="{ values, setFieldValue }" :initialValues="{ download_nums: 1, expire_time: 1440 }">
         <div class="flex flex-col gap-3">
             <h2 class="text-lg font-bold">分享选项</h2>
             <div class="flex flex-row items-center gap-2 text-sm">
@@ -33,13 +33,29 @@ const props = defineProps<{
                 ]" />
                 后过期
             </div>
-            <div class="flex flex-row gap-3 min-h-9">
-                <SwitchField name="has_password" label="密码保护" />
-                <InputField v-if="!!values.has_password" name="password" placeholder="请输入密码" />
-            </div>
-            <div class="flex flex-row gap-3 min-h-9">
-                <SwitchField name="has_download_notify" label="下载通知" />
-                <InputField v-if="!!values.has_download_notify" name="download_notify_email" placeholder="请输入邮箱" />
+            <div class="flex flex-col gap-1">
+                <div class="flex flex-row gap-3 min-h-9">
+                    <SwitchField name="has_pickup_code" label="取件码" :rules="((value: boolean) => {
+                        if (!!value) {
+                            setFieldValue('has_password', false)
+                        }
+                        return true
+                    }) as any" />
+                </div>
+                <div class="flex flex-row gap-3 min-h-9">
+                    <SwitchField name="has_password" label="密码保护" :rules="((value: boolean) => {
+                        if (!!value) {
+                            setFieldValue('has_pickup_code', false)
+                        }
+                        return true
+                    }) as any" />
+                    <InputField v-if="!!values.has_password" name="password" placeholder="请输入密码" rules="required" />
+                </div>
+                <div class="flex flex-row gap-3 min-h-9">
+                    <SwitchField name="has_download_notify" label="下载通知" />
+                    <InputField v-if="!!values.has_download_notify" name="download_notify_email" placeholder="请输入邮箱"
+                        rules="required" />
+                </div>
             </div>
             <FormButton @click="(form) => {
                 onFileHandle({ type: 'file-share', config: values })
