@@ -12,14 +12,15 @@ import (
 
 type RedisShareInfo struct {
 	// Id          string    `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
+	CreatedAt   int64     `json:"created_at"`
 	Owner       string    `json:"owner"`
 	Type        ShareType `json:"type"`
 	Data        string    `json:"data"` // 分享数据 文件分享为文件id 文本分享为文本内容
-	ExpireAt    time.Time `json:"expire_time"`
+	ExpireAt    int64     `json:"expire_time"`
 	ViewNum     int64     `json:"download_nums"`
 	Password    string    `json:"password"`
 	NotifyEmail []string  `json:"notify_email"`
+	FileName    string    `json:"file_name"`
 	// PickupCode  bool      `json:"pickup_code"`
 }
 
