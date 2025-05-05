@@ -12,14 +12,11 @@ import { useFormContext } from 'vee-validate'
 const form = useFormContext()
 
 const isValid = ref(false)
-watch(
-  () => form?.values,
-  async () => {
-    const { valid } = await form?.validate()
-    isValid.value = valid
-  },
-  { deep: true }
-)
+
+watchEffect(async () => {
+  const { valid } = await form?.validate()
+  isValid.value = valid
+})
 
 const emit = defineEmits<{
   (e: 'click', form: ReturnType<typeof useFormContext>): void
