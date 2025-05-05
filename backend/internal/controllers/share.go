@@ -20,7 +20,7 @@ type CreateShareProps struct {
 }
 
 type ShareConfig struct {
-	ExpireAt      string   `json:"expire_time"`
+	ExpireAt      int      `json:"expire_time"`
 	ViewNum       int64    `json:"download_nums"`
 	HasPassword   bool     `json:"has_password"`
 	Password      string   `json:"password"`
@@ -36,11 +36,10 @@ func CreateShareInfo(c echo.Context) error {
 	if err := cc.Bind(r); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-
-	ExpireTime, err := time.Parse(time.RFC3339, r.Config.ExpireAt)
-	if err != nil {
-		return utils.HTTPErrorHandler(c, errors.New("分享过期时间格式错误"))
+	if r.Config.ExpireAt < 60 {
+		return utils.HTTPErrorHandler(c, errors.New("非法的分享过期时间"))
 	}
+	ExpireTime := time.Now().Add(time.Minute * time.Duration(r.Config.ExpireAt))
 
 	if r.Data == "" || (r.Type != models.ShareTypeFile && r.Type != models.ShareTypeText) || ExpireTime.Before(time.Now()) || r.Config.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, errors.New("调用接口参数错误"))
@@ -65,16 +64,16 @@ func CreateShareInfo(c echo.Context) error {
 	}
 
 	models.SetRedisShareInfo(id, models.RedisShareInfo{
-		Data:      r.Data,
-		Type:      r.Type,
-		CreatedAt: time.Now().Unix(),
-		Owner:     cc.Auth.(string),
-		// ExpireAt:    r.Config.ExpireAt,
+		Data:        r.Data,
+		Type:        r.Type,
+		CreatedAt:   time.Now().Unix(),
+		Owner:       cc.Auth.(string),
 		ViewNum:     r.Config.ViewNum,
 		Password:    r.Config.Password,
 		NotifyEmail: r.Config.NotifyEmail,
 		FileName:    r.FileName,
-	}, time.Until(ExpireTime))
+		ExpireAt:    ExpireTime.Unix(),
+	})
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            id,
@@ -116,6 +115,7 @@ func GetShareInfo(c echo.Context) error {
 		}
 		return utils.HTTPSuccessHandler(c, map[string]any{
 			"id":            shareId,
+			"type":          shareInfo.Type,
 			"file_name":     shareInfo.FileName,
 			"download_nums": shareInfo.ViewNum,
 			"expire_at":     shareInfo.ExpireAt,
@@ -127,6 +127,7 @@ func GetShareInfo(c echo.Context) error {
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            shareId,
+		"type":          shareInfo.Type,
 		"file_name":     shareInfo.FileName,
 		"download_nums": shareInfo.ViewNum,
 		"expire_at":     shareInfo.ExpireAt,

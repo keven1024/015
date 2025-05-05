@@ -33,7 +33,9 @@ const (
 
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
-	shareInfoUnmarshalData, err := rdb.Get(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId)).Result()
+	shareInfo := rdb.Get(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId))
+	shareInfoUnmarshalData, err := shareInfo.Result()
+	ttl, _ := rdb.TTL(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId)).Result()
 	if err == redis.Nil {
 		return nil, nil
 	}
@@ -41,13 +43,15 @@ func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 		return nil, err
 	}
 	var shareInfoData RedisShareInfo
+
 	if err := json.Unmarshal([]byte(shareInfoUnmarshalData), &shareInfoData); err != nil {
 		return nil, err
 	}
+	shareInfoData.ExpireAt = time.Now().Add(ttl).Unix()
 	return &shareInfoData, nil
 }
 
-func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo, ttl time.Duration) error {
+func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo) error {
 	rdb, ctx := utils.GetRedisClient()
 	old_shareInfo, err := GetRedisShareInfo(shareId)
 	if err != nil {
@@ -57,6 +61,7 @@ func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo, ttl time.Durati
 		mergo.Merge(&shareInfo, old_shareInfo)
 	}
 	jsonData, _ := json.Marshal(shareInfo)
-	_, err = rdb.Set(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId), string(jsonData), ttl).Result()
+
+	_, err = rdb.Set(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId), string(jsonData), time.Duration(shareInfo.ExpireAt)).Result()
 	return err
 }
