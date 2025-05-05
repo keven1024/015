@@ -2,7 +2,7 @@
   <Field :name="props.name" v-slot="{ field }">
     <div class="flex flex-col gap-2">
       <Label v-if="props.label">{{ props.label }}</Label>
-      <Input v-bind="field" :placeholder="props.placeholder" />
+      <Input v-bind="field" :placeholder="props.placeholder" :class="props.class" />
     </div>
   </Field>
 </template>
@@ -12,5 +12,6 @@ const props = defineProps<{
   name: string
   label?: string
   placeholder?: string
+  class?: string
 }>()
 </script>
