@@ -20,7 +20,7 @@ type CreateShareProps struct {
 }
 
 type ShareConfig struct {
-	ExpireAt      int      `json:"expire_time"`
+	ExpireAt      int      `json:"expire_time"` // 分钟
 	ViewNum       int64    `json:"download_nums"`
 	HasPassword   bool     `json:"has_password"`
 	Password      string   `json:"password"`
@@ -36,11 +36,10 @@ func CreateShareInfo(c echo.Context) error {
 	if err := cc.Bind(r); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	if r.Config.ExpireAt < 60 {
+	if r.Config.ExpireAt < 1 {
 		return utils.HTTPErrorHandler(c, errors.New("非法的分享过期时间"))
 	}
-	ExpireTime := time.Now().Add(time.Minute * time.Duration(r.Config.ExpireAt))
-
+	ExpireTime := time.Now().Add(time.Duration(r.Config.ExpireAt) * time.Minute)
 	if r.Data == "" || (r.Type != models.ShareTypeFile && r.Type != models.ShareTypeText) || ExpireTime.Before(time.Now()) || r.Config.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, errors.New("调用接口参数错误"))
 	}

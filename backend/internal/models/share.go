@@ -61,7 +61,6 @@ func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo) error {
 		mergo.Merge(&shareInfo, old_shareInfo)
 	}
 	jsonData, _ := json.Marshal(shareInfo)
-
-	_, err = rdb.Set(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId), string(jsonData), time.Duration(shareInfo.ExpireAt)).Result()
+	_, err = rdb.Set(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId), string(jsonData), time.Until(time.Unix(shareInfo.ExpireAt, 0))).Result()
 	return err
 }
