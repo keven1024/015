@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { filesize } from 'filesize'
+import type { filePreview } from './FileIcon.vue';
 const props = defineProps<{
-    value: File
+    value: File | filePreview
 }>()
 const fileInfo = computed(() => {
     const [, name, ext] = props?.value?.name?.match(/^(.+)\.(.+)$/) || []

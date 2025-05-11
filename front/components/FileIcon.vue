@@ -1,10 +1,16 @@
 <script setup lang="ts">
+export type filePreview = {
+    type: string
+    name: string
+    size: number
+}
+
 import { LucideFileAudio, LucideFileVideo, LucideFile, LucideFileCode, LucideFileArchive, LucideFileText } from 'lucide-vue-next'
 const props = defineProps<{
-    file: File
+    file: File | filePreview
 }>()
 const imageUrl = computed(() => {
-    if (props?.file?.type?.startsWith('image/')) {
+    if (props?.file?.type?.startsWith('image/') && props?.file instanceof File) {
         return URL.createObjectURL(props?.file)
     }
     return null
