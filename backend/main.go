@@ -17,6 +17,9 @@ func main() {
 	e.POST("/file/create", controllers.CreateUploadTask)
 	e.POST("/file/slice", controllers.UploadFileSlice)
 	e.POST("/file/finish", controllers.FinishUploadTask)
+	e.GET("/share/:id", controllers.GetShareInfo)
+	e.POST("/share", controllers.CreateShareInfo)
+	e.GET("/config", controllers.GetConfig)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
