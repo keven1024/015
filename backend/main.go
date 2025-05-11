@@ -21,5 +21,7 @@ func main() {
 	e.POST("/share", controllers.CreateShareInfo)
 	e.GET("/config", controllers.GetConfig)
 
+	e.GET("/download/:id", controllers.DownloadShare)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
