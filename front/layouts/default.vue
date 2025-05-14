@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Toaster } from 'vue-sonner'
+await useSeo()
 </script>
 <template>
   <div class="h-screen w-screen ">
