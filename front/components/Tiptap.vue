@@ -1,15 +1,11 @@
-<template>
-    <editor-content :editor="editor" class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1" />
-</template>
-
 <script setup lang="ts">
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from 'tiptap-markdown';
 import Placeholder from '@tiptap/extension-placeholder'
 const props = defineProps<{
-    modelValue: string
-    placeholder?: string
+  modelValue: string
+  placeholder?: string
 }>()
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -23,12 +19,19 @@ onMounted(() => {
       placeholder: props.placeholder ?? ''
     })],
     onUpdate: () => {
-        // HTML
-        emit('update:modelValue', editor.value?.storage?.markdown?.getMarkdown() ?? '')
-      }
+      // HTML
+      emit('update:modelValue', editor.value?.storage?.markdown?.getMarkdown() ?? '')
+    }
   })
 })
-onUnmounted(() => { 
-    editor.value?.destroy()
+watch(() => props.modelValue, (value) => {
+  editor.value?.commands.setContent(value)
 })
+onUnmounted(() => {
+  editor.value?.destroy()
+})
+
 </script>
+<template>
+  <editor-content :editor="editor" class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1" />
+</template>
