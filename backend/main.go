@@ -19,7 +19,6 @@ func main() {
 	e.POST("/file/finish", controllers.FinishUploadTask)
 	e.GET("/share/:id", controllers.GetShareInfo)
 	e.POST("/share", controllers.CreateShareInfo)
-	e.GET("/config", controllers.GetConfig)
 
 	e.GET("/download", controllers.DownloadShare)
 	e.POST("/download", controllers.VaildateShare)
