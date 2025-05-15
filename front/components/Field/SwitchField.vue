@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import type { RuleExpression } from 'vee-validate'
 const props = defineProps<{
     name: string
     label?: string
-    rules?: string
+    rules?: RuleExpression<boolean>
 }>()
 const { value } = useField<boolean>(props.name, props?.rules)
 </script>

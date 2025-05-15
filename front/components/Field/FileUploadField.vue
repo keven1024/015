@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import FileUpload from '~/components/FileUpload.vue'
 import { cx } from 'class-variance-authority'
-
+import type { RuleExpression } from 'vee-validate'
 
 const props = defineProps<{
     name: string
-    rules?: string
+    rules?: RuleExpression<File>
 }>()
 const { value, setValue } = useField<File>(props?.name, props?.rules)
 

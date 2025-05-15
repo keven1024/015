@@ -3,8 +3,6 @@ import AsyncButton from '@/components/ui/button/AsyncButton.vue'
 const props = defineProps<{
     data: any
 }>()
-const router = useRouter()
-
 
 const handleDownload = async () => {
     const { id } = props?.data || {}

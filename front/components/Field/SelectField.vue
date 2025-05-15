@@ -8,12 +8,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import type { RuleExpression } from 'vee-validate'
 type SelectValue = string | number
 const props = defineProps<{
     name: string
     placeholder?: string
     label?: string
-    rules?: string
+    rules?: RuleExpression<SelectValue>
     options?: {
         label?: string
         value: SelectValue
