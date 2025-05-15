@@ -42,9 +42,14 @@ func DownloadShare(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+		models.SetRedisShareInfo(claims.ShareId, models.RedisShareInfo{
+			ViewNum: shareInfo.ViewNum - 1,
+		})
 		return cc.Attachment(fmt.Sprintf("%s/%s", uploadPath, utils.GetFileId(fileInfo.FileHash, fileInfo.FileSize)), shareInfo.FileName)
 	}
-
+	models.SetRedisShareInfo(claims.ShareId, models.RedisShareInfo{
+		ViewNum: shareInfo.ViewNum - 1,
+	})
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"data": shareInfo.Data,
 	})
