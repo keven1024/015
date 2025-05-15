@@ -115,7 +115,7 @@ func GetShareInfo(c echo.Context) error {
 		return utils.HTTPSuccessHandler(c, map[string]any{
 			"id":            shareId,
 			"type":          shareInfo.Type,
-			"file_name":     shareInfo.FileName,
+			"name":          shareInfo.FileName,
 			"download_nums": shareInfo.ViewNum,
 			"expire_at":     shareInfo.ExpireAt,
 			"owner":         shareInfo.Owner,
@@ -127,7 +127,7 @@ func GetShareInfo(c echo.Context) error {
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            shareId,
 		"type":          shareInfo.Type,
-		"file_name":     shareInfo.FileName,
+		"name":          shareInfo.FileName,
 		"download_nums": shareInfo.ViewNum,
 		"expire_at":     shareInfo.ExpireAt,
 		"owner":         shareInfo.Owner,
