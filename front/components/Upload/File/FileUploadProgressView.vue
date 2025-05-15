@@ -31,7 +31,7 @@ useAsyncState(async () => {
     if (!file) return
     const { size, type } = file || {}
     const now = Date.now()
-    const hash = await calcFileHash({ file } as any)
+    const hash = await calcFileHash({ file })
     if (hash) {
         step.value = 'upload'
         calcHashTime.value = Date.now() - now
@@ -87,11 +87,13 @@ useAsyncState(async () => {
                 formData.append('index', index + 1)
                 formData.append('id', id)
                 fileSliceUploadStatusList.value[index].status = 'uploading'
-                const res = await $fetch('/api/file/slice', {
+                const res = await $fetch<{
+                    code: number
+                }>('/api/file/slice', {
                     method: 'POST',
                     body: formData
                 })
-                const { code } = (res as any) || {}
+                const { code } = res || {}
                 if (code !== 200) {
                     throw new Error('上传失败')
                 }
@@ -102,7 +104,9 @@ useAsyncState(async () => {
             }
         }))
     }
-    const r = await $fetch<any>('/api/file/finish', {
+    const r = await $fetch<{
+        code: number
+    }>('/api/file/finish', {
         method: 'POST',
         body: {
             id

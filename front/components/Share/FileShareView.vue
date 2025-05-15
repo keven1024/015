@@ -6,7 +6,12 @@ const props = defineProps<{
 
 const handleDownload = async () => {
     const { id } = props?.data || {}
-    const data = await $fetch<any>(`/api/download`, {
+    const data = await $fetch<{
+        code: number
+        data: {
+            token?: string
+        }
+    }>(`/api/download`, {
         method: 'POST',
         body: {
             share_id: id

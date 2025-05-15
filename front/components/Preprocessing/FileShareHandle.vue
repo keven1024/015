@@ -40,7 +40,7 @@ const props = defineProps<{
                             setFieldValue('has_password', false)
                         }
                         return true
-                    }) as any" />
+                    })" />
                 </div>
                 <div class="flex flex-row gap-3 min-h-9">
                     <SwitchField name="has_password" label="密码保护" :rules="((value: boolean) => {
@@ -48,7 +48,7 @@ const props = defineProps<{
                             setFieldValue('has_pickup_code', false)
                         }
                         return true
-                    }) as any" />
+                    })" />
                     <InputField v-if="!!values.has_password" name="password" placeholder="请输入密码" rules="required" />
                 </div>
                 <div class="flex flex-row gap-3 min-h-9">

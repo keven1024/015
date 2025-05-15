@@ -24,7 +24,6 @@ const isDocument = computed(() => isPDF.value || isDOC.value || isXLS.value || i
 const actions = [
     {
         label: '分享文件', icon: LucideShare, className: 'bg-green-300', onClick: () => {
-            console.log('复制链接', props.file)
             showDrawer({ render: ({ hide }) => h(FileShareHandle, { ...props, hide }) })
         }
     },

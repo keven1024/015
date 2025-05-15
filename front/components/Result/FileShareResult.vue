@@ -11,7 +11,12 @@ const props = defineProps<{
 const { state } = useAsyncState(async () => {
     const { file_id, config, file } = props?.data || {}
     const { name } = file || {}
-    const data = await $fetch<any>(`/api/share`, {
+    const data = await $fetch<{
+        code: number
+        data: {
+            id?: string
+        }
+    }>(`/api/share`, {
         method: 'POST',
         body: {
             type: 'file',
