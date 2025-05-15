@@ -9,7 +9,7 @@ const emit = defineEmits<{
     (e: 'change', key: string): void
 }>()
 
-const handleFormSubmit = (form: any) => {
+const handleFormSubmit = async (form: any) => {
   const { file } = form?.values || {}
   showDrawer({
     render: ({ hide }) => h(FileShareDrawer, {

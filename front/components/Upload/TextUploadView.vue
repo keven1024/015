@@ -26,7 +26,7 @@ import { cx } from 'class-variance-authority'
                 </Button>
             </div>
             <div class="flex flex-row gap-3">
-                <FormButton @click="(form) => {
+                <FormButton @click="async (form) => {
                     const { text } = form?.values || {}
                     showDrawer({ render: ({ hide }) => h(TextShareDrawer, { hide, text }) })
                 }">

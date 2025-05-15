@@ -57,7 +57,7 @@ const props = defineProps<{
                         rules="required" />
                 </div>
             </div>
-            <FormButton @click="(form) => {
+            <FormButton @click="async (form) => {
                 onFileHandle({ type: 'file-share', config: values })
                 hide()
             }">提交</FormButton>
