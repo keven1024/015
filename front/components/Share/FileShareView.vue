@@ -5,13 +5,15 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { isBoolean } from 'lodash-es';
 import { LucideCheck, LucideX } from 'lucide-vue-next';
-
+import { useQueryClient } from '@tanstack/vue-query';
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
 const props = defineProps<{
     data: any
 }>()
+
+const queryClient = useQueryClient()
 
 const handleDownload = async () => {
     const { id } = props?.data || {}
@@ -31,6 +33,7 @@ const handleDownload = async () => {
         return
     }
     (window as any)?.open(`/api/download?token=${token}`)
+    queryClient.invalidateQueries({ queryKey: ['share', id] })
 }
 
 const expireSeconds = computed(() => {

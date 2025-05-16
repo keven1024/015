@@ -5,25 +5,28 @@ import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
 import FileShareView from '@/components/Share/FileShareView.vue'
 import TextShareView from '@/components/Share/TextShareView.vue'
+import { useQuery } from '@tanstack/vue-query'
 const route = useRoute()
 const router = useRouter()
-
 const id = computed(() => route.params.id)
 
-const { state, isLoading } = useAsyncState(async () => {
-    const data = await $fetch<{
-        code: number
-        data: {
-            id?: string
-            expire_at?: number
-        }
-    }>(`/api/share/${id.value}`)
-    return data?.data
-}, null)
+const { data, isLoading } = useQuery({
+    queryKey: ['share', id.value],
+    queryFn: async () => {
+        const data = await $fetch<{
+            code: number
+            data: {
+                id?: string
+                expire_at?: number
+            }
+        }>(`/api/share/${id.value}`)
+        return data?.data
+    }
+})
 
 const isExpired = computed(() => {
-    const { expire_at } = state.value || {}
-    return !state || !expire_at || dayjs(expire_at * 10e2).isBefore(dayjs())
+    const { expire_at } = data.value || {}
+    return !data || !expire_at || dayjs(expire_at * 10e2).isBefore(dayjs())
 })
 
 </script>
@@ -48,8 +51,8 @@ const isExpired = computed(() => {
                 }">返回首页</Button>
             </div>
             <template v-else>
-                <FileShareView :data="state" />
-                <TextShareView :data="state" />
+                <FileShareView :data="data" />
+                <TextShareView :data="data" />
             </template>
         </template>
     </div>
