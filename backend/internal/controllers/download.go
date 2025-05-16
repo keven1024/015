@@ -76,6 +76,10 @@ func VaildateShare(c echo.Context) error {
 	if shareInfo.Password != "" && shareInfo.Password != r.Password {
 		return utils.HTTPErrorHandler(c, errors.New("分享密码错误"))
 	}
+	// 如果下载次数为0，则设置为-1 防止空值问题
+	if shareInfo.ViewNum < 1 {
+		return utils.HTTPErrorHandler(c, errors.New("下载次数不足"))
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
 		ShareId: r.ShareId,
 		RegisteredClaims: jwt.RegisteredClaims{
