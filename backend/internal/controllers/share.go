@@ -97,7 +97,7 @@ func GetShareInfo(c echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	if shareInfo == nil {
+	if shareInfo == nil || shareInfo.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, errors.New("分享不存在"))
 	}
 
