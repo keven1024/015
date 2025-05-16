@@ -5,6 +5,10 @@ const props = defineProps<{
   data: { file: File, config: any, file_handle_type: string, file_id: string }
 }>()
 
+const emit = defineEmits<{
+  (e: 'change', key: string): void
+}>()
+
 // console.log(props.data)
 
 const handleList = [
@@ -18,6 +22,8 @@ const handleComponent = computed(() => {
 </script>
 <template>
   <div class="">
-    <component :is="handleComponent" :data="data" />
+    <component :is="handleComponent" :data="data" @change="(key: string) => {
+      emit('change', key)
+    }" />
   </div>
 </template>

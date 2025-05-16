@@ -11,14 +11,14 @@ import TextShareDrawer from '@/components/Drawer/TextShareDrawer.vue'
 import { cx } from 'class-variance-authority'
 </script>
 <template>
-    <VeeForm v-slot="{ setValues, getValues }">
+    <VeeForm v-slot="{ setValues, values }">
         <div class="rounded-xl p-5 bg-white/50 backdrop-blur-xl w-full lg:w-200 gap-5 flex flex-col">
             <div class="text-xl font-normal">输入文本</div>
             <div class="relative">
                 <MarkdownInputField name="text" placeholder="使用我们的文本处理器轻松分享，翻译，总结，生成图片，询问大模型"
                     class="max-h-[50vh] min-h-40 overflow-y-auto max-w-full [&>*]:pr-10" rules="required" />
                 <Button variant="ghost" size="icon" :class="cx('absolute right-2 top-2 hover:bg-black/10 transition-all duration-300',
-                    get(getValues(), 'text')?.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    values.text?.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 )" @click="() => {
                     setValues({ text: '' })
                 }">
