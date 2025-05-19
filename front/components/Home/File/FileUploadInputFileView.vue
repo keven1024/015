@@ -14,7 +14,7 @@ const handleFormSubmit = async (form: any) => {
   showDrawer({
     render: ({ hide }) => h(FileShareDrawer, {
       hide, file, onFileHandle: ({ type, config }) => {
-        form.setFieldValue('file_handle_type', type)
+        form.setFieldValue('handle_type', type)
         form.setFieldValue('config', config)
         emit('change', 'progress')
       }

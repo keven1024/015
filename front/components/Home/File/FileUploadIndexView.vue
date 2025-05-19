@@ -2,12 +2,12 @@
 import VeeForm from '@/components/VeeForm.vue'
 import FileUploadInputFileView from './FileUploadInputFileView.vue'
 import FileUploadProgressView from './FileUploadProgressView.vue'
-import FileUploadResultView from './FileUploadResultView.vue'
+import ResultIndexView from '@/components/Result/ResultIndexView.vue'
 
 const fileStepList = [
     { component: FileUploadInputFileView, key: 'input' },
     { component: FileUploadProgressView, key: 'progress' },
-    { component: FileUploadResultView, key: 'result' },
+    { component: ResultIndexView, key: 'result' },
 ]
 
 const step = ref('input')
