@@ -4,32 +4,39 @@ import FilePreviewView from '@/components/FilePreviewView.vue';
 import { Input } from '@/components/ui/input'
 import { useClipboard } from '@vueuse/core'
 import { toast } from 'vue-sonner'
+import { useQuery } from '@tanstack/vue-query';
 const props = defineProps<{
-    data: { file: File, config: any, file_handle_type: string, file_id: string }
+    data: { file: File, config: any, handle_type: string, file_id: string }
 }>()
+const emit = defineEmits<{
+    (e: 'change', key: string): void
+}>()
+const { data } = useQuery({
+    queryKey: ['create-share', props?.data?.file_id],
+    queryFn: async () => {
+        const { file_id, config, file } = props?.data || {}
+        const { name } = file || {}
+        const data = await $fetch<{
+            code: number
+            data: {
+                id?: string
+            }
+        }>(`/api/share`, {
+            method: 'POST',
+            body: {
+                type: 'file',
+                config,
+                data: file_id,
+                file_name: name
+            }
+        })
+        return data?.data
+    }
+})
 
-const { state } = useAsyncState(async () => {
-    const { file_id, config, file } = props?.data || {}
-    const { name } = file || {}
-    const data = await $fetch<{
-        code: number
-        data: {
-            id?: string
-        }
-    }>(`/api/share`, {
-        method: 'POST',
-        body: {
-            type: 'file',
-            config,
-            data: file_id,
-            file_name: name
-        }
-    })
-    return data?.data
-}, null)
 const appConfig = useAppConfig()
 const url = computed(() => {
-    const { id } = state?.value || {}
+    const { id } = data?.value || {}
     return `${appConfig?.value?.site_url}/s/${id}`
 })
 
@@ -42,7 +49,7 @@ const { copy } = useClipboard()
         <h2 class="text-lg">上传成功</h2>
         <div class="flex flex-col gap-3 items-center">
             <div class="flex flex-col h-30 items-center">
-                <FilePreviewView :value="data.file" />
+                <FilePreviewView :value="props?.data?.file" />
             </div>
             <div class="flex flex-row gap-2">
                 <Input v-model="url" class="bg-white/70" />
@@ -57,7 +64,9 @@ const { copy } = useClipboard()
                     <LucideQrCode />
                 </Button>
             </div>
-            <Button variant="ghost" class="hover:bg-white/50 w-40">
+            <Button variant="ghost" class="hover:bg-white/50 w-40" @click="() => {
+                emit('change', 'input')
+            }">
                 确定
             </Button>
         </div>

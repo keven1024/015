@@ -5,7 +5,7 @@ import { cx } from 'class-variance-authority'
 import calcFileHash from '~/lib/calcFileHash';
 import { filesize } from 'filesize';
 const props = defineProps<{
-    data: { file: File, config: any, file_handle_type: string }
+    data: { file: File, config: any, handle_type: string }
 }>()
 
 const emit = defineEmits<{
