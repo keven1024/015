@@ -38,6 +38,7 @@
     "filesize": "^10.1.6",
     "lodash-es": "^4.17.21",
     "lucide-vue-next": "^0.487.0",
+    "markdown-it": "^14.1.0",
     "motion-v": "1.0.0-beta.2",
     "nuxt": "^3.16.0",
     "nuxt-lucide-icons": "1.0.5",
@@ -60,6 +61,7 @@
     "@serwist/nuxt": "^9.0.12",
     "@serwist/vite": "^9.0.12",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/markdown-it": "^14.1.2",
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
     "serwist": "^9.0.12"

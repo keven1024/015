@@ -3,7 +3,6 @@ import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from 'tiptap-markdown';
 import Placeholder from '@tiptap/extension-placeholder'
-import { MarkdownPaste } from './Tiptap/ MarkdownPaste';
 const props = defineProps<{
   modelValue: string
   placeholder?: string
@@ -16,7 +15,10 @@ const editor = ref<Editor | undefined>(undefined)
 onMounted(() => {
   editor.value = new Editor({
     content: props.modelValue,
-    extensions: [StarterKit, Markdown, MarkdownPaste, Placeholder.configure({
+    extensions: [StarterKit, Markdown.configure({
+      transformPastedText: true,
+      transformCopiedText: true
+    }), Placeholder.configure({
       placeholder: props.placeholder ?? ''
     })],
     onUpdate: () => {

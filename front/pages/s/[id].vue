@@ -39,7 +39,7 @@ const componentMap = {
 </script>
 
 <template>
-    <div class="rounded-xl p-5 bg-white/50 backdrop-blur-xl w-full lg:w-200 my-5">
+    <div class="rounded-xl p-5 bg-white/50 backdrop-blur-xl w-full lg:w-200 my-5 overflow-hidden">
         <div v-if="isLoading" class="flex flex-col gap-5 items-center">
             <Skeleton class="w-20 h-5 rounded-full" />
             <Skeleton class="w-16 h-16 rounded-xl" />

@@ -7,6 +7,7 @@ import { isBoolean } from 'lodash-es';
 import { LucideCheck, LucideX } from 'lucide-vue-next';
 import { cx } from 'class-variance-authority';
 import { toast } from 'vue-sonner';
+import MarkdownRender from '@/components/MarkdownRender.vue'
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
@@ -23,7 +24,6 @@ const { remaining, start } = useCountdown(expireSeconds.value)
 onMounted(() => {
     start()
 })
-
 
 const fileShareInfo = computed(() => {
     return [
@@ -65,7 +65,7 @@ const handlePreview = async () => {
 }
 </script>
 <template>
-    <div :class="cx('flex flex-col ', !!previewText ? 'gap-3' : 'gap-16 items-center')">
+    <div :class="cx('flex flex-col max-h-full', !!previewText ? 'gap-3' : 'gap-16 items-center')">
         <h1 class="text-xl">查看文本</h1>
         <template v-if="!previewText">
             <div class="flex flex-col gap-2 md:flex-row w-full">
@@ -81,7 +81,7 @@ const handlePreview = async () => {
             </div>
         </template>
         <template v-else>
-            <div class="prose rounded-md bg-white/70 p-3 w-full max-w-full min-h-80" v-html="previewText" />
+            <MarkdownRender :markdown="previewText" class="rounded-md bg-white/70 p-3 w-full max-w-full min-h-80 overflow-y-auto" />
         </template>
     </div>
 </template>
