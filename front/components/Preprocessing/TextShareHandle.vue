@@ -20,8 +20,8 @@ const props = defineProps<{
                     { label: '1次浏览', value: 1 },
                     { label: '2次浏览', value: 2 },
                     { label: '3次浏览', value: 3 },
-                    { label: '5次浏览', value: 4 },
-                    { label: '10次浏览', value: 5 },
+                    { label: '5次浏览', value: 5 },
+                    { label: '10次浏览', value: 10 },
                 ]" />
                 或
                 <SelectField name="expire_time" label="过期时间" :options="[

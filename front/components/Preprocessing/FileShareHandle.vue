@@ -21,8 +21,8 @@ const props = defineProps<{
                     { label: '1次下载', value: 1 },
                     { label: '2次下载', value: 2 },
                     { label: '3次下载', value: 3 },
-                    { label: '5次下载', value: 4 },
-                    { label: '10次下载', value: 5 },
+                    { label: '5次下载', value: 5 },
+                    { label: '10次下载', value: 10 },
                 ]" />
                 或
                 <SelectField name="expire_time" label="过期时间" :options="[
