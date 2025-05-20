@@ -1,33 +1,41 @@
 <script lang="ts" setup>
 import FileShareResult from '@/components/Result/FileShareResult.vue'
+import TextShareResult from '@/components/Result/TextShareResult.vue'
+
 type basehandleData = { config: any, handle_type: string }
 
 type filehandleData = { file: File, file_id: string } & basehandleData
 type texthandleData = { text: string } & basehandleData
 
 const props = defineProps<{
-    data: filehandleData 
+    data: filehandleData | texthandleData
 }>()
 
 const emit = defineEmits<{
     (e: 'change', key: string): void
 }>()
 
-// console.log(props.data)
-
 const handleList = [
     { component: FileShareResult, key: 'file-share' },
-    // { component: FileShareResult, key: 'file-share' },
+    { component: TextShareResult, key: 'text-share' },
 ]
 const handleComponent = computed(() => {
     return handleList.find((item) => item.key === props?.data?.handle_type)?.component
 })
+// vue这个ts蠢的没边了，本来想写component: FileShareResult | TextShareResult，结果不行
 
 </script>
 <template>
-    <div class="">
-        <component :is="handleComponent" :data="data" @change="(key: string) => {
-            emit('change', key)
-        }" />
+    <div>
+        <FileShareResult
+            v-if="handleComponent === FileShareResult && 'file' in data"
+            :data="data"
+            @change="(key: string) => emit('change', key)"
+        />
+        <TextShareResult
+            v-else-if="handleComponent === TextShareResult && 'text' in data"
+            :data="data"
+            @change="(key: string) => emit('change', key)"
+        />
     </div>
 </template>
