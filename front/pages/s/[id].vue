@@ -10,7 +10,7 @@ const route = useRoute()
 const router = useRouter()
 const id = computed(() => route.params.id)
 
-const { data, isLoading } = useQuery({
+const { data, isLoading, error } = useQuery({
     queryKey: ['share', id.value],
     queryFn: async () => {
         const data = await $fetch<{
@@ -18,16 +18,23 @@ const { data, isLoading } = useQuery({
             data: {
                 id?: string
                 expire_at?: number
+                type?: string
             }
         }>(`/api/share/${id.value}`)
         return data?.data
-    }
+    },
+    retry: false
 })
 
 const isExpired = computed(() => {
     const { expire_at } = data.value || {}
     return !data || !expire_at || dayjs(expire_at * 10e2).isBefore(dayjs())
 })
+
+const componentMap = {
+    file: FileShareView,
+    text: TextShareView
+}
 
 </script>
 
@@ -43,7 +50,7 @@ const isExpired = computed(() => {
             <Skeleton class="w-full h-5 rounded-full" />
         </div>
         <template v-else>
-            <div v-if="isExpired" class="flex flex-col gap-5 items-center">
+            <div v-if="isExpired || !data" class="flex flex-col gap-5 items-center">
                 <LucideAlertCircle :size="48" class="text-orange-500 rounded-full bg-orange-500/30 p-2" />
                 <div class="text-xl ">此链接已过期。</div>
                 <Button @click="() => {
@@ -51,8 +58,7 @@ const isExpired = computed(() => {
                 }">返回首页</Button>
             </div>
             <template v-else>
-                <FileShareView :data="data" />
-                <TextShareView :data="data" />
+                <component :is="componentMap[data?.type as keyof typeof componentMap] || 'div'" :data="data" />
             </template>
         </template>
     </div>
