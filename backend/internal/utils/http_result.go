@@ -12,9 +12,9 @@ func HTTPErrorHandler(c echo.Context, err error, options ...HTTPBaseResponseProp
 }
 
 type HTTPBaseResponse struct {
-	code    *int
-	message *string
-	data    *map[string]any
+	code    int
+	message string
+	data    map[string]any
 }
 
 type HTTPBaseResponseProps func(props *HTTPBaseResponse) error
@@ -24,7 +24,7 @@ func WithCode(code int) HTTPBaseResponseProps {
 		if code < 100 || code > 599 {
 			return errors.New("code should be positive")
 		}
-		props.code = &code
+		props.code = code
 		return nil
 	}
 }
@@ -34,42 +34,31 @@ func WithMessage(message string) HTTPBaseResponseProps {
 		if message == "" {
 			return errors.New("message should not be empty")
 		}
-		props.message = &message
+		props.message = message
 		return nil
 	}
 }
 
 func WithData(data map[string]any) HTTPBaseResponseProps {
 	return func(props *HTTPBaseResponse) error {
-		props.data = &data
+		props.data = data
 		return nil
 	}
 }
+
 func HTTPBaseHandler(c echo.Context, options ...HTTPBaseResponseProps) error {
-	var props HTTPBaseResponse
+	props := HTTPBaseResponse{code: http.StatusOK, message: "success", data: map[string]any{}}
 	for _, option := range options {
 		err := option(&props)
 		if err != nil {
 			return err
 		}
 	}
-	code := http.StatusOK
-	if props.code != nil {
-		code = *props.code
-	}
-	message := "success"
-	if props.message != nil {
-		message = *props.message
-	}
-	data := map[string]any{}
-	if props.data != nil {
-		data = *props.data
-	}
 
-	return c.JSON(code, map[string]any{
-		"code":    code,
-		"message": message,
-		"data":    data,
+	return c.JSON(props.code, map[string]any{
+		"code":    props.code,
+		"message": props.message,
+		"data":    props.data,
 	})
 }
 
