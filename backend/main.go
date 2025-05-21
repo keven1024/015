@@ -12,14 +12,13 @@ func main() {
 	e.Use(middleware.ContextMiddleware())
 	e.Use(middleware.SessionMiddleware())
 	e.Use(middleware.AuthMiddleware())
+	e.Use(middleware.RateLimiterMiddleware())
 
-	// e.GET("/file/:id", controllers.GetFile)
 	e.POST("/file/create", controllers.CreateUploadTask)
 	e.POST("/file/slice", controllers.UploadFileSlice)
 	e.POST("/file/finish", controllers.FinishUploadTask)
 	e.GET("/share/:id", controllers.GetShareInfo)
 	e.POST("/share", controllers.CreateShareInfo)
-
 	e.GET("/download", controllers.DownloadShare)
 	e.POST("/download", controllers.VaildateShare)
 
