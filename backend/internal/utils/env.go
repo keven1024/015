@@ -19,3 +19,11 @@ func init() {
 func GetEnv(key string) string {
 	return v.GetString(key)
 }
+
+func GetEnvWithDefault(key string, defaultValue string) string {
+	value := v.GetString(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
