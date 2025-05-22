@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import FileUploadView from '~/components/Home/File/FileUploadIndexView.vue'
-import TextUploadView from '~/components/Home/Text/TextUploadIndexView.vue'
+import FileUploadView from '@/components/Home/File/FileUploadIndexView.vue'
+import TextUploadView from '@/components/Home/Text/TextUploadIndexView.vue'
 import { isString } from 'lodash-es'
 const route = useRoute()
 const router = useRouter()

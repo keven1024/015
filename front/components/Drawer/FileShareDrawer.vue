@@ -2,8 +2,8 @@
 import { LucideShare, LucideImage, LucideBot, LucideLanguages, LucideFileText, LucideImageMinus, LucideArrowRightLeft, LucideImagePlus, LucideAudioLines, LucideListMusic } from 'lucide-vue-next'
 import { cx } from 'class-variance-authority'
 import { isObject } from 'lodash-es';
-import showDrawer from '~/lib/showDrawer';
-import FileShareHandle from '~/components/Preprocessing/FileShareHandle.vue';
+import showDrawer from '@/lib/showDrawer';
+import FileShareHandle from '@/components/Preprocessing/FileShareHandle.vue';
 
 const props = defineProps<{
     hide: () => void

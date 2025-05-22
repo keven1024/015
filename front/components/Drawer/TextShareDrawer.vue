@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { LucideShare, LucideImage, LucideBot, LucideLanguages } from 'lucide-vue-next'
 import { cx } from 'class-variance-authority'
-import showDrawer from '~/lib/showDrawer';
-import TextShareHandle from '~/components/Preprocessing/TextShareHandle.vue';
+import showDrawer from '@/lib/showDrawer';
+import TextShareHandle from '@/components/Preprocessing/TextShareHandle.vue';
 
 const props = defineProps<{
     hide: () => void

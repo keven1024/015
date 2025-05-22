@@ -2,7 +2,7 @@
 import CircularProgress from '@/components/CircularProgress.vue'
 import { chunk, shuffle, times } from 'lodash-es';
 import { cx } from 'class-variance-authority'
-import calcFileHash from '~/lib/calcFileHash';
+import calcFileHash from '@/lib/calcFileHash';
 import { filesize } from 'filesize';
 const props = defineProps<{
     data: { file: File, config: any, handle_type: string }

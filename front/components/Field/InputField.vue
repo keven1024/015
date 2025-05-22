@@ -7,7 +7,7 @@
   </Field>
 </template>
 <script setup lang="ts">
-import { Input } from '~/components/ui/input'
+import { Input } from '@/components/ui/input'
 const props = defineProps<{
   name: string
   label?: string

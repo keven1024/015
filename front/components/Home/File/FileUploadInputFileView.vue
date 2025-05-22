@@ -3,7 +3,7 @@ import showDrawer from '~/lib/showDrawer'
 import FileShareDrawer from '@/components/Drawer/FileShareDrawer.vue'
 import FileUploadField from '@/components/Field/FileUploadField.vue'
 import FormButton from '@/components/Field/FormButton.vue'
-// const form = useFormContext()
+import PickupShareBtn from '@/components/pickupShareBtn.vue'
 
 const emit = defineEmits<{
     (e: 'change', key: string): void
@@ -32,6 +32,7 @@ const handleFormSubmit = async (form: any) => {
             <FormButton @click="handleFormSubmit">
                 <LucideShare class="size-4" />提交
             </FormButton>
+            <PickupShareBtn />
         </div>
     </div>
 </template>

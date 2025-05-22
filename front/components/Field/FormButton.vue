@@ -7,7 +7,7 @@
   </AsyncButton>
 </template>
 <script setup lang="ts">
-import { AsyncButton } from '~/components/ui/button'
+import { AsyncButton } from '@/components/ui/button'
 import { useFormContext } from 'vee-validate'
 const form = useFormContext()
 
