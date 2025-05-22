@@ -8,7 +8,7 @@
     "dev:front": "cd front && pnpm run dev",
     "dev:backend": "cd backend && export PATH=$PATH:$(go env GOPATH)/bin && air",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npx husky install",
+    "postinstall": "npx husky init",
     "prepare": "husky"
   },
   "workspaces": [
