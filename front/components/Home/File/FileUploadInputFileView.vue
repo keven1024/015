@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import showDrawer from '~/lib/showDrawer'
+import showDrawer from '@/lib/showDrawer'
 import FileShareDrawer from '@/components/Drawer/FileShareDrawer.vue'
 import FileUploadField from '@/components/Field/FileUploadField.vue'
 import FormButton from '@/components/Field/FormButton.vue'
-import PickupShareBtn from '@/components/pickupShareBtn.vue'
+import PickupShareBtn from '@/components/PickupShareBtn.vue'
 
 const emit = defineEmits<{
     (e: 'change', key: string): void
