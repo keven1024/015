@@ -6,7 +6,7 @@ import showDrawer from '@/lib/showDrawer'
 import { h } from 'vue'
 import TextShareDrawer from '@/components/Drawer/TextShareDrawer.vue'
 import { cx } from 'class-variance-authority'
-
+import PickupShareBtn from '@/components/PickupShareBtn.vue'
 const form = useFormContext()
 
 const emit = defineEmits<{
@@ -40,6 +40,7 @@ const handleTextShare = ({ type, config }: { type: string, config: any }) => {
             }">
                 <LucideShare class="size-4" />提交
             </FormButton>
+            <PickupShareBtn />
         </div>
     </div>
 </template>
