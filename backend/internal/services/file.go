@@ -1,6 +1,7 @@
 package services
 
 import (
+	"backend/internal/utils"
 	"fmt"
 	"io"
 	"os"
@@ -14,10 +15,11 @@ func GetUploadDirPath() (string, error) {
 		return "", err
 	}
 	finalPath := filepath.Join(basepath, "uploads")
-	if err := os.MkdirAll(finalPath, 0755); err != nil {
+	uploadPath := utils.GetEnvWithDefault("UPLOAD_PATH", finalPath)
+	if err := os.MkdirAll(uploadPath, 0755); err != nil {
 		return "", err
 	}
-	return finalPath, nil
+	return uploadPath, nil
 }
 
 func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error {
