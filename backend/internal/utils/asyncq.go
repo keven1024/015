@@ -3,9 +3,19 @@ package utils
 import "github.com/hibiken/asynq"
 
 func GetQueueClient() *asynq.Client {
-	return asynq.NewClient(asynq.RedisClientOpt{Addr: GetEnv("REDIS_URL")})
+	opt := RedisURI2AsynqOpt(GetEnv("REDIS_URL"))
+	return asynq.NewClient(opt)
 }
 
 func GetQueueInspector() *asynq.Inspector {
-	return asynq.NewInspector(asynq.RedisClientOpt{Addr: GetEnv("REDIS_URL")})
+	opt := RedisURI2AsynqOpt(GetEnv("REDIS_URL"))
+	return asynq.NewInspector(opt)
+}
+
+func RedisURI2AsynqOpt(uri string) asynq.RedisConnOpt {
+	opt, err := asynq.ParseRedisURI(GetEnv("REDIS_URL"))
+	if err != nil {
+		panic(err)
+	}
+	return opt
 }
