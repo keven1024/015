@@ -1,14 +1,13 @@
 package utils
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-func HTTPErrorHandler(c echo.Context, err error, options ...HTTPBaseResponseProps) error {
-	return HTTPBaseHandler(c, WithMessage(err.Error()), WithCode(http.StatusBadRequest))
+type Option interface {
+	applyTo(*HTTPBaseResponse)
 }
 
 type HTTPBaseResponse struct {
@@ -19,40 +18,28 @@ type HTTPBaseResponse struct {
 
 type HTTPBaseResponseProps func(props *HTTPBaseResponse) error
 
-func WithCode(code int) HTTPBaseResponseProps {
-	return func(props *HTTPBaseResponse) error {
-		if code < 100 || code > 599 {
-			return errors.New("code should be positive")
-		}
-		props.code = code
-		return nil
-	}
+type WithCode int
+
+func (o WithCode) applyTo(props *HTTPBaseResponse) {
+	props.code = int(o)
 }
 
-func WithMessage(message string) HTTPBaseResponseProps {
-	return func(props *HTTPBaseResponse) error {
-		if message == "" {
-			return errors.New("message should not be empty")
-		}
-		props.message = message
-		return nil
-	}
+type WithMessage string
+
+func (o WithMessage) applyTo(props *HTTPBaseResponse) {
+	props.message = string(o)
 }
 
-func WithData(data map[string]any) HTTPBaseResponseProps {
-	return func(props *HTTPBaseResponse) error {
-		props.data = data
-		return nil
-	}
+type WithData map[string]any
+
+func (o WithData) applyTo(props *HTTPBaseResponse) {
+	props.data = o
 }
 
-func HTTPBaseHandler(c echo.Context, options ...HTTPBaseResponseProps) error {
+func HTTPBaseHandler(c echo.Context, options ...Option) error {
 	props := HTTPBaseResponse{code: http.StatusOK, message: "success", data: map[string]any{}}
 	for _, option := range options {
-		err := option(&props)
-		if err != nil {
-			return err
-		}
+		option.applyTo(&props)
 	}
 
 	return c.JSON(props.code, map[string]any{
@@ -64,4 +51,8 @@ func HTTPBaseHandler(c echo.Context, options ...HTTPBaseResponseProps) error {
 
 func HTTPSuccessHandler(c echo.Context, data map[string]any, options ...HTTPBaseResponseProps) error {
 	return HTTPBaseHandler(c, WithData(data))
+}
+
+func HTTPErrorHandler(c echo.Context, err error, options ...HTTPBaseResponseProps) error {
+	return HTTPBaseHandler(c, WithMessage(err.Error()), WithCode(http.StatusBadRequest))
 }
