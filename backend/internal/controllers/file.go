@@ -150,7 +150,7 @@ func FinishUploadTask(c echo.Context) error {
 	}
 
 	// 合并文件切片
-	uploadPath, _ := services.GetUploadDirPath()
+	uploadPath, _ := utils.GetUploadDirPath()
 	slicesPath := filepath.Join(uploadPath, fmt.Sprintf("%s_%s", r.FileId, "tmp"))
 
 	// 最终合并后的文件路径

@@ -26,7 +26,7 @@ type RedisFileInfo struct {
 	FileInfo
 	FileType  FileType `json:"type"`
 	CreatedAt int64    `json:"created_at"`
-	Expire    int64    `json:"expire"`
+	Expire    int64    `json:"expire"` // 只有上传文件(init)的时候有这个字段
 }
 
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {

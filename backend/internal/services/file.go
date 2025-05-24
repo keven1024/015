@@ -9,21 +9,8 @@ import (
 	"strconv"
 )
 
-func GetUploadDirPath() (string, error) {
-	basepath, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	finalPath := filepath.Join(basepath, "uploads")
-	uploadPath := utils.GetEnvWithDefault("UPLOAD_PATH", finalPath)
-	if err := os.MkdirAll(uploadPath, 0755); err != nil {
-		return "", err
-	}
-	return uploadPath, nil
-}
-
 func CreateFileSlice(fileSlice io.Reader, fileId string, fileIndex int64) error {
-	uploadPath, err := GetUploadDirPath()
+	uploadPath, err := utils.GetUploadDirPath()
 	if err != nil {
 		return err
 	}

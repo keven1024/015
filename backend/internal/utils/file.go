@@ -5,6 +5,8 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 )
 
 func GetFileId(fileHash string, fileSize int64) string {
@@ -29,4 +31,17 @@ func GetFileMd5(file io.Reader) (string, error) {
 	}
 
 	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+}
+
+func GetUploadDirPath() (string, error) {
+	basepath, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	finalPath := filepath.Join(basepath, "uploads")
+	uploadPath := GetEnvWithDefault("UPLOAD_PATH", finalPath)
+	if err := os.MkdirAll(uploadPath, 0755); err != nil {
+		return "", err
+	}
+	return uploadPath, nil
 }

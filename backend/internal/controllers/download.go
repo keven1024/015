@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"backend/internal/models"
-	"backend/internal/services"
 	"backend/internal/utils"
 	"backend/middleware"
 	"errors"
@@ -38,7 +37,7 @@ func DownloadShare(c echo.Context) error {
 
 	if shareInfo.Type == models.ShareTypeFile {
 		fileInfo, _ := models.GetRedisFileInfo(shareInfo.Data)
-		uploadPath, err := services.GetUploadDirPath()
+		uploadPath, err := utils.GetUploadDirPath()
 		if err != nil {
 			return err
 		}
