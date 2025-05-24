@@ -13,6 +13,7 @@ func main() {
 	e.Use(middleware.SessionMiddleware())
 	e.Use(middleware.AuthMiddleware())
 	e.Use(middleware.RateLimiterMiddleware())
+	e.Use(middleware.LoggerMiddleware())
 
 	e.POST("/file/create", controllers.CreateUploadTask)
 	e.POST("/file/slice", controllers.UploadFileSlice)

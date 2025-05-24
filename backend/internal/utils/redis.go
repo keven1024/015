@@ -10,7 +10,7 @@ var rdb *redis.Client = InitRedis()
 var ctx = context.Background()
 
 func InitRedis() *redis.Client {
-	opt, err := redis.ParseURL("redis://192.168.100.5:6379/3")
+	opt, err := redis.ParseURL(GetEnv("REDIS_URL"))
 	if err != nil {
 		panic(err)
 	}
