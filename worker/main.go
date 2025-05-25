@@ -11,7 +11,7 @@ import (
 
 func main() {
 	srv := asynq.NewServer(
-		asynq.RedisClientOpt{Addr: utils.GetEnv("REDIS_URL")},
+		utils.RedisURI2AsynqOpt(utils.GetEnv("REDIS_URL")),
 		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("WORKER_CONCURRENCY", "4"))},
 	)
 
