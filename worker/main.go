@@ -4,18 +4,31 @@ import (
 	"log"
 	"worker/internal/tasks"
 	"worker/internal/utils"
+	"worker/middleware"
 
 	"github.com/hibiken/asynq"
 	"github.com/spf13/cast"
+	"go.uber.org/zap"
 )
 
 func main() {
+	// 日志
+	var logger *zap.Logger
+	if utils.GetEnvWithDefault("NODE_ENV", "production") == "production" {
+		logger, _ = zap.NewProduction()
+	} else {
+		logger, _ = zap.NewDevelopment()
+	}
+	defer logger.Sync()
+	zap.ReplaceGlobals(logger)
+
 	srv := asynq.NewServer(
 		utils.RedisURI2AsynqOpt(utils.GetEnv("REDIS_URL")),
 		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("WORKER_CONCURRENCY", "4"))},
 	)
 
 	mux := asynq.NewServeMux()
+	mux.Use(middleware.LoggerMiddleware)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 
 	if err := srv.Run(mux); err != nil {

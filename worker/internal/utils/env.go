@@ -4,12 +4,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-var v = viper.New()
+var v *viper.Viper
 
 func init() {
+	InitEnv()
+}
+
+func InitEnv() {
+	if v != nil {
+		return
+	}
+	v = viper.New()
 	v.SetConfigName(".env")
 	v.SetConfigType("env")
 	v.AddConfigPath(".")
+	v.AddConfigPath("../")
 	v.AutomaticEnv()
 	if err := v.ReadInConfig(); err != nil {
 		panic(err)
@@ -17,6 +26,7 @@ func init() {
 }
 
 func GetEnv(key string) string {
+	InitEnv()
 	return v.GetString(key)
 }
 

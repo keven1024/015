@@ -3,6 +3,13 @@ package tasks
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"os/exec"
+	"path/filepath"
+	"worker/internal/models"
+	"worker/internal/services"
+	"worker/internal/utils"
 
 	"github.com/hibiken/asynq"
 )
@@ -20,6 +27,36 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
+	originalFileInfo, _ := models.GetRedisFileInfo(payload.FileId)
+	if originalFileInfo == nil || originalFileInfo.FileType != models.FileTypeUpload {
+		return errors.New("文件不存在")
+	}
+	uploadPath, err := utils.GetUploadDirPath()
+	if err != nil {
+		return err
+	}
+	originalPath := filepath.Join(uploadPath, payload.FileId)
+	switch originalFileInfo.MimeType {
+	case "image/png":
+		args := []string{"--output", originalPath + "_compressed", originalPath}
+		cmd := exec.Command("pngquant", args...)
+		_, err := cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+	default:
+		return errors.New("不支持的文件类型")
+	}
+	compressedPath := fmt.Sprintf("%s_compressed", originalPath)
+	compressedFileId, err := services.GenStandardFile(compressedPath, originalFileInfo.MimeType)
+	if err != nil {
+		return err
+	}
+
+	models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+		"status":  "success",
+		"file_id": compressedFileId,
+	})
 
 	return nil
 }
