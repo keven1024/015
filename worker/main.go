@@ -29,6 +29,8 @@ func main() {
 
 	mux := asynq.NewServeMux()
 	mux.Use(middleware.LoggerMiddleware)
+	mux.HandleFunc("share:remove", tasks.RemoveShare)
+	mux.HandleFunc("file:remove", tasks.RemoveFile)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 
 	if err := srv.Run(mux); err != nil {
