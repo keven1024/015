@@ -4,6 +4,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"backend/internal/utils"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"mime/multipart"
@@ -11,6 +12,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 )
 
@@ -42,6 +44,7 @@ func CreateUploadTask(c echo.Context) error {
 	if r.FileSize > 500*1024*1024 {
 		ChunkSize = r.FileSize / 500
 	}
+	uploadTaskExpire := int64(3600)
 	newFileInfo := models.RedisFileInfo{
 		FileType: models.FileTypeInit,
 		FileInfo: models.FileInfo{
@@ -51,9 +54,21 @@ func CreateUploadTask(c echo.Context) error {
 			ChunkSize: ChunkSize,
 		},
 		CreatedAt: time.Now().Unix(),
-		Expire:    3600,
+		Expire:    uploadTaskExpire,
 	}
 	err := models.SetRedisFileInfo(fileId, newFileInfo)
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+
+	client := utils.GetQueueClient()
+	json, err := json.Marshal(map[string]any{
+		"file_id": fileId,
+	})
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	_, err = client.Enqueue(asynq.NewTask("file:remove", json), asynq.ProcessIn(time.Duration(uploadTaskExpire)*time.Second))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
