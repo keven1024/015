@@ -4,9 +4,11 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils"
 	"backend/middleware"
+	"encoding/json"
 	"errors"
 	"time"
 
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
@@ -73,6 +75,24 @@ func CreateShareInfo(c echo.Context) error {
 		FileName:    r.FileName,
 		ExpireAt:    ExpireTime.Unix(),
 	})
+
+	if r.Type == models.ShareTypeFile {
+		shareIDs, err := models.GetRedisFileShareRelational(r.Data)
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		shareIDs = append(shareIDs, id)
+		models.SetRedisFileShareRelational(r.Data, shareIDs)
+		client := utils.GetQueueClient()
+		json, err := json.Marshal(map[string]any{"share_id": id, "file_id": r.Data})
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		_, err = client.Enqueue(asynq.NewTask("share:remove", json), asynq.ProcessIn(time.Duration(r.Config.ExpireAt)*time.Minute))
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+	}
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            id,
