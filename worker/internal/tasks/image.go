@@ -48,14 +48,21 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 		return errors.New("不支持的文件类型")
 	}
 	compressedPath := fmt.Sprintf("%s_compressed", originalPath)
-	compressedFileId, err := services.GenStandardFile(compressedPath, originalFileInfo.MimeType)
+	compressedFileInfo, err := services.GenStandardFile(compressedPath, originalFileInfo.MimeType)
 	if err != nil {
 		return err
 	}
 
 	models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
-		"status":  "success",
-		"file_id": compressedFileId,
+		"status": "success",
+		"old_file": map[string]any{
+			"id":   payload.FileId,
+			"size": originalFileInfo.FileSize,
+		},
+		"new_file": map[string]any{
+			"id":   compressedFileInfo.FileId,
+			"size": compressedFileInfo.FileSize,
+		},
 	})
 
 	return nil
