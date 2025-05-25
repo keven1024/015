@@ -2,12 +2,24 @@ package main
 
 import (
 	"backend/internal/controllers"
+	"backend/internal/utils"
 	"backend/middleware"
 
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 func main() {
+	// 日志
+	var logger *zap.Logger
+	if utils.GetEnvWithDefault("NODE_ENV", "production") == "production" {
+		logger, _ = zap.NewProduction()
+	} else {
+		logger, _ = zap.NewDevelopment()
+	}
+	defer logger.Sync()
+	zap.ReplaceGlobals(logger)
+
 	e := echo.New()
 	e.Use(middleware.ContextMiddleware())
 	e.Use(middleware.SessionMiddleware())
