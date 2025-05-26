@@ -35,5 +35,8 @@ func main() {
 	e.GET("/download", controllers.DownloadShare)
 	e.POST("/download", controllers.VaildateShare)
 
+	e.POST("/image/compress", controllers.GenCompressImage)
+	e.GET("/image/compress/:id", controllers.GetCompressImage)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
