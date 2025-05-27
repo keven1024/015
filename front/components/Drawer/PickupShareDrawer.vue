@@ -4,6 +4,10 @@ import FormButton from '@/components/Field/FormButton.vue';
 import PinInputField from '@/components/Field/PinInputField.vue';
 import type { FormContext, GenericObject } from 'vee-validate';
 import { toast } from 'vue-sonner';
+const router = useRouter()
+const props = defineProps<{
+    hide: () => void
+}>()
 const handleSubmit = async (form: FormContext<GenericObject, GenericObject>) => {
     try {
         const code = form.values.code
@@ -17,6 +21,11 @@ const handleSubmit = async (form: FormContext<GenericObject, GenericObject>) => 
             form.resetForm()
             return
         }
+        const { share_id } = data.data
+        props.hide()
+        router.push({
+            path: `/s/${share_id}`
+        })
         return
     } catch (error) {
         toast.error('取件码错误')
