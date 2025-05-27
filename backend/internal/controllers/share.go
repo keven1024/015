@@ -6,6 +6,7 @@ import (
 	"backend/middleware"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/hibiken/asynq"
@@ -75,6 +76,11 @@ func CreateShareInfo(c echo.Context) error {
 		FileName:    r.FileName,
 		ExpireAt:    ExpireTime.Unix(),
 	})
+	var pickupCode string
+	if r.Config.HasPickupCode {
+		pickupCode = utils.GeneratePickupCode()
+		models.SetRedisPickupData(pickupCode, id)
+	}
 
 	if r.Type == models.ShareTypeFile {
 		shareIDs, err := models.GetRedisFileShareRelational(r.Data)
@@ -99,6 +105,7 @@ func CreateShareInfo(c echo.Context) error {
 		"file_name":     r.FileName,
 		"download_nums": r.Config.ViewNum,
 		"expire_at":     ExpireTime.Unix(),
+		"pickup_code":   pickupCode,
 	})
 }
 
@@ -151,5 +158,23 @@ func GetShareInfo(c echo.Context) error {
 		"download_nums": shareInfo.ViewNum,
 		"expire_at":     shareInfo.ExpireAt,
 		"owner":         shareInfo.Owner,
+	})
+}
+
+func GetShareByPickupCode(c echo.Context) error {
+	cc := c.(*middleware.CustomContext)
+	pickupCode := cc.Param("code")
+	if pickupCode == "" {
+		return utils.HTTPErrorHandler(c, errors.New("缺少提取码"))
+	}
+	shareId, err := models.GetRedisPickupData(strings.ToUpper(pickupCode))
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	if shareId == "" {
+		return utils.HTTPErrorHandler(c, errors.New("分享不存在"))
+	}
+	return utils.HTTPSuccessHandler(c, map[string]any{
+		"share_id": shareId,
 	})
 }

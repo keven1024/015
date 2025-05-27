@@ -34,6 +34,7 @@ func main() {
 	e.POST("/share", controllers.CreateShareInfo)
 	e.GET("/download", controllers.DownloadShare)
 	e.POST("/download", controllers.VaildateShare)
+	e.GET("/share/pickup/:code", controllers.GetShareByPickupCode)
 
 	e.POST("/image/compress", controllers.GenCompressImage)
 	e.GET("/image/compress/:id", controllers.GetCompressImage)
