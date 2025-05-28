@@ -78,8 +78,17 @@ func CreateShareInfo(c echo.Context) error {
 	})
 	var pickupCode string
 	if r.Config.HasPickupCode {
-		pickupCode = utils.GeneratePickupCode()
-		models.SetRedisPickupData(pickupCode, id)
+		for {
+			pickupCode = utils.GeneratePickupCode()
+			ok, err := models.SetRedisPickupData(pickupCode, id)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
+			if !ok {
+				continue
+			}
+			break
+		}
 	}
 
 	if r.Type == models.ShareTypeFile {
