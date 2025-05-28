@@ -19,21 +19,24 @@ const handleList = [
     { component: FileShareResult, key: 'file-share' },
     { component: TextShareResult, key: 'text-share' },
 ]
-const handleComponent = computed(() => {
-    return handleList.find((item) => item.key === props?.data?.handle_type)?.component
+
+const activeHandle = computed(() => {
+    return handleList.find((item) => item.key === props?.data?.handle_type)
 })
 // vue这个ts蠢的没边了，本来想写component: FileShareResult | TextShareResult，结果不行
 
 </script>
 <template>
     <div>
-        <FileShareResult
-            v-if="handleComponent === FileShareResult && 'file' in data"
+        <component
+            v-if="'file' in data"
+            :is="activeHandle?.component"
             :data="data"
             @change="(key: string) => emit('change', key)"
         />
-        <TextShareResult
-            v-else-if="handleComponent === TextShareResult && 'text' in data"
+        <component
+            v-if="'text' in data"
+            :is="activeHandle?.component"
             :data="data"
             @change="(key: string) => emit('change', key)"
         />
