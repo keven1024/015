@@ -20,8 +20,8 @@ func GetRedisPickupData(pickupCode string) (string, error) {
 	return ShareId, nil
 }
 
-func SetRedisPickupData(pickupCode string, shareId string) error {
+func SetRedisPickupData(pickupCode string, shareId string) (bool, error) {
 	rdb, ctx := utils.GetRedisClient()
-	_, err := rdb.Set(ctx, fmt.Sprintf("015:pickupCode:%s", pickupCode), shareId, time.Until(time.Now().Add(24*time.Hour))).Result()
-	return err
+	ok, err := rdb.SetNX(ctx, fmt.Sprintf("015:pickupCode:%s", pickupCode), shareId, time.Until(time.Now().Add(24*time.Hour))).Result()
+	return ok, err
 }
