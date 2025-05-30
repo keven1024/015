@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "npm-run-all -p dev:front dev:backend dev:worker",
     "dev:front": "cd front && pnpm run dev",
-    "dev:backend": "cd backend && export PATH=$PATH:$(go env GOPATH)/bin && air",
-    "dev:worker": "cd worker && export PATH=$PATH:$(go env GOPATH)/bin && air",
+    "dev:backend": "cd backend && air",
+    "dev:worker": "cd worker && air",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npx husky init",
     "prepare": "husky"
