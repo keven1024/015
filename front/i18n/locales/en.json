@@ -1,0 +1,9 @@
+{
+  "navbar": {
+    "file": "File",
+    "text": "Text"
+  },
+  "i18n": {
+    "switchLocale": "Switch Language"
+  }
+}

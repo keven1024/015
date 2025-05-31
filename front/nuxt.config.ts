@@ -5,15 +5,25 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   modules: [
-    "@vueuse/nuxt", // '@serwist/nuxt',
+    // '@serwist/nuxt',
+    "@vueuse/nuxt",
     "motion-v/nuxt",
     "nuxt-lucide-icons",
     "shadcn-nuxt",
     "@vee-validate/nuxt",
     "@pinia/nuxt",
     "@nuxt/image",
+    "@nuxtjs/i18n",
   ],
   // serwist: {},
+  i18n: {
+    strategy: "no_prefix",
+    defaultLocale: "en",
+    locales: [
+      { code: "zh-CN", name: "中文(简体)", file: "zh-CN.json" },
+      { code: "en", name: "English", file: "en.json" },
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

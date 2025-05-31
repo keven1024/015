@@ -1,0 +1,9 @@
+{
+  "navbar": {
+    "file": "文件",
+    "text": "文本"
+  },
+  "i18n": {
+    "switchLocale": "切换语言"
+  }
+}
