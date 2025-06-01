@@ -58,3 +58,8 @@ func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
 	_, err = rdb.HSet(ctx, "015:fileInfoMap", fileId, string(jsonData)).Result()
 	return err
 }
+
+func GetRedisFileKeysAll() ([]string, error) {
+	rdb, ctx := utils.GetRedisClient()
+	return rdb.HKeys(ctx, "015:fileInfoMap").Result()
+}

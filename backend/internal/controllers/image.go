@@ -67,8 +67,5 @@ func GetCompressImage(c echo.Context) error {
 			})
 		}
 	}
-	return utils.HTTPSuccessHandler(c, map[string]any{
-		"status": "success",
-		"data":   taskInfo,
-	})
+	return utils.HTTPSuccessHandler(c, *taskInfo)
 }
