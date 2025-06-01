@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+
+	goUnits "github.com/docker/go-units"
 )
 
 func GetFileId(fileHash string, fileSize int64) string {
@@ -44,4 +46,9 @@ func GetUploadDirPath() (string, error) {
 		return "", err
 	}
 	return uploadPath, nil
+}
+
+func GetFileSize(size string) (int64, error) {
+	s, err := goUnits.FromHumanSize(size)
+	return s, err
 }

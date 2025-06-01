@@ -39,5 +39,6 @@ func main() {
 	e.POST("/image/compress", controllers.GenCompressImage)
 	e.GET("/image/compress/:id", controllers.GetCompressImage)
 
+	e.GET("/stat", controllers.GetStat)
 	e.Logger.Fatal(e.Start(":1323"))
 }
