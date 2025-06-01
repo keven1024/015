@@ -33,8 +33,7 @@ import { motion } from "motion-v";
 import { LucideGlobe } from "lucide-vue-next";
 import showDrawer from "@/lib/showDrawer";
 import I18nSwitchDrawer from "./Drawer/I18nSwitchDrawer.vue";
-const { t, ...r } = useI18n();
-console.log("看看r", r);
+const { t } = useI18n();
 const routes = [
   {
     key: "about",
