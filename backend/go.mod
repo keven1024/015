@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	dario.cat/mergo v1.0.1
-	github.com/docker/go-units v0.5.0
+	github.com/dustin/go-humanize v1.0.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/googollee/go-socket.io v1.7.0
 	github.com/gorilla/sessions v1.4.0

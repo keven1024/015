@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	goUnits "github.com/docker/go-units"
+	humanize "github.com/dustin/go-humanize"
 )
 
 func GetFileId(fileHash string, fileSize int64) string {
@@ -48,7 +48,6 @@ func GetUploadDirPath() (string, error) {
 	return uploadPath, nil
 }
 
-func GetFileSize(size string) (int64, error) {
-	s, err := goUnits.FromHumanSize(size)
-	return s, err
+func GetFileSize(size string) (uint64, error) {
+	return humanize.ParseBytes(size)
 }
