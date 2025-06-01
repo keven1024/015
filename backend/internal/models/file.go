@@ -59,7 +59,7 @@ func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
 	return err
 }
 
-func GetRedisFileKeysAll() ([]string, error) {
+func GetRedisFileInfoAll() (map[string]string, error) {
 	rdb, ctx := utils.GetRedisClient()
-	return rdb.HKeys(ctx, "015:fileInfoMap").Result()
+	return rdb.HGetAll(ctx, "015:fileInfoMap").Result()
 }
