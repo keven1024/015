@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row bg-white/50 backdrop-blur-xl p-2 rounded-full gap-1"
+    class="flex flex-row bg-white/50 backdrop-blur-xl p-2 rounded-full gap-1 sticky top-0 z-10"
   >
     <div
       v-for="item in routes"
