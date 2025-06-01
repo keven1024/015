@@ -55,13 +55,18 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 
 	models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
-		"old_file": map[string]any{
-			"id":   payload.FileId,
-			"size": originalFileInfo.FileSize,
-		},
-		"new_file": map[string]any{
-			"id":   compressedFileInfo.FileId,
-			"size": compressedFileInfo.FileSize,
+		"result": []any{
+			map[string]any{
+				"status": "success",
+				"old_file": map[string]any{
+					"id":   payload.FileId,
+					"size": originalFileInfo.FileSize,
+				},
+				"new_file": map[string]any{
+					"id":   compressedFileInfo.FileId,
+					"size": compressedFileInfo.FileSize,
+				},
+			},
 		},
 	})
 

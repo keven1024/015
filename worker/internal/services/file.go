@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"time"
 	"worker/internal/models"
 	"worker/internal/utils"
 )
@@ -51,6 +52,8 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 			FileHash: compressedFileHash,
 			MimeType: mimeType,
 		},
+		FileType:  models.FileTypeUpload,
+		CreatedAt: time.Now().Unix(),
 	})
 
 	return GenStandardFileReturn{
