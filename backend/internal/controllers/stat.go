@@ -88,8 +88,9 @@ func GetStat(c echo.Context) error {
 			"file_size": maxStorageSize,
 		},
 		"admin": map[string]any{
-			"user_name": utils.GetEnv("ADMIN_NAME"),
-			"email":     utils.GetEnv("ADMIN_EMAIL"),
+			"name":  utils.GetEnv("ADMIN_NAME"),
+			"email": utils.GetEnv("ADMIN_EMAIL"),
+			"url":   utils.GetEnv("ADMIN_URL"),
 		},
 		"chart": map[string]any{
 			"storage": storageChartData,
