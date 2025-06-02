@@ -10,7 +10,7 @@ steps:
     settings:
       username: fudaoyuanicu
       repo: fudaoyuanicu/015-backend
-      context: ./backend
+      context: ./backend/
       password:
         from_secret: docker_password
       dockerfile: Dockerfile
@@ -24,7 +24,7 @@ steps:
     settings:
       username: fudaoyuanicu
       repo: fudaoyuanicu/015-frontend
-      context: ./front
+      context: ./front/
       password:
         from_secret: docker_password
       dockerfile: Dockerfile
@@ -38,7 +38,7 @@ steps:
     settings:
       username: fudaoyuanicu
       repo: fudaoyuanicu/015-worker
-      context: ./worker
+      context: ./worker/
       password:
         from_secret: docker_password
       dockerfile: Dockerfile
