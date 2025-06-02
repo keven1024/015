@@ -5,12 +5,23 @@ const props = defineProps<{
   data: { name: string; value: string; color: string }[];
   title: string;
 }>();
-const { t } = useI18n();
 const dataKeyMap = {
-  file_size: t("about.fileSize"),
-  file_num: t("about.fileNum"),
-  processed: t("about.processed"),
-  failed: t("about.failed"),
+  file_size: {
+    "zh-CN": "文件大小",
+    en: "File Size",
+  },
+  file_num: {
+    "zh-CN": "文件数量",
+    en: "File Num",
+  },
+  processed: {
+    "zh-CN": "处理数量",
+    en: "Processed",
+  },
+  failed: {
+    "zh-CN": "失败数量",
+    en: "Failed",
+  },
 };
 </script>
 
@@ -24,7 +35,10 @@ const dataKeyMap = {
           :style="{ backgroundColor: item.color ?? '#222' }"
         ></div>
         <div class="text-xs font-medium">
-          {{ dataKeyMap?.[item.name as keyof typeof dataKeyMap] ?? item.name }}
+          {{
+            dataKeyMap?.[item.name as keyof typeof dataKeyMap]?.["en"] ??
+            item.name
+          }}
         </div>
         <div class="text-sm">
           {{

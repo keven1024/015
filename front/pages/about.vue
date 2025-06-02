@@ -123,11 +123,8 @@ const users = computed(() => {
     <div class="flex flex-col gap-2 items-center">
       <NuxtImg src="/logo.png" class="size-20 rounded-xl" />
       <div class="text-xl">{{ site_title ?? "015" }}</div>
-      <div class="text-sm opacity-75">
-        {{
-          site_desc ??
-          "015 是一个开源的临时文件分享平台项目，支持临时大文件切片上传，临时文本上传、下载、分享"
-        }}
+      <div class="text-sm opacity-75 text-center px-5">
+        {{ site_desc ?? t("seo.desc") }}
       </div>
     </div>
     <div class="font-semibold">{{ t("about.systemInfo") }}</div>
@@ -202,6 +199,8 @@ const users = computed(() => {
           :categories="currentChartData.categories"
           :show-grid-line="false"
           :show-legend="false"
+          :show-y-axis="true"
+          :show-x-axis="true"
           :colors="currentChartData.colors"
           :custom-tooltip="AboutChartTooltip"
           :curve-type="CurveType.CatmullRom"
