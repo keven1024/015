@@ -5,5 +5,20 @@
   },
   "i18n": {
     "switchLocale": "Switch Language"
+  },
+  "about": {
+    "file": "File",
+    "task": "Task",
+    "admin": "Admin",
+    "author": "Author",
+    "title": "About",
+    "systemInfo": "System Info",
+    "systemVersion": "System Version",
+    "storage": "Storage",
+    "analysis": "Analysis",
+    "fileSize": "File Size",
+    "fileNum": "File Num",
+    "processed": "Processed",
+    "failed": "Failed"
   }
 }

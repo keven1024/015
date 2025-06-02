@@ -5,11 +5,12 @@ const props = defineProps<{
   data: { name: string; value: string; color: string }[];
   title: string;
 }>();
+const { t } = useI18n();
 const dataKeyMap = {
-  file_size: "文件大小",
-  file_num: "文件数量",
-  processed: "处理数量",
-  failed: "失败数量",
+  file_size: t("about.fileSize"),
+  file_num: t("about.fileNum"),
+  processed: t("about.processed"),
+  failed: t("about.failed"),
 };
 </script>
 

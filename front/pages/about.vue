@@ -8,6 +8,9 @@ import AboutChartTooltip from "@/components/AboutChartTooltip.vue";
 import { filesize } from "filesize";
 import SparkMD5 from "spark-md5";
 
+const appConfig = useAppConfig();
+const { site_title, site_desc } = appConfig.value || {};
+
 const { data, isLoading } = useQuery({
   queryKey: ["stat"],
   queryFn: async () => {
@@ -16,10 +19,12 @@ const { data, isLoading } = useQuery({
   },
 });
 
+const { t } = useI18n();
+
 const chartTabs = computed(() => {
   return [
     {
-      label: "文件",
+      label: t("about.file"),
       value: "storage",
       total:
         data.value?.chart?.storage?.reduce(
@@ -29,7 +34,7 @@ const chartTabs = computed(() => {
         ) ?? 0,
     },
     {
-      label: "任务",
+      label: t("about.task"),
       value: "queue",
       total:
         data.value?.chart?.queue?.reduce(
@@ -93,7 +98,7 @@ const users = computed(() => {
     ...(!!name
       ? [
           {
-            title: "站长",
+            title: t("about.admin"),
             email,
             name,
             url: url ?? (email ? `mailto:${email}` : null),
@@ -101,7 +106,7 @@ const users = computed(() => {
         ]
       : []),
     {
-      title: "作者",
+      title: t("about.author"),
       name: "keven1024",
       email: "keven@fudaoyuan.icu",
       url: "https://github.com/keven1024",
@@ -114,16 +119,18 @@ const users = computed(() => {
   <div
     class="rounded-xl p-5 bg-white/50 backdrop-blur-xl w-full lg:w-200 my-5 flex flex-col gap-5"
   >
-    <div class="text-xl font-normal">关于</div>
+    <div class="text-xl font-normal">{{ t("about.title") }}</div>
     <div class="flex flex-col gap-2 items-center">
       <NuxtImg src="/logo.png" class="size-20 rounded-xl" />
-      <div class="text-xl">015</div>
+      <div class="text-xl">{{ site_title ?? "015" }}</div>
       <div class="text-sm opacity-75">
-        015
-        是一个开源的临时文件分享平台项目，支持临时大文件切片上传，临时文本上传、下载、分享
+        {{
+          site_desc ??
+          "015 是一个开源的临时文件分享平台项目，支持临时大文件切片上传，临时文本上传、下载、分享"
+        }}
       </div>
     </div>
-    <div class="font-semibold">系统信息</div>
+    <div class="font-semibold">{{ t("about.systemInfo") }}</div>
     <template v-if="isLoading">
       <div class="flex flex-row gap-2">
         <Skeleton class="w-full h-20 rounded-xl" v-for="i in 2" :key="i" />
@@ -132,13 +139,13 @@ const users = computed(() => {
     <template v-else>
       <div class="grid grid-cols-2 gap-2">
         <div class="rounded-xl bg-white/50 flex-1 flex flex-col p-3">
-          <div class="opacity-75 text-xs">系统版本</div>
+          <div class="opacity-75 text-xs">{{ t("about.systemVersion") }}</div>
           <div class="text-xl font-semibold">
-            {{ data?.version }}
+            {{ data?.version ?? "dev" }}
           </div>
         </div>
         <div class="rounded-xl bg-white/50 flex-1 flex flex-col p-3">
-          <div class="opacity-75 text-xs">存储空间</div>
+          <div class="opacity-75 text-xs">{{ t("about.storage") }}</div>
           <div class="text-right flex flex-row items-baseline">
             <span class="text-lg font-semibold">{{
               filesize(currentFileSize ?? 0)
@@ -158,7 +165,7 @@ const users = computed(() => {
         </div>
       </div>
     </template>
-    <div class="font-semibold">分析</div>
+    <div class="font-semibold">{{ t("about.analysis") }}</div>
     <template v-if="isLoading">
       <div class="flex flex-row gap-2">
         <Skeleton class="w-full h-96 rounded-xl" />

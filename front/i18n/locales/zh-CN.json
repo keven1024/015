@@ -5,5 +5,20 @@
   },
   "i18n": {
     "switchLocale": "切换语言"
+  },
+  "about": {
+    "file": "文件",
+    "task": "任务",
+    "admin": "站长",
+    "author": "作者",
+    "title": "关于",
+    "systemInfo": "系统信息",
+    "systemVersion": "系统版本",
+    "storage": "存储空间",
+    "analysis": "分析",
+    "fileSize": "文件大小",
+    "fileNum": "文件数量",
+    "processed": "处理数量",
+    "failed": "失败数量"
   }
 }
