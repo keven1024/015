@@ -29,10 +29,13 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      "/api/**": { proxy: "http://127.0.0.1:1323/**" },
+      "/api/**": {
+        proxy: process.env.API_BASE_URL || "http://127.0.0.1:1323/**",
+      },
     },
   },
   devServer: {
-    port: 5000,
+    port: parseInt(process.env.PORT || "5000"),
+    host: process.env.HOST || "0.0.0.0",
   },
 });

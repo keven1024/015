@@ -10,24 +10,9 @@ steps:
     settings:
       username: fudaoyuanicu
       repo: fudaoyuanicu/015-backend
-      context: ./backend/
       password:
         from_secret: docker_password
-      dockerfile: ./backend/Dockerfile
-      tags:
-        - ${DRONE_TAG}
-        - latest
-      build_args:
-        - BUILD_TAG=${DRONE_TAG}
-  - name: build-frontend
-    image: plugins/docker
-    settings:
-      username: fudaoyuanicu
-      repo: fudaoyuanicu/015-frontend
-      context: ./front/
-      password:
-        from_secret: docker_password
-      dockerfile: ./front/Dockerfile
+      dockerfile: Dockerfile
       tags:
         - ${DRONE_TAG}
         - latest
