@@ -32,7 +32,7 @@ func GenCompressImage(c echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	info, err := client.Enqueue(asynq.NewTask("image:compress", json))
+	info, err := client.Enqueue(asynq.NewTask("image:compress", json), asynq.MaxRetry(3))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -60,10 +60,23 @@ func GetCompressImage(c echo.Context) error {
 		if err != nil {
 			return utils.HTTPErrorHandler(c, errors.New("任务已过期"))
 		}
+		stateMap := map[asynq.TaskState]string{
+			asynq.TaskStateActive:    "processing",
+			asynq.TaskStatePending:   "pending",
+			asynq.TaskStateScheduled: "scheduled",
+			asynq.TaskStateRetry:     "retry",
+			asynq.TaskStateArchived:  "archived",
+			asynq.TaskStateCompleted: "completed",
+		}
 		if queneTaskInfo != nil {
 			return utils.HTTPSuccessHandler(c, map[string]any{
-				"status": "processing",
+				"status": stateMap[queneTaskInfo.State],
 				"state":  queneTaskInfo.State,
+				"err": map[string]any{
+					"message":   queneTaskInfo.LastErr,
+					"retry":     queneTaskInfo.Retried,
+					"max_retry": queneTaskInfo.MaxRetry,
+				},
 			})
 		}
 	}
