@@ -13,7 +13,7 @@ steps:
       context: ./backend/
       password:
         from_secret: docker_password
-      dockerfile: Dockerfile
+      dockerfile: ./backend/Dockerfile
       tags:
         - ${DRONE_TAG}
         - latest
@@ -27,7 +27,7 @@ steps:
       context: ./front/
       password:
         from_secret: docker_password
-      dockerfile: Dockerfile
+      dockerfile: ./front/Dockerfile
       tags:
         - ${DRONE_TAG}
         - latest
@@ -41,7 +41,7 @@ steps:
       context: ./worker/
       password:
         from_secret: docker_password
-      dockerfile: Dockerfile
+      dockerfile: ./worker/Dockerfile
       tags:
         - ${DRONE_TAG}
         - latest
