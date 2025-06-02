@@ -71,7 +71,6 @@ func GetCompressImage(c echo.Context) error {
 		if queneTaskInfo != nil {
 			return utils.HTTPSuccessHandler(c, map[string]any{
 				"status": stateMap[queneTaskInfo.State],
-				"state":  queneTaskInfo.State,
 				"err": map[string]any{
 					"message":   queneTaskInfo.LastErr,
 					"retry":     queneTaskInfo.Retried,
