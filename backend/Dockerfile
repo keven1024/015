@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Download Go modules
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && go mod download
 
 # Copy the source code. Note the slash at the end, as explained in
 # https://docs.docker.com/engine/reference/builder/#copy
