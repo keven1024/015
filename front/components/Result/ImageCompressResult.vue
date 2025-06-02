@@ -4,6 +4,10 @@ import { AsyncButton, Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { filesize } from "filesize";
 import useAppShare from "~/composables/useShare";
+import { toast } from "vue-sonner";
+const emit = defineEmits<{
+  (e: "change", key: string): void;
+}>();
 const props = defineProps<{
   data: { file: File; config: any; handle_type: string; file_id: string };
 }>();
@@ -46,7 +50,12 @@ const { data: taskData, refetch } = useQuery({
             size: number;
           };
         }[];
-        status: "success" | "processing" | "failed";
+        status: "success" | "retry" | "archived";
+        err?: {
+          message?: string;
+          retry?: number;
+          max_retry?: number;
+        };
       };
     }>(`/api/image/compress/${taskId.value}`);
     return data?.data;
@@ -61,11 +70,23 @@ const { counter, pause } = useInterval(2000, { controls: true });
 watch(
   () => counter.value,
   () => {
-    if (taskData.value?.status === "success") {
+    if (["success", "archived"].includes(taskData.value?.status ?? "")) {
       pause();
       return;
     }
     refetch();
+  },
+);
+
+watch(
+  () => taskData.value?.err?.retry,
+  (newVal, oldVal) => {
+    if (!oldVal || !newVal || !taskData.value?.err?.max_retry) {
+      return;
+    }
+    if (newVal <= taskData.value?.err?.max_retry) {
+      toast.error(`处理错误: ${taskData.value?.err?.message}, 将再次重试`);
+    }
   },
 );
 </script>
@@ -136,7 +157,33 @@ watch(
         </AsyncButton>
       </div>
     </div>
-    <div v-else class="flex flex-col gap-2">
+    <div
+      v-else-if="taskData?.status !== 'retry' && !!taskData?.err?.message"
+      class="flex flex-col gap-2"
+    >
+      <div
+        class="w-full h-16 flex flex-row items-center gap-3 bg-white/80 rounded-md p-2"
+      >
+        <div
+          class="size-10 flex items-center justify-center rounded-md bg-red-200"
+        >
+          <LucideAlertTriangle class="size-5 text-red-600" />
+        </div>
+        <div class="text-sm">
+          {{
+            `经过 ${taskData?.err?.retry} 次重试后任务处理失败: ${taskData?.err?.message}`
+          }}
+        </div>
+      </div>
+      <div class="flex flex-row justify-center">
+        <Button @click="emit('change', 'input')"> 返回首页 </Button>
+      </div>
+    </div>
+
+    <div
+      v-else="taskData?.status !== 'retry' && !!taskData?.err?.message"
+      class="flex flex-col gap-2"
+    >
       <Skeleton
         class="w-full h-16 flex flex-row items-center justify-between"
         v-for="i in 3"
