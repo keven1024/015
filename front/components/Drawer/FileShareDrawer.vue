@@ -15,7 +15,7 @@ import { cx } from "class-variance-authority";
 import { isObject } from "lodash-es";
 import showDrawer from "@/lib/showDrawer";
 import FileShareHandle from "@/components/Preprocessing/FileShareHandle.vue";
-
+const { t } = useI18n();
 const props = defineProps<{
   hide: () => void;
   file: File;
@@ -40,7 +40,7 @@ const isDocument = computed(
 );
 const actions = [
   {
-    label: "分享文件",
+    label: t("file.handleType.file-share"),
     icon: LucideShare,
     className: "bg-green-300",
     onClick: () => {
@@ -50,7 +50,7 @@ const actions = [
     },
   },
   isImage.value && {
-    label: "图片压缩",
+    label: t("file.handleType.file-image-compress"),
     icon: LucideImageMinus,
     className: "bg-red-300",
     onClick: () => {
@@ -91,11 +91,11 @@ const actions = [
 </script>
 <template>
   <div class="flex flex-col gap-5 p-5">
-    <div class="flex flex-row gap-5">
+    <div class="flex flex-row gap-2">
       <div
         v-for="item in actions"
         :key="item.label"
-        class="flex flex-col items-center gap-2"
+        class="flex flex-col items-center gap-2 max-w-20"
         @click="
           () => {
             props?.hide();
@@ -106,14 +106,14 @@ const actions = [
         <div
           :class="
             cx(
-              'size-14 flex justify-center items-center rounded-full',
+              'size-14 flex justify-center items-center rounded-full mx-3',
               item?.className,
             )
           "
         >
           <component :is="item?.icon" />
         </div>
-        <div class="text-sm">{{ item?.label }}</div>
+        <div class="text-xs truncate w-full text-center">{{ item?.label }}</div>
       </div>
     </div>
   </div>
