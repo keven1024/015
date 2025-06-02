@@ -5,11 +5,11 @@ trigger:
 kind: pipeline
 name: Build
 steps:
-  - name: build-backend
+  - name: build-app
     image: plugins/docker
     settings:
       username: fudaoyuanicu
-      repo: fudaoyuanicu/015-backend
+      repo: fudaoyuanicu/015-app
       password:
         from_secret: docker_password
       dockerfile: Dockerfile
