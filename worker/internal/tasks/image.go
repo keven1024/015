@@ -44,6 +44,17 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 		if err != nil {
 			return err
 		}
+	case "image/jpeg":
+		err := utils.CopyFile(originalPath, originalPath+"_compressed")
+		if err != nil {
+			return err
+		}
+		args := []string{"-m", "90", "--strip-all", originalPath + "_compressed"}
+		cmd := exec.Command("jpegoptim", args...)
+		_, err = cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
 	default:
 		return errors.New("不支持的文件类型")
 	}
@@ -57,7 +68,6 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 		"status": "success",
 		"result": []any{
 			map[string]any{
-				"status": "success",
 				"old_file": map[string]any{
 					"id":   payload.FileId,
 					"size": originalFileInfo.FileSize,
@@ -70,5 +80,17 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 		},
 	})
 
+	return nil
+}
+
+func UpscaleImage(ctx context.Context, task *asynq.Task) error {
+	return nil
+}
+
+func TranslateImage(ctx context.Context, task *asynq.Task) error {
+	return nil
+}
+
+func CreateAIImage(ctx context.Context, task *asynq.Task) error {
 	return nil
 }

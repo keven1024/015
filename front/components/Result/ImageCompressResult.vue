@@ -104,16 +104,16 @@ watch(
       v-for="item in taskData?.result"
     >
       <div
-        class="bg-white/80 p-2 rounded-md w-full flex flex-row items-center justify-between"
+        class="bg-white/80 p-2 rounded-md w-full flex flex-row items-center justify-between gap-2"
       >
-        <div class="flex flex-row gap-2 items-center">
+        <div class="flex flex-row gap-2 items-center max-w-2/3">
           <div
             class="flex flex-row items-center justify-center rounded-md bg-black/5 p-2"
           >
             <LucideImage />
           </div>
-          {{ props?.data?.file?.name }}
-          <div class="flex flex-row gap-2 items-center text-sm">
+          <div class="truncate w-auto">{{ props?.data?.file?.name }}</div>
+          <div class="flex flex-row gap-2 items-center text-sm shrink-0">
             <span class="opacity-75">{{
               filesize(item.new_file.size ?? 0)
             }}</span>
