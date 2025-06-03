@@ -4,15 +4,14 @@ FROM node:22-alpine AS front-base
 FROM front-base AS front-deps
 RUN apk add --no-cache libc6-compat 
 WORKDIR /app
-COPY front/package.json ./
-RUN corepack enable pnpm && pnpm i
+COPY . .
+RUN corepack enable pnpm && pnpm --filter=015-front deploy dist
 
 
 FROM front-base AS front-builder
 WORKDIR /app
-COPY --from=front-deps /app/node_modules ./node_modules
-COPY front/ .
-RUN corepack enable pnpm && pnpm i && pnpm build
+COPY --from=front-deps /app/dist/ .
+RUN corepack enable pnpm && pnpm build
 
 FROM golang:1.23.1 AS backend-builder
 WORKDIR /app
