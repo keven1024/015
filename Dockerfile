@@ -5,7 +5,7 @@ FROM front-base AS front-deps
 RUN apk add --no-cache libc6-compat 
 WORKDIR /app
 COPY . .
-RUN corepack enable pnpm && pnpm --filter=015-front deploy dist
+RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist
 
 
 FROM front-base AS front-builder
@@ -41,7 +41,7 @@ COPY 015.sh /app/015.sh
 
 # Change the port and host
 ENV PORT=80 HOST=0.0.0.0
-ENV SITE_URL="http://localhost" SITE_TITLE="015" SITE_DESC="015 是一个开源的临时内容分享平台项目, 支持文件和文本上传, 下载, 分享"
+ENV SITE_URL="http://localhost"
 ENV UPLOAD_PATH="/uploads"
 
 EXPOSE 80
