@@ -5,14 +5,15 @@ import { Input } from "@/components/ui/input";
 import { useClipboard } from "@vueuse/core";
 import { toast } from "vue-sonner";
 import { useQuery } from "@tanstack/vue-query";
-import useAppShare from "@/composables/useShare";
+import useMyAppShare from "~/composables/useMyAppShare";
+import useMyAppConfig from "@/composables/useMyAppConfig";
 const props = defineProps<{
   data: { file: File; config: any; handle_type: string; file_id: string };
 }>();
 const emit = defineEmits<{
   (e: "change", key: string): void;
 }>();
-const { createFileShare } = useAppShare();
+const { createFileShare } = useMyAppShare();
 const { data } = useQuery({
   queryKey: ["create-share", props?.data?.file_id],
   queryFn: async () => {
@@ -27,7 +28,7 @@ const { data } = useQuery({
   },
 });
 
-const appConfig = useAppConfig();
+const appConfig = useMyAppConfig();
 const url = computed(() => {
   const { id } = data?.value || {};
   return `${appConfig?.value?.site_url}/s/${id}`;

@@ -60,7 +60,7 @@ const createTextShare = async (data: { text: string; config: any }) => {
   });
 };
 
-const useAppShare = () => {
+const useMyAppShare = () => {
   return {
     downloadFile,
     createShare,
@@ -69,4 +69,4 @@ const useAppShare = () => {
   };
 };
 
-export default useAppShare;
+export default useMyAppShare;

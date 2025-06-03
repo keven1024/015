@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { useClipboard } from "@vueuse/core";
 import { toast } from "vue-sonner";
 import { useQuery } from "@tanstack/vue-query";
-import useAppShare from "@/composables/useShare";
+import useMyAppShare from "~/composables/useMyAppShare";
+import useMyAppConfig from "@/composables/useMyAppConfig";
 
 const props = defineProps<{
   data: { text: string; config: any; handle_type: string };
@@ -14,7 +15,7 @@ const emit = defineEmits<{
   (e: "change", key: string): void;
 }>();
 
-const { createTextShare } = useAppShare();
+const { createTextShare } = useMyAppShare();
 const { data } = useQuery({
   queryKey: ["create-share", props?.data?.text],
   queryFn: async () => {
@@ -26,7 +27,7 @@ const { data } = useQuery({
     return data?.data;
   },
 });
-const appConfig = useAppConfig();
+const appConfig = useMyAppConfig();
 const url = computed(() => {
   const { id } = data?.value || {};
   return `${appConfig?.value?.site_url}/s/${id}`;

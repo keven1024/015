@@ -7,8 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AboutChartTooltip from "@/components/AboutChartTooltip.vue";
 import { filesize } from "filesize";
 import SparkMD5 from "spark-md5";
+import useMyAppConfig from "@/composables/useMyAppConfig";
 
-const appConfig = useAppConfig();
+const appConfig = useMyAppConfig();
 const { site_title, site_desc } = appConfig.value || {};
 
 const { data, isLoading } = useQuery({

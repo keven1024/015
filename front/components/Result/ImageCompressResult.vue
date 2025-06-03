@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { AsyncButton, Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { filesize } from "filesize";
-import useAppShare from "~/composables/useShare";
+import useMyAppShare from "~/composables/useMyAppShare";
 import { toast } from "vue-sonner";
 const emit = defineEmits<{
   (e: "change", key: string): void;
@@ -63,7 +63,7 @@ const { data: taskData, refetch } = useQuery({
   enabled: !!taskId.value,
 });
 
-const { downloadFile, createFileShare } = useAppShare();
+const { downloadFile, createFileShare } = useMyAppShare();
 
 const { counter, pause } = useInterval(2000, { controls: true });
 
