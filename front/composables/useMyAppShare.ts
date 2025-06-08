@@ -1,20 +1,45 @@
-const downloadFile = async (share_id: string) => {
-  const data = await $fetch<{
-    code: number;
-    data: {
-      token?: string;
-    };
-  }>(`/api/download`, {
-    method: "POST",
-    body: {
-      share_id,
-    },
-  });
-  const { token } = data?.data || {};
-  if (!token) {
-    return;
+import { toast } from "vue-sonner";
+
+let shareIdTokenMap: WeakMap<{ share_id: string }, string>;
+
+const getShareToken = async (share_id: string): Promise<string | undefined> => {
+  if (!shareIdTokenMap) {
+    shareIdTokenMap = new WeakMap();
   }
-  (window as any)?.open(`/api/download?token=${token}`);
+  let token = shareIdTokenMap.get({ share_id });
+  if (!token) {
+    const data = await $fetch<{
+      code: number;
+      message: string;
+      data: {
+        token?: string;
+      };
+    }>(`/api/download`, {
+      method: "POST",
+      body: {
+        share_id,
+      },
+    });
+    if (!data?.data?.token) {
+      throw new Error(data?.message || "获取token失败");
+    }
+    token = data.data.token;
+    shareIdTokenMap.set({ share_id }, token);
+  }
+  return token;
+};
+
+const downloadFile = async (share_id: string) => {
+  try {
+    const token = await getShareToken(share_id);
+    if (!token) {
+      throw new Error("获取token失败");
+      return;
+    }
+    (window as any)?.open(`/api/download?token=${token}`);
+  } catch (e) {
+    toast.error((e as any)?.data?.message || e);
+  }
 };
 
 const createShare = async (data: any) => {
@@ -66,6 +91,7 @@ const useMyAppShare = () => {
     createShare,
     createFileShare,
     createTextShare,
+    getShareToken,
   };
 };
 
