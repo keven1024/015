@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { useClipboard } from "@vueuse/core";
 import { toast } from "vue-sonner";
 import { useQuery } from "@tanstack/vue-query";
-import useMyAppShare from "~/composables/useMyAppShare";
+import useMyAppShare from "@/composables/useMyAppShare";
 import useMyAppConfig from "@/composables/useMyAppConfig";
+import showDrawer from "@/lib/showDrawer";
+import QrCoreDrawer from "@/components/Drawer/QrCoreDrawer.vue";
 
 const props = defineProps<{
   data: { text: string; config: any; handle_type: string };
@@ -38,9 +40,9 @@ const { copy } = useClipboard();
 
 <template>
   <div class="flex flex-col gap-3">
-    <div class="flex flex-row justify-between">
-      <h2 class="text-lg">分享成功</h2>
-      <div class="flex flex-row gap-2 basis-1/2">
+    <div class="flex flex-col md:flex-row gap-2">
+      <div class="flex flex-row justify-between md:basis-1/2">
+        <h2 class="text-lg">分享成功</h2>
         <Button
           variant="outline"
           class="bg-white/70"
@@ -53,7 +55,9 @@ const { copy } = useClipboard();
         >
           <LucideHome />
         </Button>
-        <Input v-model="url" class="bg-white/70" />
+      </div>
+      <div class="flex flex-row gap-2 flex-1">
+        <Input v-model="url" class="bg-white/70" readonly />
         <Button
           variant="outline"
           class="bg-white/70"
@@ -67,13 +71,28 @@ const { copy } = useClipboard();
         >
           <LucideCopy />
         </Button>
-        <Button variant="outline" class="bg-white/70" size="icon">
+        <Button
+          variant="outline"
+          class="bg-white/70"
+          size="icon"
+          @click="
+            () => {
+              showDrawer({
+                render: ({ ...rest }) =>
+                  h(QrCoreDrawer, {
+                    ...rest,
+                    data: url,
+                  }),
+              });
+            }
+          "
+        >
           <LucideQrCode />
         </Button>
       </div>
     </div>
     <div
-      class="prose rounded-md bg-white/70 p-3 w-full max-w-full"
+      class="prose rounded-md bg-white/70 p-3 w-full max-w-full min-h-[30vh]"
       v-html="props?.data?.text"
     />
   </div>

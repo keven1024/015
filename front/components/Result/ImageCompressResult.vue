@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { AsyncButton, Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { filesize } from "filesize";
-import useMyAppShare from "~/composables/useMyAppShare";
+import useMyAppShare from "@/composables/useMyAppShare";
 import { toast } from "vue-sonner";
 const emit = defineEmits<{
   (e: "change", key: string): void;

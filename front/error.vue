@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
 import { useI18n } from "vue-i18n";
-import { Button } from "~/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const { t } = useI18n();
 

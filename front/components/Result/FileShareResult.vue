@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { useClipboard } from "@vueuse/core";
 import { toast } from "vue-sonner";
 import { useQuery } from "@tanstack/vue-query";
-import useMyAppShare from "~/composables/useMyAppShare";
+import useMyAppShare from "@/composables/useMyAppShare";
 import useMyAppConfig from "@/composables/useMyAppConfig";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-cn"; // 导入中文语言包
-import showDrawer from "~/lib/showDrawer";
+import showDrawer from "@/lib/showDrawer";
 import QrCoreDrawer from "@/components/Drawer/QrCoreDrawer.vue";
 dayjs.extend(relativeTime); // 扩展 relativeTime 插件
 dayjs.locale("zh-cn"); // 设置语言为中文
@@ -121,9 +121,9 @@ const { copy } = useClipboard();
               class="bg-white/70"
               size="icon"
               @click="
-                ({ ...rest }) => {
+                () => {
                   showDrawer({
-                    render: () =>
+                    render: ({ ...rest }) =>
                       h(QrCoreDrawer, {
                         ...rest,
                         data: url,
