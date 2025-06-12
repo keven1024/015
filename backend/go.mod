@@ -6,7 +6,6 @@ require (
 	dario.cat/mergo v1.0.1
 	github.com/dustin/go-humanize v1.0.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
-	github.com/googollee/go-socket.io v1.7.0
 	github.com/gorilla/sessions v1.4.0
 	github.com/hibiken/asynq v0.25.1
 	github.com/labstack/echo-contrib v0.17.3
@@ -24,13 +23,10 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
-	github.com/gofrs/uuid v4.0.0+incompatible // indirect
-	github.com/gomodule/redigo v1.8.4 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
