@@ -2,7 +2,7 @@ FROM node:22-alpine AS front-base
 
 # Install dependencies only when needed
 FROM front-base AS front-deps
-RUN apk add --no-cache libc6-compat 
+RUN apk add --no-cache gcompat
 WORKDIR /app
 COPY . .
 RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist
