@@ -26,7 +26,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o backend
 
 
 FROM front-base AS runner
-ARG BUILD_TAG
+ARG VERSION
+ARG BUILD_TIME
 WORKDIR /app
 RUN apk add --no-cache curl openssl
 ENV NODE_ENV production
@@ -43,6 +44,8 @@ COPY 015.sh /app/015.sh
 ENV PORT=80 HOST=0.0.0.0
 ENV SITE_URL="http://localhost"
 ENV UPLOAD_PATH="/uploads"
+ENV VERSION=${VERSION}
+ENV BUILD_TIME=${BUILD_TIME}
 
 EXPOSE 80
 

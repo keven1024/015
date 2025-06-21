@@ -17,7 +17,8 @@ steps:
         - ${DRONE_TAG}
         - latest
       build_args:
-        - BUILD_TAG=${DRONE_TAG}
+         - VERSION=${DRONE_TAG}
+         - BUILD_TIME=${DRONE_BUILD_FINISHED}
   - name: build-worker
     image: plugins/docker
     settings:
