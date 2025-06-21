@@ -2,9 +2,10 @@
 import CircularProgress from '@/components/CircularProgress.vue'
 import { chunk, get, shuffle, times } from 'lodash-es'
 import { cx } from 'class-variance-authority'
-import calcFileHash from '@/lib/calcFileHash'
 import { filesize } from 'filesize'
 import { toast } from 'vue-sonner'
+import asyncWorker from '~/lib/asyncWorker'
+import calcFileHashWorker from '~/lib/calcFileHashWorker?worker'
 const props = defineProps<{
     data: { file: File; config: any; handle_type: string }
 }>()
@@ -34,7 +35,8 @@ const { error } = useAsyncState(async () => {
     if (!file) return
     const { size, type = 'application/octet-stream' } = file || {}
     const now = Date.now()
-    const hash = await calcFileHash({ file })
+    const res = await asyncWorker(calcFileHashWorker, { data: { file } })
+    const { hash } = res?.data || {}
     if (hash) {
         step.value = 'upload'
         calcHashTime.value = Date.now() - now
