@@ -9,6 +9,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
+	"github.com/spf13/cast"
 )
 
 type FileChartData struct {
@@ -83,7 +84,8 @@ func GetStat(c echo.Context) error {
 	})
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"version": "0.1.0",
+		"version":    utils.GetEnvWithDefault("VERSION", "dev"),
+		"build_time": cast.ToInt(utils.GetEnvWithDefault("BUILD_TIME", cast.ToString(time.Now().Unix()))),
 		"max_limit": map[string]any{
 			"file_size": maxStorageSize,
 		},
