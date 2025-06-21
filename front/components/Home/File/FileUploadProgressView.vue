@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import CircularProgress from '@/components/CircularProgress.vue'
-import { chunk, shuffle, times } from 'lodash-es'
+import { chunk, get, shuffle, times } from 'lodash-es'
 import { cx } from 'class-variance-authority'
 import calcFileHash from '@/lib/calcFileHash'
 import { filesize } from 'filesize'
+import { toast } from 'vue-sonner'
 const props = defineProps<{
     data: { file: File; config: any; handle_type: string }
 }>()
@@ -28,7 +29,7 @@ const successCount = computed(() => fileSliceUploadStatusList.value.filter((item
 const alreadyUploadSize = computed(() => successCount.value * chunkSize.value)
 const uploadProgress = computed(() => Math.round((alreadyUploadSize.value / (props?.data?.file?.size || 0)) * 100))
 
-useAsyncState(async () => {
+const { error } = useAsyncState(async () => {
     const { file } = props.data || {}
     if (!file) return
     const { size, type = 'application/octet-stream' } = file || {}
@@ -49,7 +50,7 @@ useAsyncState(async () => {
         method: 'POST',
         body: {
             size,
-            mime_type: type,
+            mime_type: get(type, '', 'application/octet-stream'),
             hash,
         },
     })
@@ -122,6 +123,13 @@ useAsyncState(async () => {
     form.setFieldValue('file_id', id)
     emit('change', 'result')
 }, null)
+
+watch(error, (newVal) => {
+    if (newVal) {
+        toast.error('上传失败')
+    }
+    emit('change', 'input')
+})
 </script>
 <template>
     <div class="flex flex-col gap-3">
