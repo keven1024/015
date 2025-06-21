@@ -14,7 +14,6 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/cast"
 )
 
 func CreateUploadTask(c echo.Context) error {
@@ -41,8 +40,10 @@ func CreateUploadTask(c echo.Context) error {
 			"chunk_size": fileInfo.ChunkSize,
 		})
 	}
-
-	maxStorageSize := cast.ToInt64(utils.GetEnv("MAX_LOCALSTORAGE_SIZE"))
+	maxStorageSize, err := utils.GetFileSize(utils.GetEnv("MAX_LOCALSTORAGE_SIZE"))
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
 	fileInfoMap, err := models.GetRedisFileInfoAll()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
@@ -56,7 +57,7 @@ func CreateUploadTask(c echo.Context) error {
 		}
 		totalSize += fileInfo.FileSize
 	}
-	if totalSize+r.FileSize > maxStorageSize {
+	if totalSize+r.FileSize > int64(maxStorageSize) {
 		return utils.HTTPErrorHandler(c, errors.New("存储空间不足"))
 	}
 
