@@ -14,6 +14,15 @@ const useSeo = async (props: UseSeoProps = {}) => {
         }
         const { title } = head || {}
         useHead({
+            link: [
+                { rel: 'icon', href: '/logo.png', sizes: 'any' },
+                // { rel: 'icon', href: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
+                { rel: 'apple-touch-icon', sizes: '180x180', href: '/logo.png' },
+            ],
+            meta: [
+                // used on some mobile browsers
+                { name: 'theme-color', content: '#395276' },
+            ],
             ...head,
             title: title ? `${title} - ${seoMeta?.value?.site_title}` : seoMeta?.value?.site_title,
         })
@@ -23,8 +32,14 @@ const useSeo = async (props: UseSeoProps = {}) => {
             description: seoMeta?.value?.site_desc,
             ogTitle: seoMeta?.value?.site_title,
             ogDescription: seoMeta?.value?.site_desc,
-            // ogImage: seoMeta?.value?.site_url,
-            // twitterCard: 'summary_large_image',
+            ogImage: {
+                url: `${seoMeta?.value?.site_url}/logo.png`,
+                width: 1024,
+                height: 1024,
+                alt: 'logo',
+                type: 'image/png',
+            },
+            twitterCard: 'summary',
         })
     }
     return
