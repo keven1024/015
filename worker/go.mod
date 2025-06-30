@@ -5,7 +5,7 @@ go 1.23.1
 require (
 	dario.cat/mergo v1.0.2
 	github.com/hibiken/asynq v0.25.1
-	github.com/redis/go-redis/v9 v9.7.0
+	github.com/redis/go-redis/v9 v9.7.3
 	github.com/samber/lo v1.50.0
 	github.com/spf13/cast v1.8.0
 	github.com/spf13/viper v1.20.1
