@@ -21,6 +21,7 @@ const emit = defineEmits<{
 const { createTextShare } = useMyAppShare()
 const { data } = useQuery({
     queryKey: ['create-share', props?.data?.text],
+    staleTime: Infinity,
     queryFn: async () => {
         const { config, text } = props?.data || {}
         const data = await createTextShare({
