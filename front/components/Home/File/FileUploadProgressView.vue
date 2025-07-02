@@ -27,7 +27,7 @@ const fileSliceUploadStatusList = ref<
 >([])
 
 const successCount = computed(() => fileSliceUploadStatusList.value.filter((item) => item.status === 'success').length)
-const alreadyUploadSize = computed(() => successCount.value * chunkSize.value)
+const alreadyUploadSize = computed(() => Math.min(successCount.value * chunkSize.value, props?.data?.file?.size))
 const uploadProgress = computed(() => Math.round((alreadyUploadSize.value / (props?.data?.file?.size || 0)) * 100))
 
 const { error } = useAsyncState(async () => {
