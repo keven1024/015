@@ -72,8 +72,17 @@ func VaildateShare(c echo.Context) error {
 	if shareInfo == nil {
 		return utils.HTTPErrorHandler(c, errors.New("分享不存在"))
 	}
-	if shareInfo.Password != "" && shareInfo.Password != r.Password {
-		return utils.HTTPErrorHandler(c, errors.New("分享密码错误"))
+	if shareInfo.Password != "" {
+		if r.Password == "" {
+			return utils.HTTPErrorHandler(c, errors.New("缺少分享密码"))
+		}
+		hash, err := utils.GeneratePasswordHash(r.Password)
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		if hash != shareInfo.Password {
+			return utils.HTTPErrorHandler(c, errors.New("分享密码错误"))
+		}
 	}
 	// 如果下载次数为0，则设置为-1 防止空值问题
 	if shareInfo.ViewNum < 1 {

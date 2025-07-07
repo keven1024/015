@@ -64,17 +64,25 @@ func CreateShareInfo(c echo.Context) error {
 			return utils.HTTPErrorHandler(c, errors.New("分享文件状态错误"))
 		}
 	}
+	password := ""
+	if r.Config.Password != "" {
+		hash, err := utils.GeneratePasswordHash(r.Config.Password)
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		password = hash
+	}
 
 	models.SetRedisShareInfo(id, models.RedisShareInfo{
-		Data:        r.Data,
-		Type:        r.Type,
-		CreatedAt:   time.Now().Unix(),
-		Owner:       cc.Auth.(string),
-		ViewNum:     r.Config.ViewNum,
-		Password:    r.Config.Password,
-		NotifyEmail: r.Config.NotifyEmail,
-		FileName:    r.FileName,
-		ExpireAt:    ExpireTime.Unix(),
+		Data:      r.Data,
+		Type:      r.Type,
+		CreatedAt: time.Now().Unix(),
+		Owner:     cc.Auth.(string),
+		ViewNum:   r.Config.ViewNum,
+		Password:  password,
+		// NotifyEmail: r.Config.NotifyEmail,
+		FileName: r.FileName,
+		ExpireAt: ExpireTime.Unix(),
 	})
 	var pickupCode string
 	if r.Config.HasPickupCode {
@@ -153,6 +161,7 @@ func GetShareInfo(c echo.Context) error {
 			"type":          shareInfo.Type,
 			"name":          shareInfo.FileName,
 			"download_nums": shareInfo.ViewNum,
+			"has_password":  shareInfo.Password != "",
 			"expire_at":     shareInfo.ExpireAt,
 			"owner":         shareInfo.Owner,
 			"size":          fileInfo.FileSize,
@@ -165,6 +174,7 @@ func GetShareInfo(c echo.Context) error {
 		"type":          shareInfo.Type,
 		"name":          shareInfo.FileName,
 		"download_nums": shareInfo.ViewNum,
+		"has_password":  shareInfo.Password != "",
 		"expire_at":     shareInfo.ExpireAt,
 		"owner":         shareInfo.Owner,
 	})
