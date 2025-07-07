@@ -36,16 +36,16 @@ const getShareToken = async (
     return token
 }
 
-const downloadFile = async (share_id: string) => {
-    try {
-        const token = await getShareToken(share_id)
-        if (!token) {
-            throw new Error('获取token失败')
-        }
-        window?.open(`/api/download?token=${token}`)
-    } catch (e) {
-        toast.error((e as any)?.data?.message || e)
+const downloadFile = (token: string) => {
+    window?.open(`/api/download?token=${token}`)
+}
+
+const downloadFileByShareId = async (share_id: string) => {
+    const token = await getShareToken(share_id)
+    if (!token) {
+        throw new Error('获取token失败')
     }
+    return downloadFile(token)
 }
 
 const createShare = async (data: any) => {
@@ -98,6 +98,7 @@ const createTextShare = async (data: { text: string; config: any }) => {
 const useMyAppShare = () => {
     return {
         downloadFile,
+        downloadFileByShareId,
         createShare,
         createFileShare,
         createTextShare,
