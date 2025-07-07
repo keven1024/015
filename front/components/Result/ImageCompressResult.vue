@@ -135,8 +135,8 @@ watch(
                             }
                             try {
                                 await downloadFileByShareId(id)
-                            } catch (error) {
-                                toast.error((error as any)?.data?.message || error)
+                            } catch (error: any) {
+                                toast.error(error?.data?.message || error?.message || error)
                             }
                         }
                     "

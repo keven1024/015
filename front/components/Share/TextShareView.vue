@@ -64,8 +64,8 @@ const handlePreview = async () => {
             }
         }>(`/api/download?token=${token}`)
         previewText.value = r?.data?.data
-    } catch (error) {
-        toast.error((error as any)?.data?.message || error)
+    } catch (error: any) {
+        toast.error(error?.data?.message || error?.message || error)
     }
 }
 </script>

@@ -34,8 +34,8 @@ const handleDownload = async () => {
             throw new Error('获取token失败')
         }
         downloadFile(token)
-    } catch (error) {
-        toast.error((error as any)?.data?.message || error)
+    } catch (error: any) {
+        toast.error(error?.data?.message || error?.message || error)
     } finally {
         queryClient.invalidateQueries({ queryKey: ['share', id] })
     }
