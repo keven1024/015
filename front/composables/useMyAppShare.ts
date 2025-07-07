@@ -1,5 +1,5 @@
 import { toast } from 'vue-sonner'
-
+declare const window: any
 let shareIdTokenMap: WeakMap<{ share_id: string }, string>
 
 const getShareToken = async (share_id: string): Promise<string | undefined> => {
@@ -34,9 +34,8 @@ const downloadFile = async (share_id: string) => {
         const token = await getShareToken(share_id)
         if (!token) {
             throw new Error('获取token失败')
-            return
         }
-        ;(window as any)?.open(`/api/download?token=${token}`)
+        window?.open(`/api/download?token=${token}`)
     } catch (e) {
         toast.error((e as any)?.data?.message || e)
     }

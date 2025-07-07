@@ -8,9 +8,10 @@ const drawer = computed(() => store?._get('drawer'))
 const currentDrawer = computed(() => drawer?.value?.[drawer?.value?.length - 1])
 
 const render = computed(() => currentDrawer?.value?.render)
+const hide = computed(() => currentDrawer?.value?.onClose)
 const Children = () =>
     createVNode(render.value, {
-        hide: () => store?._set('drawer', drawer?.value?.slice(0, -1)),
+        hide,
     })
 </script>
 
@@ -20,7 +21,7 @@ const Children = () =>
         @update:open="
             (open) => {
                 if (!open && drawer?.length > 0) {
-                    store?._set('drawer', drawer?.slice(0, -1))
+                    hide()
                 }
             }
         "
