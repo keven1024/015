@@ -2,11 +2,17 @@ import { toast } from 'vue-sonner'
 declare const window: any
 let shareIdTokenMap: WeakMap<{ share_id: string }, string>
 
-const getShareToken = async (share_id: string): Promise<string | undefined> => {
+const getShareToken = async (
+    share_id: string,
+    options?: {
+        password?: string
+    }
+): Promise<string | undefined> => {
     if (!shareIdTokenMap) {
         shareIdTokenMap = new WeakMap()
     }
     let token = shareIdTokenMap.get({ share_id })
+    const { password } = options || {}
     if (!token) {
         const data = await $fetch<{
             code: number
@@ -18,6 +24,7 @@ const getShareToken = async (share_id: string): Promise<string | undefined> => {
             method: 'POST',
             body: {
                 share_id,
+                password,
             },
         })
         if (!data?.data?.token) {

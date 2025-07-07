@@ -11,6 +11,8 @@ import MarkdownRender from '@/components/MarkdownRender.vue'
 import { Button } from '@/components/ui/button'
 import { LucideCopy } from 'lucide-vue-next'
 import { useClipboard } from '@vueuse/core'
+import showDrawer from '~/lib/showDrawer'
+import PasswallShareDrawer from '~/components/Drawer/PasswallShareDrawer.vue'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
@@ -47,7 +49,14 @@ const previewText = ref<string | null>(null)
 
 const handlePreview = async () => {
     try {
-        const token = await getShareToken(props?.data?.id)
+        let token = null
+        if (props?.data?.has_password) {
+            token = await showDrawer({
+                render: ({ ...rest }) => h(PasswallShareDrawer, { ...rest, share_id: props?.data?.id }),
+            })
+        } else {
+            token = await getShareToken(props?.data?.id)
+        }
         const r = await $fetch<{
             code: number
             data: {
