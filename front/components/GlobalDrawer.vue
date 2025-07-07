@@ -7,11 +7,11 @@ const store = useStore('drawer')
 const drawer = computed(() => store?._get('drawer'))
 const currentDrawer = computed(() => drawer?.value?.[drawer?.value?.length - 1])
 
-const render = computed(() => currentDrawer?.value?.render)
-const hide = computed(() => currentDrawer?.value?.onClose)
+const render = computed<() => Component>(() => currentDrawer?.value?.render)
+const hide = computed<() => void>(() => currentDrawer?.value?.onClose)
 const Children = () =>
     createVNode(render.value, {
-        hide,
+        hide: hide?.value,
     })
 </script>
 

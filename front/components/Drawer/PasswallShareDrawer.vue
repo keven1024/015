@@ -19,7 +19,7 @@ const handleSubmit = async (form: FormContext<GenericObject, GenericObject>) => 
             form.resetForm()
             return
         }
-        props.hide?.value(token)
+        props?.hide(token)
         return
     } catch (error) {
         toast.error('密码错误')
