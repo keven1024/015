@@ -7,14 +7,11 @@ const showDrawer = (props: DrawerProps) => {
     return new Promise<void>((res) => {
         const { render } = props || {}
         const onClose = (data?: any) => {
-            store._set(
-                'drawer',
-                (store._get('drawer')?.value ?? [])?.filter((item: any) => item.key !== key)
-            )
+            store.drawer = (store.drawer ?? [])?.filter((item: any) => item.key !== key)
             res(data)
         }
         const store = useStore()
-        store._set('drawer', [...(store._get('drawer')?.value || []), { render, onClose, key }])
+        store.drawer = [...(store.drawer || []), { render, onClose, key }]
     })
 }
 

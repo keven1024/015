@@ -3,24 +3,25 @@ import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { createVNode } from 'vue'
 import useStore from '@/composables/useStore'
 
-const store = useStore('drawer')
-const drawer = computed(() => store?._get('drawer'))
-const currentDrawer = computed(() => drawer?.value?.[drawer?.value?.length - 1])
+const store = useStore()
+const currentDrawer = computed(() => store.drawer?.[store.drawer?.length - 1])
 
-const render = computed<() => Component>(() => currentDrawer?.value?.render)
-const hide = computed<() => void>(() => currentDrawer?.value?.onClose)
+const render = computed(() => currentDrawer?.value?.render)
+const hide = computed(() => currentDrawer?.value?.onClose)
 const Children = () =>
-    createVNode(render.value, {
-        hide: hide?.value,
-    })
+    render.value
+        ? createVNode(render.value, {
+              hide: hide?.value,
+          })
+        : null
 </script>
 
 <template>
     <Drawer
-        :open="!!drawer?.[drawer?.length - 1]"
+        :open="!!store.drawer?.[store.drawer?.length - 1]"
         @update:open="
             (open) => {
-                if (!open && drawer?.length > 0) {
+                if (!open && store?.drawer?.length && hide) {
                     hide()
                 }
             }
