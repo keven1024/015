@@ -41,7 +41,7 @@ defineExpose({
 <template>
     <div ref="containerRef" class="w-full h-full">
         <Application :width="width" :height="height" :resolution="resolution" ref="app" autoDensity antialias :backgroundAlpha="0">
-            <slot />
+            <slot :width="width" :height="height" />
         </Application>
     </div>
 </template>
