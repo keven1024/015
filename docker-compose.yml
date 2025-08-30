@@ -1,0 +1,24 @@
+services:
+  app:
+    image: fudaoyuanicu/015-app:latest
+    container_name: 015-app
+    volumes:
+      - ./uploads:/uploads
+    ports:
+      - "8080:80"
+    env_file: '.env'
+    depends_on:
+      - redis
+
+  worker:
+    image: fudaoyuanicu/015-worker:latest
+    container_name: worker
+    env_file: '.env'
+    volumes:
+      - ./uploads:/uploads
+    depends_on:
+      - app
+      - redis
+  redis:
+    image: redis:7
+    container_name: redis
