@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Application } from 'vue3-pixi'
-import { useElementSize } from '@vueuse/core'
+import { useElementSize, useDevicePixelRatio } from '@vueuse/core'
 
 export interface PixiExpose {
     app: Application
@@ -21,8 +21,8 @@ const height = computed(() => {
     if (containerHeight.value > contentHeight.value) return contentHeight.value
     return contentHeight.value
 })
-const resolution = computed(() => window?.devicePixelRatio || 1)
-
+const { pixelRatio } = useDevicePixelRatio()
+const resolution = computed(() => pixelRatio.value ?? 1)
 watchEffect(() => {
     if (app.value?.app?.renderer) {
         app.value?.app?.renderer?.resize(width.value, height.value)
