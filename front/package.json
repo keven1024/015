@@ -41,7 +41,7 @@
         "markdown-it": "^14.1.0",
         "motion-v": "^1.5.0",
         "nanoid": "^5.1.5",
-        "nuxt": "3.18.0",
+        "nuxt": "3.19.0",
         "nuxt-lucide-icons": "1.0.5",
         "pinia": "^3.0.3",
         "pixi.js": "^8.11.0",
