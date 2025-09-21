@@ -28,7 +28,7 @@ const Children = () =>
         "
     >
         <DrawerContent>
-            <div class="mx-auto w-full max-w-sm pb-10">
+            <div class="mx-auto w-full max-w-sm pb-10 px-3">
                 <Children />
             </div>
         </DrawerContent>
