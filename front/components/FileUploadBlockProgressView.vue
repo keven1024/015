@@ -22,7 +22,7 @@ const renderGraphics = (graphics: Graphics) => {
     graphics.clear()
     Object.entries(props?.data?.chunks || {})?.map(([index, item]) => {
         const { status, createdAt } = item || {}
-        const size = props.data?.chunkLength / width.value
+        const size = width.value / props.data?.chunkLength
         const x = Number(index) * size
         graphics.rect(x, 0, size, height.value)
         let color = 0x60a5fa
