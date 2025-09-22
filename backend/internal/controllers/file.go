@@ -61,9 +61,10 @@ func CreateUploadTask(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, errors.New("存储空间不足"))
 	}
 
-	ChunkSize := int64(1 * 1024 * 1024)
-	if r.FileSize > 500*1024*1024 {
-		ChunkSize = r.FileSize / 500
+	ChunkSize := int64(0.25 * 1024 * 1024)
+	// 根据文件大小动态调整块大小
+	for r.FileSize/ChunkSize > 1000 {
+		ChunkSize *= 2
 	}
 	uploadTaskExpire := int64(3600)
 	newFileInfo := models.RedisFileInfo{
