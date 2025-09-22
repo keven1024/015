@@ -14,11 +14,12 @@ import showDrawer from '@/lib/showDrawer'
 import QrCoreDrawer from '@/components/Drawer/QrCoreDrawer.vue'
 import { h } from 'vue'
 import { cx } from 'class-variance-authority'
+import type { FileHandleKey } from '../Preprocessing/types'
 dayjs.extend(relativeTime) // 扩展 relativeTime 插件
 dayjs.locale('zh-cn') // 设置语言为中文
 
 const props = defineProps<{
-    data: { files: { id: string; file: File }[]; config: any; handle_type: string }
+    data: { files: { id: string; file: File }[]; config: Record<string, any>; handle_type: FileHandleKey }
 }>()
 const emit = defineEmits<{
     (e: 'change', key: string): void
@@ -33,7 +34,7 @@ const { data } = useQuery({
                 const { id, file } = item || {}
                 return { id, name: file.name }
             }),
-            config,
+            config: config as any,
         })
         return data?.map((item) => item?.data)
     },

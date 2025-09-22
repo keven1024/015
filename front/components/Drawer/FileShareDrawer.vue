@@ -15,11 +15,12 @@ import { cx } from 'class-variance-authority'
 import { isObject } from 'lodash-es'
 import showDrawer from '@/lib/showDrawer'
 import FileShareHandle from '@/components/Preprocessing/FileShareHandle.vue'
+import type { FileShareHandleProps } from '../Preprocessing/types'
 const { t } = useI18n()
 const props = defineProps<{
     hide: () => void
     file: File[]
-    onFileHandle: ({ type, config }: { type: string; config: any }) => void
+    onFileHandle: (props: FileShareHandleProps) => void
 }>()
 
 const isImage = computed(() => props.file.every((r) => r?.type?.startsWith('image/')))

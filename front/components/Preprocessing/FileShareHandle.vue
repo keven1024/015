@@ -3,10 +3,11 @@ import SwitchField from '../Field/SwitchField.vue'
 import InputField from '../Field/InputField.vue'
 import SelectField from '../Field/SelectField.vue'
 import FormButton from '../Field/FormButton.vue'
+import type { FileShareHandleProps } from './types'
 const props = defineProps<{
     hide: () => void
     file: File[]
-    onFileHandle: ({ type, config }: { type: string; config: any }) => void
+    onFileHandle: (props: FileShareHandleProps) => void
 }>()
 </script>
 

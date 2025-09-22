@@ -9,9 +9,11 @@ import useMyAppConfig from '@/composables/useMyAppConfig'
 import showDrawer from '@/lib/showDrawer'
 import QrCoreDrawer from '@/components/Drawer/QrCoreDrawer.vue'
 import dayjs from 'dayjs'
+import { h } from 'vue'
+import type { TextHandleKey } from '../Preprocessing/types'
 
 const props = defineProps<{
-    data: { text: string; config: any; handle_type: string }
+    data: { text: string; config: Record<string, any>; handle_type: TextHandleKey }
 }>()
 
 const emit = defineEmits<{

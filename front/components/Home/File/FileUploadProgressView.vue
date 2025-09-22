@@ -14,9 +14,10 @@ import dayjs from 'dayjs'
 import showDrawer from '~/lib/showDrawer'
 import FileUploadSpeedInfoView from './FileUploadSpeedInfoView.vue'
 import getFileChunk from '~/lib/getFileChunk'
+import type { FileHandleKey } from '~/components/Preprocessing/types'
 
 const props = defineProps<{
-    data: { file: File[]; config: any; handle_type: string }
+    data: { file: File[]; config: Record<string, any>; handle_type: FileHandleKey }
 }>()
 const emit = defineEmits<{
     (e: 'change', key: string): void
