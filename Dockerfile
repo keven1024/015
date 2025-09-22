@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=front-deps /app/dist/ .
 RUN corepack enable pnpm && pnpm build
 
-FROM golang:1.23.1 AS backend-builder
+FROM golang:1.24.3 AS backend-builder
 WORKDIR /app
 # Download Go modules
 COPY backend/go.mod backend/go.sum ./
