@@ -3,7 +3,7 @@ import { LucidePlay, LucideSettings, LucideSquare } from 'lucide-vue-next'
 import Button from '@/components/ui/button/Button.vue'
 import FileUploadBlockProgressView from '@/components/FileUploadBlockProgressView.vue'
 import { motion } from 'motion-v'
-import { filesize } from 'filesize'
+import getFileSize from '~/lib/getFileSize'
 import { cx } from 'class-variance-authority'
 import asyncWorker from '@/lib/asyncWorker'
 import calcFileHashWorker from '@/lib/calcFileHashWorker?worker'
@@ -338,12 +338,13 @@ const handleShowSpeedInfo = () => {
         <div class="rounded-xl p-3 bg-white/80 flex flex-col gap-2 col-span-4 md:col-span-3 h-32 md:h-auto">
             <div class="flex flex-col gap-1">
                 <div @click="handleShowSpeedInfo" class="flex flex-row gap-1 items-center text-xs opacity-70">
-                    总上传进度 <LucideInfo class="size-3" />
+                    总上传进度
+                    <LucideInfo class="size-3" />
                 </div>
                 <div class="text-2xl font-bold">
                     {{
                         `${
-                            filesize(
+                            getFileSize(
                                 Object.entries(speedChartData)
                                     ?.filter((r) => dayjs().unix() - 60 < parseInt(r[0]))
                                     ?.reduce((acc, curr) => acc + curr[1]?.reduce((_acc, _curr) => _acc + _curr.value, 0), 0) / 60
@@ -415,16 +416,19 @@ const handleShowSpeedInfo = () => {
         <div class="col-span-4 flex flex-col bg-white/80 rounded-xl p-3 text-md gap-5">
             <div>文件列表</div>
             <div class="flex flex-col -mx-3 text-sm">
-                <div class="grid grid-cols-[2fr_5rem_5rem] md:grid-cols-[2fr_5rem_5rem_4fr] gap-2 border-b border-black/20 pb-2 px-3">
+                <div class="grid grid-cols-[2fr_6rem_6rem] md:grid-cols-[2fr_6rem_6rem_4fr] gap-2 border-b border-black/20 pb-2 px-3">
                     <div>文件名</div>
                     <div>文件大小</div>
-                    <div @click="handleShowSpeedInfo" class="flex flex-row gap-1 items-center">上传速度 <LucideInfo class="size-3" /></div>
+                    <div @click="handleShowSpeedInfo" class="flex flex-row gap-1 items-center">
+                        上传速度
+                        <LucideInfo class="size-3" />
+                    </div>
                     <div class="hidden md:block">进度</div>
                 </div>
                 <div
                     :class="
                         cx(
-                            'grid grid-cols-[2fr_5rem_5rem] md:grid-cols-[2fr_5rem_5rem_4fr] gap-2 py-2 border-b border-black/20 items-center hover:bg-primary/30 px-3 cursor-pointer',
+                            'grid grid-cols-[2fr_6rem_6rem] md:grid-cols-[2fr_6rem_6rem_4fr] gap-2 py-2 border-b border-black/20 items-center hover:bg-primary/30 px-3 cursor-pointer',
                             selectedFile === item?.fileId && 'bg-primary text-white hover:!bg-primary'
                         )
                     "
@@ -462,16 +466,16 @@ const handleShowSpeedInfo = () => {
                         </Button>
                         <div class="truncate">{{ item?.file?.name }}</div>
                     </div>
-                    <div>{{ filesize(item?.file?.size) }}</div>
+                    <div>{{ getFileSize(item?.file?.size) }}</div>
                     <div>
                         {{
-                            `${filesize(
+                            `${getFileSize(
                                 (Object.entries(item?.uploadInfo?.chunks || {})?.filter(
                                     ([, chunk]) => chunk.status === 'success' && dayjs().unix() - 60 < chunk.createdAt
                                 )?.length /
                                     60) *
                                     (item?.uploadInfo?.ChunkSize || 0)
-                            )}/s`
+                            )} /s`
                         }}
                     </div>
                     <div
@@ -519,7 +523,7 @@ const handleShowSpeedInfo = () => {
             <div>上传详情</div>
             <div class="grid grid-cols-3 text-sm gap-3">
                 <div>
-                    区块： {{ selectedUploadfile?.uploadInfo?.chunkLength }} x {{ filesize(selectedUploadfile?.uploadInfo?.ChunkSize as number) }}
+                    区块： {{ selectedUploadfile?.uploadInfo?.chunkLength }} x {{ getFileSize(selectedUploadfile?.uploadInfo?.ChunkSize as number) }}
                 </div>
                 <div class="truncate col-span-2">hash: {{ selectedUploadfile?.hash }}</div>
                 <div>已完成: {{ selectedUploadfileChunk?.filter((r) => r.status === 'success')?.length || 0 }}</div>

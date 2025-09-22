@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { filesize } from 'filesize'
-import type { filePreview } from './FileIcon.vue';
+import getFileSize from '~/lib/getFileSize'
+import type { filePreview } from './FileIcon.vue'
 const props = defineProps<{
     value: File | filePreview
 }>()
@@ -17,6 +17,6 @@ const fileInfo = computed(() => {
             <div class="truncate">{{ fileInfo?.name }}</div>
             <div>{{ `.${fileInfo?.ext}` }}</div>
         </div>
-        <div class="text-xs opacity-50">{{ filesize(value?.size ?? 0) }}</div>
+        <div class="text-xs opacity-50">{{ getFileSize(value?.size ?? 0) }}</div>
     </div>
 </template>

@@ -5,7 +5,7 @@ import { cx } from 'class-variance-authority'
 import { useQuery } from '@tanstack/vue-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import AboutChartTooltip from '@/components/AboutChartTooltip.vue'
-import { filesize } from 'filesize'
+import getFileSize from '~/lib/getFileSize'
 import SparkMD5 from 'spark-md5'
 import useMyAppConfig from '@/composables/useMyAppConfig'
 import dayjs from 'dayjs'
@@ -137,8 +137,8 @@ const users = computed(() => {
                 <div class="rounded-xl bg-white/50 flex-1 flex flex-col p-3">
                     <div class="opacity-75 text-xs">{{ t('about.storage') }}</div>
                     <div class="text-right flex flex-row items-baseline">
-                        <span class="text-lg font-semibold">{{ filesize(currentFileSize ?? 0) }}</span>
-                        <span class="text-md opacity-75">/ {{ filesize(data?.max_limit?.file_size ?? 0) }}</span>
+                        <span class="text-lg font-semibold">{{ getFileSize(currentFileSize ?? 0) }}</span>
+                        <span class="text-md opacity-75">/ {{ getFileSize(data?.max_limit?.file_size ?? 0) }}</span>
                     </div>
                     <Progress class="h-1" :model-value="(currentFileSize / (data?.max_limit?.file_size ?? 0)) * 100" />
                 </div>
