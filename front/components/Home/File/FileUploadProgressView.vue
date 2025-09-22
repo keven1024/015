@@ -122,8 +122,9 @@ const { error, execute, isLoading } = useAsyncState(
             await Promise.all(
                 times(batchNum.value, async (i: number) => {
                     const file = sample(taskList)
-                    const fileId = file?.fileId as string
-                    const task = get(file?.queue, '0')
+                    const { fileId, queue } = file || {}
+                    if (!fileId) return
+                    const task = get(queue, '0')
                     if (!task) return
                     const { taskId, index, queueType, taskType, retry } = task || {}
                     if (procressTaskList.value.has(taskId)) return
@@ -243,10 +244,12 @@ const handleCreate = async (fileId: string) => {
 const handleChunk = async (fileId: string) => {
     const uploadfile = uploadfiles.value.find((item) => item.fileId === fileId)
     if (!uploadfile?.file) return
-    uploadfile.procressType = 'upload'
     const { chunkLength } = uploadfile.uploadInfo || {}
+    if (!chunkLength) return
+
+    uploadfile.procressType = 'upload'
     const tasks = shuffle(
-        times(chunkLength as number, (i: number) => ({ taskType: 'upload' as const, queueType: 'async' as const, taskId: nanoid(), index: i }))
+        times(chunkLength, (i: number) => ({ taskType: 'upload' as const, queueType: 'async' as const, taskId: nanoid(), index: i }))
     )
     uploadfile.queue.push(...tasks)
 }
@@ -254,6 +257,10 @@ const handleChunk = async (fileId: string) => {
 const handleUpload = async (fileId: string, index: number) => {
     const uploadfile = uploadfiles.value.find((item) => item.fileId === fileId)
     if (!uploadfile?.file) return
+    const { id, uploadInfo } = uploadfile || {}
+    const { chunkLength, ChunkSize } = uploadInfo || {}
+    if (!ChunkSize || !id) return
+
     if (uploadfile.procressType !== 'upload') uploadfile.procressType = 'upload'
     let chunkInfo = uploadfile.uploadInfo?.chunks?.[index]
     if (!chunkInfo) {
@@ -262,14 +269,12 @@ const handleUpload = async (fileId: string, index: number) => {
             createdAt: dayjs().unix(),
         }
     }
-    const { id, uploadInfo } = uploadfile || {}
-    const { chunkLength, ChunkSize } = uploadInfo || {}
 
-    const chunk = await getFileChunk(uploadfile.file, index, ChunkSize as number)
+    const chunk = await getFileChunk(uploadfile.file, index * ChunkSize, ChunkSize)
     const formData = new FormData()
     formData.append('file', new Blob([chunk]))
     formData.append('index', (index + 1).toString())
-    formData.append('id', id as string)
+    formData.append('id', id)
     const res = await $fetch<{
         code: number
     }>('/api/file/slice', {
