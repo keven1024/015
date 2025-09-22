@@ -1,10 +1,16 @@
+<div align="center"><a name="readme-top"></a>
+
 # 015
 
 015 (/ˈzɪərəʊ wʌn faɪv/, "zero-one-five") 是一个支持selfhosted的临时文件分享平台。专注于提供一次性，临时的文件和文本上传，处理，分享服务。项目名称来源于DARLING in the FRANXX的 [莓](https://darling-in-the-franxx.fandom.com/wiki/Ichigo)
 
 一个基于 Vue 3 + Nuxt 3 + Go 构建的现代文件分享网站，支持文件上传、文本分享、图片压缩、并发处理、秒传功能等，具备完整的分享管理和访问控制体系。
 
-![015 Platform Overview](./image/0.png)
+![015 Platform Overview](/.github/image/0.png)
+
+[English](README.md) | 中文
+
+</div>
 
 ## 🌟 功能特性
 
@@ -35,59 +41,69 @@
 
 ## 截图
 
-![](./image/1.webp)
+选择文件上传页面
+![](/.github/image/1.png)
 
-![](./image/2.webp)
+输入文本上传页面
+![](/.github/image/2.png)
 
-![](./image/3.png)
+选择文件上传页面 - 支持多选文件上传
+![](/.github/image/3.png)
 
-![](./image/4.png)
+文件正在上传页面 - 类似Github的展示上传进度的文件热力图
+![](/.github/image/4.png)
+
+文件正在上传页面 - 类似 QbitTorrent 的展示文件上传进度的进度条
+![](/.github/image/5.png)
+
+文件上传成功页面
+![](/.github/image/6.png)
 
 ## 🏗️ 技术架构
 
 ### 前端技术栈
 
--   **Vue 3** - 渐进式 JavaScript 框架
--   **Nuxt 3** - Vue.js 全栈框架
--   **TypeScript** - 完整的类型安全
--   **Tailwind CSS** - 原子化 CSS 框架
--   **Reka UI** - 现代化组件库
--   **Pinia** - 状态管理
--   **TanStack Query** - 数据获取和缓存
--   **Vue Router** - 路由管理
--   **i18next** - 国际化支持
+- **Vue 3** - 渐进式 JavaScript 框架
+- **Nuxt 3** - Vue.js 全栈框架
+- **TypeScript** - 完整的类型安全
+- **Tailwind CSS** - 原子化 CSS 框架
+- **Reka UI** - 现代化组件库
+- **Pinia** - 状态管理
+- **TanStack Query** - 数据获取和缓存
+- **Vue Router** - 路由管理
+- **i18next** - 国际化支持
 
 ### 后端技术栈
 
--   **Go 1.23** - 高性能服务器端语言
--   **Echo** - 高性能 HTTP 框架
--   **Redis** - 缓存和会话存储
--   **Asynq** - 异步任务队列
--   **JWT** - 身份验证
--   **Zap** - 结构化日志
+- **Go 1.23** - 高性能服务器端语言
+- **Echo** - 高性能 HTTP 框架
+- **Redis** - 缓存和会话存储
+- **Asynq** - 异步任务队列
+- **JWT** - 身份验证
+- **Zap** - 结构化日志
 
 ### 构建系统
 
--   **Node.js** - 服务器端运行时
--   **pnpm** - 快速包管理器
--   **Husky** - Git hooks 管理
--   **Prettier** - 代码格式化
--   **Lint-staged** - 暂存文件检查
+- **Node.js** - 服务器端运行时
+- **pnpm** - 快速包管理器
+- **Husky** - Git hooks 管理
+- **Prettier** - 代码格式化
+- **Lint-staged** - 暂存文件检查
 
 ### 存储架构
 
--   **文件存储** - 本地文件系统存储
--   **Redis 缓存** - 分享信息、文件元数据缓存
--   **队列系统** - 异步任务处理队列
+- **文件存储** - 本地文件系统存储
+- **Redis 缓存** - 分享信息、文件元数据缓存
+- **队列系统** - 异步任务处理队列
 
 ## 🚀 快速开始
 
 ### 环境要求
 
--   Node.js 18+
--   Go 1.23+
--   Redis 6+
--   pnpm 9+
+- Node.js 18+
+- Go 1.23+
+- Redis 6+
+- pnpm 9+
 
 ### 安装依赖
 
@@ -113,7 +129,7 @@ cp .env.example .env
 
 # 配置必要的环境变量
 REDIS_URL=redis://localhost:6379
-UPLOAD_PATH=./uploads
+UPLOAD_PATH=/.github/uploads
 download_secret=your_download_secret
 ```
 
@@ -159,9 +175,9 @@ pnpm run dev:worker   # Worker 服务
 
 ### 代码规范
 
--   使用 Prettier 进行代码格式化
--   使用 Husky + lint-staged 进行提交前检查
--   遵循 TypeScript 类型安全规范
+- 使用 Prettier 进行代码格式化
+- 使用 Husky + lint-staged 进行提交前检查
+- 遵循 TypeScript 类型安全规范
 
 ### 提交规范
 
@@ -188,22 +204,22 @@ cd worker && go build -o worker .
 
 ### 已完成功能 ✅
 
--   前端计算哈希和秒传
--   并发切片上传 (使用 Web Worker)
--   文件上传/文本上传和分享
--   上传统计页面
--   多语言支持
--   最大上传限制
--   后端队列系统和 Worker 处理文件
+- 前端计算哈希和秒传
+- 并发切片上传 (使用 Web Worker)
+- 文件上传/文本上传和分享
+- 上传统计页面
+- 多语言支持
+- 最大上传限制
+- 后端队列系统和 Worker 处理文件
 
 ### 计划功能 🚧
 
--   断点续传 (后端计算已上传部分并返回)
--   图片格式转换和压缩
--   图片 OCR 复制
--   文档转 Markdown
--   文本翻译/总结
--   支持上传多文件
+- 断点续传 (后端计算已上传部分并返回)
+- 图片格式转换和压缩
+- 图片 OCR 复制
+- 文档转 Markdown
+- 文本翻译/总结
+- 支持上传多文件
 
 ## 🤝 贡献指南
 
@@ -215,7 +231,7 @@ cd worker && go build -o worker .
 
 ## 🔗 相关链接
 
--   [Vue 3 文档](https://vuejs.org/)
--   [Nuxt 3 文档](https://nuxt.com/)
--   [Echo 框架文档](https://echo.labstack.com/)
--   [Asynq 文档](https://github.com/hibiken/asynq)
+- [Vue 3 文档](https://vuejs.org/)
+- [Nuxt 3 文档](https://nuxt.com/)
+- [Echo 框架文档](https://echo.labstack.com/)
+- [Asynq 文档](https://github.com/hibiken/asynq)
