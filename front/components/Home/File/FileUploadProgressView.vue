@@ -15,6 +15,7 @@ import showDrawer from '~/lib/showDrawer'
 import FileUploadSpeedInfoView from './FileUploadSpeedInfoView.vue'
 import getFileChunk from '~/lib/getFileChunk'
 import type { FileHandleKey } from '~/components/Preprocessing/types'
+import asyncWait from '@/lib/asyncWait'
 
 const props = defineProps<{
     data: { file: File[]; config: Record<string, any>; handle_type: FileHandleKey }
@@ -119,6 +120,7 @@ const { error, execute, isLoading } = useAsyncState(
     async () => {
         while (activeTaskAllQueue.value.length > 0) {
             const taskList = uploadfiles?.value?.filter((r) => r.queue.length > 0 && r.status === 'start')
+            await asyncWait(10) // 让出主线程，防止空转导致ui卡死
             await Promise.all(
                 times(batchNum.value, async (i: number) => {
                     const file = sample(taskList)
