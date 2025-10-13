@@ -80,7 +80,7 @@ const createFileShare = async (data: {
     const { files, config } = data || {}
     return await Promise.all(
         times(files.length, async (i) => {
-            const { id, name } = files[i]
+            const { id, name } = files[i] || {}
             return await createShare({
                 type: 'file',
                 data: id,
