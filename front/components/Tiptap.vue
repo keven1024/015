@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { Editor, EditorContent, type JSONContent } from '@tiptap/vue-3'
+import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
 const props = defineProps<{
-    modelValue?: JSONContent
+    modelValue?: string
     placeholder?: string
 }>()
 const emit = defineEmits<{
-    (e: 'update:modelValue', value?: JSONContent): void
+    (e: 'update:modelValue', value: string): void
 }>()
 
 const editor = ref<Editor | undefined>(undefined)
@@ -16,20 +17,24 @@ onMounted(() => {
         content: props.modelValue,
         extensions: [
             StarterKit,
+            Markdown.configure({
+                transformPastedText: true,
+                transformCopiedText: true,
+            }),
             Placeholder.configure({
                 placeholder: props.placeholder ?? '',
             }),
             // CommandsPlugin,
         ],
-        onUpdate: (v) => {
-            emit('update:modelValue', editor.value?.getJSON?.())
+        onUpdate: () => {
+            emit('update:modelValue', editor.value?.storage?.markdown?.getMarkdown() ?? '')
         },
     })
 })
 watch(
     () => props.modelValue,
     (value) => {
-        if (value !== editor.value?.getJSON?.()) {
+        if (value !== editor.value?.storage?.markdown?.getMarkdown()) {
             editor.value?.commands.setContent(value ?? '')
         }
     }
