@@ -46,6 +46,6 @@ onUnmounted(() => {
 <template>
     <editor-content
         :editor="editor"
-        class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0"
+        class="prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20"
     />
 </template>

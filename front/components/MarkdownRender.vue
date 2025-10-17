@@ -11,5 +11,13 @@ const renderHtml = computed(() => {
 })
 </script>
 <template>
-    <div :class="cx('prose prose-sm [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0', props?.class)" v-html="renderHtml" />
+    <div
+        :class="
+            cx(
+                'prose prose-sm [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20',
+                props?.class
+            )
+        "
+        v-html="renderHtml"
+    />
 </template>
