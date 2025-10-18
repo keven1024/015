@@ -94,6 +94,16 @@
         "link": "Link",
         "copySuccess": "Copy Success"
     },
+    "textshareresult": {
+        "title": "Share Successful",
+        "info": "Info",
+        "viewNums": "View Count",
+        "expireTime": "Expire Time",
+        "pickupCode": "Pickup Code",
+        "link": "Link",
+        "content": "Content",
+        "copySuccess": "Copy Success"
+    },
     "about": {
         "file": "File",
         "task": "Task",

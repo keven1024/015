@@ -94,6 +94,16 @@
         "link": "链接",
         "copySuccess": "复制成功"
     },
+    "textshareresult": {
+        "title": "分享成功",
+        "info": "信息",
+        "viewNums": "浏览次数",
+        "expireTime": "过期时间",
+        "pickupCode": "提取码",
+        "link": "链接",
+        "content": "内容",
+        "copySuccess": "复制成功"
+    },
     "about": {
         "file": "文件",
         "task": "任务",
