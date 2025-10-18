@@ -5,6 +5,7 @@ await useSeo()
 <template>
     <div class="h-screen w-screen">
         <GlobalDrawer />
+        <GlobalDayjs />
         <Toaster position="top-center" richColors closeButton />
         <img
             class="w-full h-full object-cover absolute inset-0 -z-[1] bg-gradient-to-bl from-primary/40 to-primary"
