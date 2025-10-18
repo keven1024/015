@@ -56,13 +56,13 @@ const { t } = useI18n()
                         <div class="size-16 flex justify-center items-center rounded-xl bg-white/80">
                             <PlusIcon class="size-7" />
                         </div>
-                        <div class="mb-3">添加更多</div>
+                        <div class="mb-3">{{ t('file.addMore') }}</div>
                     </div>
                 </div>
             </template>
             <template v-else>
                 <LucideUpload class="size-10" />
-                <div class="text-sm">
+                <div class="text-sm select-none">
                     {{ t('file.uploadFilePlaceholder') }}
                 </div>
             </template>

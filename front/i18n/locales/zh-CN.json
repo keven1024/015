@@ -16,6 +16,7 @@
     "file": {
         "uploadFile": "上传文件",
         "uploadFilePlaceholder": "拖拽文件 或 点击上传",
+        "addMore": "添加更多",
         "handleType": {
             "file-share": "文件分享",
             "file-image-compress": "图片压缩"
@@ -32,6 +33,56 @@
         "title": "输入取件码",
         "codeError": "取件码错误",
         "btn": "取件"
+    },
+    "fileshare": {
+        "title": "分享选项",
+        "downloadNums": "下载次数",
+        "expireTime": "过期时间",
+        "or": "或",
+        "expireAfter": "后过期",
+        "pickupCode": "取件码",
+        "passwordProtection": "密码保护",
+        "downloadNotify": "下载通知",
+        "passwordPlaceholder": "请输入密码",
+        "emailPlaceholder": "请输入邮箱",
+        "downloadOptions": {
+            "1time": "1次下载",
+            "2times": "2次下载",
+            "3times": "3次下载",
+            "5times": "5次下载",
+            "10times": "10次下载"
+        },
+        "expireOptions": {
+            "5min": "5分钟",
+            "1hour": "1小时",
+            "1day": "1天",
+            "3days": "3天"
+        }
+    },
+    "textshare": {
+        "title": "分享选项",
+        "viewNums": "浏览次数",
+        "expireTime": "过期时间",
+        "or": "或",
+        "expireAfter": "后过期",
+        "pickupCode": "取件码",
+        "passwordProtection": "密码保护",
+        "readNotify": "已读通知",
+        "passwordPlaceholder": "请输入密码",
+        "emailPlaceholder": "请输入邮箱",
+        "viewOptions": {
+            "1time": "1次浏览",
+            "2times": "2次浏览",
+            "3times": "3次浏览",
+            "5times": "5次浏览",
+            "10times": "10次浏览"
+        },
+        "expireOptions": {
+            "5min": "5分钟",
+            "1hour": "1小时",
+            "1day": "1天",
+            "3days": "3天"
+        }
     },
     "about": {
         "file": "文件",

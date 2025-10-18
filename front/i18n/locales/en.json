@@ -16,6 +16,7 @@
     "file": {
         "uploadFile": "Upload File",
         "uploadFilePlaceholder": "Drag and drop files or click to upload",
+        "addMore": "Add More",
         "handleType": {
             "file-share": "File Share",
             "file-image-compress": "Image Compress"
@@ -32,6 +33,56 @@
         "title": "Enter Pickup Code",
         "codeError": "Invalid pickup code",
         "btn": "Pickup"
+    },
+    "fileshare": {
+        "title": "Share Options",
+        "downloadNums": "Download Count",
+        "expireTime": "Expire Time",
+        "or": "or",
+        "expireAfter": "expire",
+        "pickupCode": "Pickup Code",
+        "passwordProtection": "Password Protection",
+        "downloadNotify": "Download Notification",
+        "passwordPlaceholder": "Enter password",
+        "emailPlaceholder": "Enter email",
+        "downloadOptions": {
+            "1time": "1 download",
+            "2times": "2 downloads",
+            "3times": "3 downloads",
+            "5times": "5 downloads",
+            "10times": "10 downloads"
+        },
+        "expireOptions": {
+            "5min": "5 minutes",
+            "1hour": "1 hour",
+            "1day": "1 day",
+            "3days": "3 days"
+        }
+    },
+    "textshare": {
+        "title": "Share Options",
+        "viewNums": "View Count",
+        "expireTime": "Expire Time",
+        "or": "or",
+        "expireAfter": "expire",
+        "pickupCode": "Pickup Code",
+        "passwordProtection": "Password Protection",
+        "readNotify": "Read Notification",
+        "passwordPlaceholder": "Enter password",
+        "emailPlaceholder": "Enter email",
+        "viewOptions": {
+            "1time": "1 view",
+            "2times": "2 views",
+            "3times": "3 views",
+            "5times": "5 views",
+            "10times": "10 views"
+        },
+        "expireOptions": {
+            "5min": "5 minutes",
+            "1hour": "1 hour",
+            "1day": "1 day",
+            "3days": "3 days"
+        }
     },
     "about": {
         "file": "File",
