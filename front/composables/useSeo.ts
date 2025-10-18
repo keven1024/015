@@ -1,23 +1,30 @@
+import getApiBaseUrl from '~/lib/getApiBaseUrl'
+
 type UseSeoProps = {
     head?: Record<string, any>
     seo?: Record<string, any>
 }
 const useSeo = async (props: UseSeoProps = {}) => {
     const { head, seo } = props || {}
-    const seoMeta = ref<any>()
+    const seoMeta = ref<{
+        site_title: string
+        site_desc: string
+        site_url: string
+        site_icon: string
+        site_bg_url: string
+    }>()
     if (import.meta.server) {
-        const { SITE_TITLE, SITE_DESC, SITE_URL } = process.env || {}
-        seoMeta.value = {
-            site_title: SITE_TITLE,
-            site_desc: SITE_DESC,
-            site_url: SITE_URL,
-        }
+        await fetch(`${getApiBaseUrl()}/config`)
+            .then((res) => res.json())
+            .then(({ data }) => {
+                seoMeta.value = data
+            })
         const { title } = head || {}
         useHead({
             link: [
-                { rel: 'icon', href: '/logo.png', sizes: 'any' },
+                { rel: 'icon', href: seoMeta.value?.site_icon || '/logo.png', sizes: 'any' },
                 // { rel: 'icon', href: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
-                { rel: 'apple-touch-icon', sizes: '180x180', href: '/logo.png' },
+                { rel: 'apple-touch-icon', sizes: '180x180', href: seoMeta.value?.site_icon || '/logo.png' },
             ],
             meta: [
                 // used on some mobile browsers
@@ -33,7 +40,7 @@ const useSeo = async (props: UseSeoProps = {}) => {
             ogTitle: seoMeta?.value?.site_title,
             ogDescription: seoMeta?.value?.site_desc,
             ogImage: {
-                url: `${seoMeta?.value?.site_url}/logo.png`,
+                url: `${seoMeta?.value?.site_url}${seoMeta?.value?.site_icon || '/logo.png'}`,
                 width: 1024,
                 height: 1024,
                 alt: 'logo',
