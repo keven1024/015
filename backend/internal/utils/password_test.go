@@ -9,8 +9,8 @@ import (
 
 func TestGeneratePasswordHash(t *testing.T) {
 	// 保存原始环境变量
-	originalSalt := os.Getenv("PASSWORD_SALT")
-	defer os.Setenv("PASSWORD_SALT", originalSalt)
+	originalSalt := os.Getenv("password.salt")
+	defer os.Setenv("password.salt", originalSalt)
 
 	tests := []struct {
 		name        string
@@ -20,11 +20,11 @@ func TestGeneratePasswordHash(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:        "PASSWORD_SALT未配置",
+			name:        "password.salt未配置",
 			password:    "testpassword",
 			salt:        "",
 			expectError: true,
-			errorMsg:    "请配置PASSWORD_SALT",
+			errorMsg:    "请配置password.salt",
 		},
 		{
 			name:        "正常生成哈希",
@@ -38,9 +38,9 @@ func TestGeneratePasswordHash(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// 设置环境变量
 			if tt.salt != "" {
-				os.Setenv("PASSWORD_SALT", tt.salt)
+				os.Setenv("password.salt", tt.salt)
 			} else {
-				os.Unsetenv("PASSWORD_SALT")
+				os.Unsetenv("password.salt")
 			}
 
 			hash, err := GeneratePasswordHash(tt.password)

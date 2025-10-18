@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
@@ -15,12 +17,14 @@ func InitEnv() {
 		return
 	}
 	v = viper.New()
-	v.SetConfigName(".env")
-	v.SetConfigType("env")
+	v.SetConfigName("config.yaml")
+	v.SetConfigType("yaml")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AddConfigPath(".")
 	v.AddConfigPath("../")
 	v.AutomaticEnv()
-	if err := v.ReadInConfig(); err != nil {
+	err := v.ReadInConfig()
+	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			// 只有当错误不是"配置文件未找到"时才 panic
 			panic(err)

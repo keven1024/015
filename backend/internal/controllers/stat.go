@@ -70,7 +70,7 @@ func GetStat(c echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	maxStorageSize, err := utils.GetFileSize(utils.GetEnv("MAX_LOCALSTORAGE_SIZE"))
+	maxStorageSize, err := utils.GetFileSize(utils.GetEnv("upload.maximum"))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
