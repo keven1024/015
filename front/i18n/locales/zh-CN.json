@@ -1,46 +1,51 @@
 {
-  "navbar": {
-    "file": "文件",
-    "text": "文本"
-  },
-  "i18n": {
-    "switchLocale": "切换语言"
-  },
-  "seo": {
-    "desc": "015 是一个开源的临时文件分享平台项目，支持临时大文件切片上传，临时文本上传、下载、分享"
-  },
-  "btn": {
-    "submit": "提交",
-    "backToHome": "返回首页"
-  },
-  "file": {
-    "uploadFile": "上传文件",
-    "uploadFilePlaceholder": "拖拽文件 或 点击上传",
-    "handleType": {
-      "file-share": "文件分享",
-      "file-image-compress": "图片压缩"
+    "navbar": {
+        "file": "文件",
+        "text": "文本"
+    },
+    "i18n": {
+        "switchLocale": "切换语言"
+    },
+    "seo": {
+        "desc": "015 是一个开源的临时文件分享平台项目，支持临时大文件切片上传，临时文本上传、下载、分享"
+    },
+    "btn": {
+        "submit": "提交",
+        "backToHome": "返回首页"
+    },
+    "file": {
+        "uploadFile": "上传文件",
+        "uploadFilePlaceholder": "拖拽文件 或 点击上传",
+        "handleType": {
+            "file-share": "文件分享",
+            "file-image-compress": "图片压缩"
+        }
+    },
+    "text": {
+        "uploadText": "上传文本",
+        "uploadTextPlaceholder": "使用我们的文本处理器轻松分享，翻译，总结，生成图片，询问大模型",
+        "handleType": {
+            "text-share": "文本分享"
+        }
+    },
+    "pickup": {
+        "title": "输入取件码",
+        "codeError": "取件码错误",
+        "btn": "取件"
+    },
+    "about": {
+        "file": "文件",
+        "task": "任务",
+        "admin": "站长",
+        "author": "作者",
+        "title": "关于",
+        "systemInfo": "系统信息",
+        "systemVersion": "系统版本",
+        "storage": "存储空间",
+        "analysis": "分析",
+        "fileSize": "文件大小",
+        "fileNum": "文件数量",
+        "processed": "处理数量",
+        "failed": "失败数量"
     }
-  },
-  "text": {
-    "uploadText": "上传文本",
-    "uploadTextPlaceholder": "使用我们的文本处理器轻松分享，翻译，总结，生成图片，询问大模型",
-    "handleType": {
-      "text-share": "文本分享"
-    }
-  },
-  "about": {
-    "file": "文件",
-    "task": "任务",
-    "admin": "站长",
-    "author": "作者",
-    "title": "关于",
-    "systemInfo": "系统信息",
-    "systemVersion": "系统版本",
-    "storage": "存储空间",
-    "analysis": "分析",
-    "fileSize": "文件大小",
-    "fileNum": "文件数量",
-    "processed": "处理数量",
-    "failed": "失败数量"
-  }
 }

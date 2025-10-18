@@ -1,46 +1,51 @@
 {
-  "navbar": {
-    "file": "File",
-    "text": "Text"
-  },
-  "i18n": {
-    "switchLocale": "Switch Language"
-  },
-  "seo": {
-    "desc": "015 is a temporary file sharing platform project, supporting temporary large file slicing upload, temporary text upload, download and share"
-  },
-  "btn": {
-    "submit": "Submit",
-    "backToHome": "Back to Home"
-  },
-  "file": {
-    "uploadFile": "Upload File",
-    "uploadFilePlaceholder": "Drag and drop files or click to upload",
-    "handleType": {
-      "file-share": "File Share",
-      "file-image-compress": "Image Compress"
+    "navbar": {
+        "file": "File",
+        "text": "Text"
+    },
+    "i18n": {
+        "switchLocale": "Switch Language"
+    },
+    "seo": {
+        "desc": "015 is a temporary file sharing platform project, supporting temporary large file slicing upload, temporary text upload, download and share"
+    },
+    "btn": {
+        "submit": "Submit",
+        "backToHome": "Back to Home"
+    },
+    "file": {
+        "uploadFile": "Upload File",
+        "uploadFilePlaceholder": "Drag and drop files or click to upload",
+        "handleType": {
+            "file-share": "File Share",
+            "file-image-compress": "Image Compress"
+        }
+    },
+    "text": {
+        "uploadText": "Upload Text",
+        "uploadTextPlaceholder": "Share, translate, summarize, generate images, and ask large models with our text processor",
+        "handleType": {
+            "text-share": "Text Share"
+        }
+    },
+    "pickup": {
+        "title": "Enter Pickup Code",
+        "codeError": "Invalid pickup code",
+        "btn": "Pickup"
+    },
+    "about": {
+        "file": "File",
+        "task": "Task",
+        "admin": "Admin",
+        "author": "Author",
+        "title": "About",
+        "systemInfo": "System Info",
+        "systemVersion": "System Version",
+        "storage": "Storage",
+        "analysis": "Analysis",
+        "fileSize": "File Size",
+        "fileNum": "File Num",
+        "processed": "Processed",
+        "failed": "Failed"
     }
-  },
-  "text": {
-    "uploadText": "Upload Text",
-    "uploadTextPlaceholder": "Share, translate, summarize, generate images, and ask large models with our text processor",
-    "handleType": {
-      "text-share": "Text Share"
-    }
-  },
-  "about": {
-    "file": "File",
-    "task": "Task",
-    "admin": "Admin",
-    "author": "Author",
-    "title": "About",
-    "systemInfo": "System Info",
-    "systemVersion": "System Version",
-    "storage": "Storage",
-    "analysis": "Analysis",
-    "fileSize": "File Size",
-    "fileNum": "File Num",
-    "processed": "Processed",
-    "failed": "Failed"
-  }
 }
