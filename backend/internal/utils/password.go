@@ -8,7 +8,7 @@ import (
 )
 
 func GeneratePasswordHash(password string) (string, error) {
-	salt := GetEnv("password.salt")
+	salt := GetEnv("share.password_salt")
 	if salt == "" {
 		return "", errors.New("请配置PASSWORD_SALT")
 	}
