@@ -3,6 +3,7 @@ import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
+import BubbleMenuView from './BubbleMenu/BubbleMenuView.vue'
 import { cx } from 'class-variance-authority'
 
 const props = defineProps<{
@@ -57,4 +58,5 @@ onUnmounted(() => {
         "
     >
     </editor-content>
+    <BubbleMenuView :editor="editor as any" />
 </template>
