@@ -84,6 +84,16 @@
             "3days": "3天"
         }
     },
+    "fileshareresult": {
+        "title": "上传成功",
+        "fileList": "文件列表",
+        "info": "信息",
+        "downloadNums": "下载次数",
+        "expireTime": "过期时间",
+        "pickupCode": "提取码",
+        "link": "链接",
+        "copySuccess": "复制成功"
+    },
     "about": {
         "file": "文件",
         "task": "任务",

@@ -84,6 +84,16 @@
             "3days": "3 days"
         }
     },
+    "fileshareresult": {
+        "title": "Upload Successful",
+        "fileList": "File List",
+        "info": "Info",
+        "downloadNums": "Download Count",
+        "expireTime": "Expire Time",
+        "pickupCode": "Pickup Code",
+        "link": "Link",
+        "copySuccess": "Copy Success"
+    },
     "about": {
         "file": "File",
         "task": "Task",

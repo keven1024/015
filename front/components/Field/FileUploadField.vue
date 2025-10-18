@@ -39,7 +39,7 @@ const { t } = useI18n()
                             <Button
                                 class="size-5 p-0 bg-red-500/20 hover:bg-red-500/60 text-red-500 hover:text-white"
                                 @click="
-                                    (e) => {
+                                    (e: any) => {
                                         e.stopPropagation()
                                         setValue(
                                             value?.filter((r) => r?.name !== item?.name || r?.type !== item?.type || r?.size !== item?.size) || []
