@@ -9,6 +9,7 @@ import InputField from '@/components/Field/InputField.vue'
 import FormButton from '@/components/Field/FormButton.vue'
 import SelectField from '@/components/Field/SelectField.vue'
 import SwitchField from '@/components/Field/SwitchField.vue'
+import dayjs from 'dayjs'
 
 const { NODE_ENV } = process.env || {}
 const isDev = NODE_ENV === 'development'
@@ -72,6 +73,7 @@ if (!isDev) {
                 </FormButton>
             </div>
         </VeeForm>
+        <div>测试dayjs语言包渲染:{{ dayjs().add(1, 'day').fromNow() }}</div>
     </div>
 </template>
 <style scoped></style>
