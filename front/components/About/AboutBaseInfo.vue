@@ -118,7 +118,7 @@ const genUserAvatar = (email: string) => {
                         <span class="font-semibold">{{ t('about.about') }}</span>
                     </AccordionTrigger>
                     <AccordionContent>
-                        <MarkdownRender :markdown="renderI18n(data?.content ?? {}, 'en', locale) ?? ''" />
+                        <MarkdownRender class="max-w-full" :markdown="renderI18n(data?.content ?? {}, 'en', locale) ?? ''" />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
