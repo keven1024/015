@@ -45,3 +45,8 @@ func SetRedisStat(key string, stat StatData) error {
 	_, err = rdb.HSet(ctx, "015:stat", key, string(jsonData)).Result()
 	return err
 }
+
+func GetRedisStatAll() (map[string]string, error) {
+	rdb, ctx := utils.GetRedisClient()
+	return rdb.HGetAll(ctx, "015:stat").Result()
+}

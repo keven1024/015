@@ -4,7 +4,6 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils"
 	"encoding/json"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,10 +14,11 @@ const (
 	QueueHistoryDays = 30
 )
 
-type FileChartData struct {
-	FileSize int64  `json:"file_size"`
-	FileNum  int64  `json:"file_num"`
-	Date     string `json:"date"`
+type StatChartData struct {
+	FileSize    int64 `json:"file_size"`
+	FileNum     int64 `json:"file_num"`
+	ShareNum    int64 `json:"share_num"`
+	DownloadNum int64 `json:"download_num"`
 }
 
 type QueueChartData struct {
@@ -27,39 +27,23 @@ type QueueChartData struct {
 }
 
 func GetStat(c echo.Context) error {
-	fileInfoMap, err := models.GetRedisFileInfoAll()
+	statInfoMap, err := models.GetRedisStatAll()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	now := time.Now()
-	cutoffTime := now.Add(-DaysToAnalyze * 24 * time.Hour)
-
-	fileChartData := make(map[string]FileChartData)
-	for _, value := range fileInfoMap {
-		var fileInfo models.RedisFileInfo
-		err := json.Unmarshal([]byte(value), &fileInfo)
+	statChartData := make(map[string]StatChartData)
+	for key, value := range statInfoMap {
+		var statData models.StatData
+		err := json.Unmarshal([]byte(value), &statData)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		if fileInfo.FileType != models.FileTypeUpload {
-			continue
-		}
-
-		createdAt := time.Unix(fileInfo.CreatedAt, 0)
-		if createdAt.After(cutoffTime) {
-			dateKey := createdAt.Format(DateLayout)
-			if data, ok := fileChartData[dateKey]; ok {
-				fileChartData[dateKey] = FileChartData{
-					FileSize: data.FileSize + fileInfo.FileSize,
-					FileNum:  data.FileNum + 1,
-				}
-			} else {
-				fileChartData[dateKey] = FileChartData{
-					FileSize: fileInfo.FileSize,
-					FileNum:  1,
-				}
-			}
+		statChartData[key] = StatChartData{
+			FileSize:    statData.FileSize,
+			FileNum:     statData.FileNum,
+			ShareNum:    statData.ShareNum,
+			DownloadNum: statData.DownloadNum,
 		}
 	}
 
@@ -83,7 +67,7 @@ func GetStat(c echo.Context) error {
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"chart": map[string]any{
-			"storage": fileChartData,
+			"storage": statChartData,
 			"queue":   queuesChartData,
 		},
 	})
