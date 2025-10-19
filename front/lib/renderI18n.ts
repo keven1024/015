@@ -1,10 +1,7 @@
-import { useI18n } from 'vue-i18n'
-
 const renderI18n = (json: Record<string, string>, defaultKey: string, locale?: string) => {
-    const { locale: _locale } = useI18n()
     if (!json) return ''
     if (!locale) {
-        locale = _locale.value
+        return json?.[defaultKey]
     }
     if (!json?.[locale]) {
         const [baseLocaleKey, subLocaleKey] = locale?.split('-') || []

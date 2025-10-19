@@ -8,6 +8,7 @@ import Progress from '~/components/ui/progress/Progress.vue'
 import renderI18n from '~/lib/renderI18n'
 import { I18nT } from 'vue-i18n'
 
+const { locale } = useI18n()
 const appConfig = useMyAppConfig()
 const { data, isLoading } = useQuery({
     queryKey: ['about'],
@@ -48,7 +49,7 @@ const genUserAvatar = (email: string) => {
     <template v-else>
         <NuxtImg v-if="data?.bg_url" :src="data?.bg_url" class="aspect-[3/1] w-full rounded-xl" fit="cover" />
         <div class="flex flex-col gap-2 items-center">
-            <div class="text-xl">{{ renderI18n(appConfig?.site_title ?? {}, 'en') }}</div>
+            <div class="text-xl">{{ renderI18n(appConfig?.site_title ?? {}, 'en', locale) }}</div>
             <div class="text-sm opacity-75 text-center px-5">
                 <I18nT keypath="about.powerBy" tag="span">
                     <NuxtLink href="https://github.com/keven1024/015" target="_blank" class="text-primary hover:underline">015</NuxtLink>

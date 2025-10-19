@@ -1,14 +1,16 @@
 import getApiBaseUrl from '~/lib/getApiBaseUrl'
+import renderI18n from '~/lib/renderI18n'
 
 type UseSeoProps = {
     head?: Record<string, any>
     seo?: Record<string, any>
+    locale?: string
 }
 const useSeo = async (props: UseSeoProps = {}) => {
-    const { head, seo } = props || {}
+    const { head, seo, locale } = props || {}
     const seoMeta = ref<{
-        site_title: string
-        site_desc: string
+        site_title: Record<string, string>
+        site_desc: Record<string, string>
         site_url: string
         site_icon: string
         site_bg_url: string
@@ -20,6 +22,8 @@ const useSeo = async (props: UseSeoProps = {}) => {
                 seoMeta.value = data
             })
         const { title } = head || {}
+        const siteTitle = computed(() => renderI18n(seoMeta?.value?.site_title || {}, 'en', locale))
+        const siteDesc = computed(() => renderI18n(seoMeta?.value?.site_desc || {}, 'en', locale))
         useHead({
             link: [
                 { rel: 'icon', href: seoMeta.value?.site_icon || '/logo.png', sizes: 'any' },
@@ -31,14 +35,14 @@ const useSeo = async (props: UseSeoProps = {}) => {
                 { name: 'theme-color', content: '#395276' },
             ],
             ...head,
-            title: title ? `${title} - ${seoMeta?.value?.site_title}` : seoMeta?.value?.site_title,
+            title: title ? `${title} - ${siteTitle.value}` : siteTitle.value,
         })
         useSeoMeta({
             ...seo,
-            title: seoMeta?.value?.site_title,
-            description: seoMeta?.value?.site_desc,
-            ogTitle: seoMeta?.value?.site_title,
-            ogDescription: seoMeta?.value?.site_desc,
+            title: siteTitle.value,
+            description: siteDesc.value,
+            ogTitle: siteTitle.value,
+            ogDescription: siteDesc.value,
             ogImage: {
                 url: `${seoMeta?.value?.site_url}${seoMeta?.value?.site_icon || '/logo.png'}`,
                 width: 1024,
