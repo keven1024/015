@@ -107,10 +107,13 @@
     "about": {
         "powerBy": "由 {0} 驱动的开源自托管临时文件分享平台",
         "file": "文件",
+        "share": "分享",
+        "download": "下载",
         "task": "任务",
         "admin": "本站管理员",
         "author": "作者",
         "title": "关于",
+        "about": "关于",
         "systemInfo": "系统信息",
         "systemVersion": "系统版本",
         "storage": "已托管的文件",

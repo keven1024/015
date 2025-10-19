@@ -107,10 +107,13 @@
     "about": {
         "powerBy": "Power by {0} as a open source temporary file sharing platform",
         "file": "File",
+        "share": "Share",
+        "download": "Download",
         "task": "Task",
         "admin": "Site Admin",
         "author": "Author",
         "title": "About",
+        "about": "About",
         "systemInfo": "System Info",
         "systemVersion": "System Version",
         "storage": "Storage",

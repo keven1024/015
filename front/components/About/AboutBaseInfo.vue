@@ -24,6 +24,7 @@ const { data, isLoading } = useQuery({
                 name?: string
                 email?: string
                 url?: string
+                content?: Record<string, string>
             }
         }>('/api/about')
         return data?.data
@@ -65,7 +66,7 @@ const genUserAvatar = (email: string) => {
         </div>
     </template>
     <template v-else>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div class="rounded-xl bg-white/50 flex-1 flex flex-col p-3 gap-2">
                 <div class="opacity-75 text-xs">{{ t('about.admin') }}</div>
                 <div
@@ -104,6 +105,23 @@ const genUserAvatar = (email: string) => {
                 </div>
                 <Progress class="h-1" :model-value="((data?.file?.current ?? 0) / (data?.file?.maximun ?? 0)) * 100" />
             </div>
+        </div>
+    </template>
+    <template v-if="isLoading">
+        <Skeleton class="w-full h-16 rounded-xl" />
+    </template>
+    <template v-else>
+        <div v-if="data?.content" class="rounded-xl bg-white/50 flex flex-col px-3 gap-2">
+            <Accordion type="single" collapsible>
+                <AccordionItem value="about">
+                    <AccordionTrigger>
+                        <span class="font-semibold">{{ t('about.about') }}</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <MarkdownRender :markdown="renderI18n(data?.content ?? {}, 'en', locale) ?? ''" />
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </div>
     </template>
 </template>
