@@ -72,6 +72,9 @@ func GetStat(c echo.Context) error {
 	queuesChartData := make(map[string]QueueChartData)
 	for _, item := range queues {
 		dateKey := item.Date.Format(DateLayout)
+		if item.Processed == 0 && item.Failed == 0 {
+			continue
+		}
 		queuesChartData[dateKey] = QueueChartData{
 			Processed: item.Processed,
 			Failed:    item.Failed,
