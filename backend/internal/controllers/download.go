@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/cast"
 )
 
 type DownloadShareClaims struct {
@@ -88,10 +89,11 @@ func VaildateShare(c echo.Context) error {
 	if shareInfo.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, errors.New("下载次数不足"))
 	}
+	downloadWindow := utils.GetEnvWithDefault("share.download_window", "12")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
 		ShareId: r.ShareId,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cast.ToDuration(downloadWindow + "h"))),
 		},
 	})
 
@@ -121,6 +123,21 @@ func VaildateShare(c echo.Context) error {
 	models.SetRedisShareInfo(r.ShareId, models.RedisShareInfo{
 		ViewNum: latestViewNum,
 	})
+
+	// 统计分享数
+	currentDate := time.Now().Format("2006-01-02")
+	statData, _ := models.GetRedisStat(currentDate)
+	if statData == nil {
+		statData = &models.StatData{
+			FileSize:    0,
+			FileNum:     0,
+			ShareNum:    0,
+			DownloadNum: 0,
+		}
+	}
+	statData.DownloadNum += 1
+	models.SetRedisStat(currentDate, *statData)
+
 	if shareInfo.Type == models.ShareTypeFile {
 		return utils.HTTPSuccessHandler(c, map[string]any{
 			"token": downloadToken,

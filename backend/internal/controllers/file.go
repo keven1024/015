@@ -222,6 +222,20 @@ func FinishUploadTask(c echo.Context) error {
 	models.SetRedisFileInfo(r.FileId, models.RedisFileInfo{
 		FileType: models.FileTypeUpload,
 	})
+	// 统计
+	currentDate := time.Now().Format("2006-01-02")
+	statData, _ := models.GetRedisStat(currentDate)
+	if statData == nil {
+		statData = &models.StatData{
+			FileSize:    0,
+			FileNum:     0,
+			ShareNum:    0,
+			DownloadNum: 0,
+		}
+	}
+	statData.FileSize += fileInfo.FileSize
+	statData.FileNum += 1
+	models.SetRedisStat(currentDate, *statData)
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"size":      fileInfo.FileSize,

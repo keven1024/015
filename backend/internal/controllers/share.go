@@ -12,6 +12,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/spf13/cast"
 )
 
 type CreateShareProps struct {
@@ -111,11 +112,28 @@ func CreateShareInfo(c echo.Context) error {
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		_, err = client.Enqueue(asynq.NewTask("share:remove", json), asynq.ProcessIn(time.Duration(r.Config.ExpireAt)*time.Minute))
+		// 这里延时分享过期时间基础上加下载窗口期后1小时删除，防止用户过期前几分钟才开始下载，下载一半文件不见了
+		downloadWindow := utils.GetEnvWithDefault("share.download_window", "12")
+		deleteTime := time.Duration(r.Config.ExpireAt)*time.Minute + cast.ToDuration(downloadWindow+"h") + 1*time.Hour
+		_, err = client.Enqueue(asynq.NewTask("share:remove", json), asynq.ProcessIn(deleteTime))
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
 	}
+
+	// 统计分享数
+	currentDate := time.Now().Format("2006-01-02")
+	statData, _ := models.GetRedisStat(currentDate)
+	if statData == nil {
+		statData = &models.StatData{
+			FileSize:    0,
+			FileNum:     0,
+			ShareNum:    0,
+			DownloadNum: 0,
+		}
+	}
+	statData.ShareNum += 1
+	models.SetRedisStat(currentDate, *statData)
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            id,
