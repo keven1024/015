@@ -48,7 +48,7 @@ const genUserAvatar = (email: string) => {
         </div>
     </template>
     <template v-else>
-        <NuxtImg v-if="data?.bg_url" :src="data?.bg_url" class="aspect-[3/1] w-full rounded-xl" fit="cover" />
+        <NuxtImg v-if="data?.bg_url" :src="data?.bg_url" class="aspect-[3/1] w-full rounded-xl object-cover" />
         <div class="flex flex-col gap-2 items-center">
             <div class="text-xl">{{ renderI18n(appConfig?.site_title ?? {}, 'en', locale) }}</div>
             <div class="text-sm opacity-75 text-center px-5">

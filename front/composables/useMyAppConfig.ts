@@ -6,6 +6,8 @@ const useMyAppConfig = () => {
             site_url: string
             site_icon: string
             site_bg_url: string
+            version: string
+            build_time: number
         }
     }>('/api/config')
     return computed(() => data?.value?.data)
