@@ -1,0 +1,55 @@
+share:
+    # (必填)你的下载secret，每一次下载次数减1的时候都会根据这里的secret生成一个下载jwt token， 有效期一小时，使用该下载token有效期内可以多线程下载该文件而不会被多次扣除次数
+    download_secret: your-secret-token
+    # 颁发的下载token的窗口期，默认12小时，文件过期后自动从服务器删除时间为此时间基础上加1小时，默认为12+1=13小时
+    download_window: 12
+    # (必填)设置密码时会把密码加盐
+    password_salt: your-passwall-salt
+
+upload:
+    # 上传文件保存路径
+    path: /upload
+    # 指定实例最大上传容量，支持填写人类可读的值，比如1TiB，500GiB等，注意填写GiB而不是GB, Gib按1024字节计算，Gb按1000字节计算
+    maximum: 100GiB
+
+redis:
+    # (必填)redis 地址
+    url: redis://redis:6379/0
+
+# 站点基本信息
+site:
+    # 必填，对应你的公网域名
+    url: http://localhost:5000
+    title:
+        'en': '015'
+    desc:
+        'en': '015 is an open-source temporary file sharing platform project that supports uploading, downloading, and sharing files and text.'
+    icon: '/logo.png'
+    bg_url: 'https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302'
+
+# 关于页面的
+about:
+    # hero图片 推荐3:1 比例
+    bg_url: 'https://files.mastodon.social/site_uploads/files/000/000/001/@1x/57c12f441d083cde.png'
+    # 关于信息，markdown格式
+    content:
+        'zh': |
+            ### markdown测试文案
+
+            这里有一个图片示例：
+
+            ![示例图片](https://cdn.ani.work/site_uploads/files/000/000/005/@1x/d68677a8b7a8d296.png)
+
+            这里有一个[示例链接](https://fudaoyuan.icu)
+        'en': |
+            ### Markdown Test Content
+
+            Here is an image example:
+
+            ![Sample Image](https://cdn.ani.work/site_uploads/files/000/000/005/@1x/d68677a8b7a8d296.png)
+
+            Here is a [sample link](https://fudaoyuan.icu)
+    email: keven@fudaoyuan.icu
+    name: keven
+    url: 'https://fudaoyuan.icu'
+    avatar: ''
