@@ -4,6 +4,7 @@ import (
 	"backend/internal/controllers"
 	"backend/internal/utils"
 	"backend/middleware"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -12,7 +13,7 @@ import (
 func main() {
 	// 日志
 	var logger *zap.Logger
-	if utils.GetEnvWithDefault("NODE_ENV", "production") == "production" {
+	if utils.GetEnvWithDefault("node.env", "production") == "production" {
 		logger, _ = zap.NewProduction()
 	} else {
 		logger, _ = zap.NewDevelopment()
@@ -40,5 +41,5 @@ func main() {
 	e.GET("/image/compress/:id", controllers.GetCompressImage)
 
 	e.GET("/stat", controllers.GetStat)
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", utils.GetEnvWithDefault("api.port", "5001"))))
 }

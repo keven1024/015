@@ -39,7 +39,7 @@ func GetUploadDirPath() (string, error) {
 		return "", err
 	}
 	finalPath := filepath.Join(basepath, "uploads")
-	uploadPath := GetEnvWithDefault("UPLOAD_PATH", finalPath)
+	uploadPath := GetEnvWithDefault("upload.path", finalPath)
 	if err := os.MkdirAll(uploadPath, 0755); err != nil {
 		return "", err
 	}

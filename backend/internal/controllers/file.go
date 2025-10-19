@@ -40,7 +40,7 @@ func CreateUploadTask(c echo.Context) error {
 			"chunk_size": fileInfo.ChunkSize,
 		})
 	}
-	maxStorageSize, err := utils.GetFileSize(utils.GetEnv("MAX_LOCALSTORAGE_SIZE"))
+	maxStorageSize, err := utils.GetFileSize(utils.GetEnv("upload.maximum"))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

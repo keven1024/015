@@ -23,8 +23,8 @@ func main() {
 	zap.ReplaceGlobals(logger)
 
 	srv := asynq.NewServer(
-		utils.RedisURI2AsynqOpt(utils.GetEnv("REDIS_URL")),
-		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("WORKER_CONCURRENCY", "4"))},
+		utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")),
+		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
 	)
 
 	mux := asynq.NewServeMux()

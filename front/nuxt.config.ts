@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
+import getApiBaseUrl from './lib/getApiBaseUrl'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: '2024-04-03',
@@ -35,7 +36,7 @@ export default defineNuxtConfig({
     nitro: {
         routeRules: {
             '/api/**': {
-                proxy: process.env.API_BASE_URL || 'http://127.0.0.1:1323/**',
+                proxy: `${getApiBaseUrl()}/**`,
             },
         },
     },

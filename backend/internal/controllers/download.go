@@ -25,7 +25,7 @@ func DownloadShare(c echo.Context) error {
 	}
 	claims := DownloadShareClaims{}
 	t, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(utils.GetEnv("download_secret")), nil
+		return []byte(utils.GetEnv("share.download_secret")), nil
 	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
@@ -96,7 +96,7 @@ func VaildateShare(c echo.Context) error {
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	downloadToken, err := token.SignedString([]byte(utils.GetEnv("download_secret")))
+	downloadToken, err := token.SignedString([]byte(utils.GetEnv("share.download_secret")))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
