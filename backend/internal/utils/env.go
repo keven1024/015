@@ -23,12 +23,14 @@ func InitEnv() {
 	v.AddConfigPath(".")
 	v.AddConfigPath("../")
 	v.AutomaticEnv()
+	v.WatchConfig()
 	err := v.ReadInConfig()
 	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			// 只有当错误不是"配置文件未找到"时才 panic
-			panic(err)
-		}
+		panic(err)
+		// if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+		// 	// 只有当错误不是"配置文件未找到"时才 panic
+		// 	panic(err)
+		// }
 	}
 }
 
