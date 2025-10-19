@@ -105,6 +105,7 @@
         "copySuccess": "Copy Success"
     },
     "about": {
+        "powerBy": "Power by {0} as a open source temporary file sharing platform",
         "file": "File",
         "task": "Task",
         "admin": "Admin",

@@ -105,6 +105,7 @@
         "copySuccess": "复制成功"
     },
     "about": {
+        "powerBy": "由 {0} 驱动的开源自托管临时文件分享平台",
         "file": "文件",
         "task": "任务",
         "admin": "站长",
