@@ -44,3 +44,8 @@ func GetEnvWithDefault(key string, defaultValue string) string {
 	}
 	return value
 }
+
+func GetEnvMapString(key string) map[string]string {
+	InitEnv()
+	return v.GetStringMapString(key)
+}
