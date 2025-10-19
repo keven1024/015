@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"backend/internal/utils"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/cast"
 )
 
 func GetConfig(c echo.Context) error {
@@ -13,5 +15,7 @@ func GetConfig(c echo.Context) error {
 		"site_url":    utils.GetEnv("site.url"),
 		"site_icon":   utils.GetEnvWithDefault("site.icon", "/logo.png"),
 		"site_bg_url": utils.GetEnvWithDefault("site.bg_url", "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302"),
+		"version":     utils.GetEnvWithDefault("VERSION", "dev"),
+		"build_time":  cast.ToInt(utils.GetEnvWithDefault("BUILD_TIME", cast.ToString(time.Now().Unix()))),
 	})
 }

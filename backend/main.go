@@ -41,5 +41,7 @@ func main() {
 	e.GET("/image/compress/:id", controllers.GetCompressImage)
 
 	e.GET("/stat", controllers.GetStat)
+	e.GET("/config", controllers.GetConfig)
+	e.GET("/about", controllers.GetAbout)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", utils.GetEnvWithDefault("api.port", "5001"))))
 }
