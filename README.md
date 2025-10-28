@@ -41,23 +41,17 @@ English | [中文](README-zh.md)
 
 ## 📸 Screenshots
 
-File selection upload page
-![](/.github/image/1.png)
+| File Selection Upload Page                                   | Text Input Upload Page                                          |
+|---------------------------------------|-----------------------------------------------|
+| ![](/.github/image/1.png) | ![](/.github/image/2.png) |
 
-Text input upload page
-![](/.github/image/2.png)
+| Multiple File Upload                                           | Upload Progress Heatmap                                              |
+|------------------------------------------------|---------------------------------------------------|
+| ![](/.github/image/3.png) | ![](/.github/image/4.png) |
 
-File selection upload page - supports multiple file uploads
-![](/.github/image/3.png)
-
-File uploading page - similar to GitHub's file heatmap showing upload progress
-![](/.github/image/4.png)
-
-File uploading page - similar to qBittorrent's progress bar showing file upload progress
-![](/.github/image/5.png)
-
-File upload success page
-![](/.github/image/6.png)
+| Upload Progress Bar                                           | Upload Success Page                                           |
+|------------------------------------------------|-------------------------------------------------|
+| ![](/.github/image/5.png) | ![](/.github/image/6.png) |
 
 ## 🏗️ Technical Architecture
 
