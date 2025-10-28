@@ -42,8 +42,6 @@ COPY 015.sh /app/015.sh
 
 # Change the port and host
 ENV PORT=80 HOST=0.0.0.0
-ENV SITE_URL="http://localhost"
-ENV UPLOAD_PATH="/uploads"
 ENV VERSION=${VERSION}
 ENV BUILD_TIME=${BUILD_TIME}
 
