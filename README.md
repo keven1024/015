@@ -98,51 +98,17 @@ File upload success page
 
 ## 🚀 Quick Start
 
-### Requirements
+### Docker
 
-- Node.js 18+
-- Go 1.23+
-- Redis 6+
-- pnpm 9+
+1. Download files
+   - config.example.yaml
+   - docker-compose.yml
 
-### Install Dependencies
+2. Rename config.example.yaml to config.yaml after configuration
 
+3. Start
 ```bash
-# Install root dependencies
-pnpm install
-
-# Install frontend dependencies
-cd front && pnpm install
-
-# Install backend dependencies
-cd backend && go mod download
-
-# Install Worker dependencies
-cd worker && go mod download
-```
-
-### Environment Configuration
-
-```bash
-# Copy environment variables file
-cp .env.example .env
-
-# Configure necessary environment variables
-REDIS_URL=redis://localhost:6379
-UPLOAD_PATH=/.github/uploads
-download_secret=your_download_secret
-```
-
-### Start Services
-
-```bash
-# Start all services in development mode
-pnpm run dev
-
-# Or start separately
-pnpm run dev:front    # Frontend service (port 5000)
-pnpm run dev:backend  # Backend service (port 1323)
-pnpm run dev:worker   # Worker service
+docker compose up -d
 ```
 
 ## 📁 Project Structure

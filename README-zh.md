@@ -59,6 +59,23 @@
 文件上传成功页面
 ![](/.github/image/6.png)
 
+## 🚀 快速开始
+
+### Docker
+
+1. 下载文件
+    - config.example.yaml
+    - docker-compose.yml
+
+2. 把config.example.yaml配置完成后改为config.yaml
+
+
+3. 启动
+```bash
+docker compose up -d
+```
+
+
 ## 🏗️ 技术架构
 
 ### 前端技术栈
@@ -95,55 +112,6 @@
 - **文件存储** - 本地文件系统存储
 - **Redis 缓存** - 分享信息、文件元数据缓存
 - **队列系统** - 异步任务处理队列
-
-## 🚀 快速开始
-
-### 环境要求
-
-- Node.js 18+
-- Go 1.23+
-- Redis 6+
-- pnpm 9+
-
-### 安装依赖
-
-```bash
-# 安装根目录依赖
-pnpm install
-
-# 安装前端依赖
-cd front && pnpm install
-
-# 安装后端依赖
-cd backend && go mod download
-
-# 安装 Worker 依赖
-cd worker && go mod download
-```
-
-### 环境配置
-
-```bash
-# 复制环境变量文件
-cp .env.example .env
-
-# 配置必要的环境变量
-REDIS_URL=redis://localhost:6379
-UPLOAD_PATH=/.github/uploads
-download_secret=your_download_secret
-```
-
-### 启动服务
-
-```bash
-# 开发模式启动所有服务
-pnpm run dev
-
-# 或分别启动
-pnpm run dev:front    # 前端服务 (端口 5000)
-pnpm run dev:backend  # 后端服务 (端口 1323)
-pnpm run dev:worker   # Worker 服务
-```
 
 ## 📁 项目结构
 
