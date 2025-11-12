@@ -14,7 +14,7 @@ const renderHtml = computed(() => {
     <div
         :class="
             cx(
-                'prose prose-sm [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20',
+                'prose prose-sm [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 break-all',
                 props?.class
             )
         "
