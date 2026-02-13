@@ -40,7 +40,7 @@
         "js-md5": "^0.8.3",
         "lodash-es": "^4.17.23",
         "lucide-vue-next": "^0.542.0",
-        "markdown-it": "^14.1.0",
+        "markdown-it": "^14.1.1",
         "motion-v": "^1.10.2",
         "nanoid": "^5.1.6",
         "nuxt": "4.2.2",
