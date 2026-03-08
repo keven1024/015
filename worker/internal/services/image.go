@@ -48,7 +48,14 @@ func ConvertImageWithMagick(filePath, mimeType, targetExt string) (string, error
 
 	outputPath := filePath + "_converted." + targetExt
 
-	_, err := utils.RunCommand("magick", filePath, outputPath)
+	// JPG 不支持透明通道，透明 PNG 转 JPG 前需压平到背景色（白底），否则透明处会变黑
+	args := []string{filePath}
+	if lo.Contains([]string{"jpg", "jpeg"}, targetExt) {
+		args = append(args, "-background", "white", "-flatten")
+	}
+	args = append(args, outputPath)
+
+	_, err := utils.RunCommand("convert", args...)
 	if err != nil {
 		return "", err
 	}
