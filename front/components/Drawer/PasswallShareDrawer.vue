@@ -4,6 +4,7 @@ import FormButton from '@/components/Field/FormButton.vue'
 import InputField from '@/components/Field/InputField.vue'
 import type { FormContext, GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
+const { t } = useI18n()
 const props = defineProps<{
     share_id: string
     hide: any
@@ -15,14 +16,14 @@ const handleSubmit = async (form: FormContext<GenericObject, GenericObject>) => 
         const password = form.values.password
         const token = await getShareToken(props.share_id, { password })
         if (!token) {
-            toast.error('密码错误')
+            toast.error(t('page.shareView.passwall.passwordError'))
             form.resetForm()
             return
         }
         props?.hide(token)
         return
     } catch (error) {
-        toast.error('密码错误')
+        toast.error(t('page.shareView.passwall.passwordError'))
         form.resetForm()
     }
 }
@@ -31,9 +32,9 @@ const handleSubmit = async (form: FormContext<GenericObject, GenericObject>) => 
 <template>
     <VeeForm>
         <div class="flex flex-col gap-5">
-            <div class="text-xl font-bold">输入密码</div>
-            <InputField name="password" type="password" rules="required" placeholder="请输入密码" />
-            <FormButton @click="handleSubmit">提交</FormButton>
+            <div class="text-xl font-bold">{{ t('page.shareView.passwall.title') }}</div>
+            <InputField name="password" type="password" rules="required" :placeholder="t('page.shareView.passwall.passwordPlaceholder')" />
+            <FormButton @click="handleSubmit">{{ t('btn.submit') }}</FormButton>
         </div>
     </VeeForm>
 </template>

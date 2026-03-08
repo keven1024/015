@@ -12,6 +12,7 @@ import PasswallShareDrawer from '~/components/Drawer/PasswallShareDrawer.vue'
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
+const { t } = useI18n()
 const props = defineProps<{
     data: any
 }>()
@@ -31,7 +32,7 @@ const handleDownload = async () => {
             token = await getShareToken(id)
         }
         if (!token) {
-            throw new Error('获取token失败')
+            throw new Error(t('page.shareView.fileShare.getTokenFailed'))
         }
         downloadFile(token)
     } catch (error: any) {
@@ -53,19 +54,19 @@ onMounted(() => {
 
 const fileShareInfo = computed(() => {
     return [
-        { label: '需要密码', value: props?.data?.has_password ?? false },
+        { label: t('page.shareView.fileShare.needPassword'), value: props?.data?.has_password ?? false },
         {
-            label: '过期时间',
-            value: dayjs.duration(remaining.value, 'seconds').format(`D天 HH:mm:ss`),
+            label: t('page.shareView.fileShare.expireTime'),
+            value: dayjs.duration(remaining.value, 'seconds').format(t('page.shareView.fileShare.durationFormat')),
         },
-        { label: '剩余下载次数', value: props?.data?.download_nums ?? 0 },
+        { label: t('page.shareView.fileShare.remainingDownloads'), value: props?.data?.download_nums ?? 0 },
     ]
 })
 </script>
 
 <template>
     <div class="flex flex-col gap-5 items-center">
-        <h1 class="text-xl font-bold">下载文件</h1>
+        <h1 class="text-xl font-bold">{{ t('page.shareView.fileShare.title') }}</h1>
         <FilePreviewView :value="props?.data" />
         <div class="flex flex-col gap-2 md:flex-row w-full">
             <div class="flex flex-row md:flex-col md:gap-1 justify-between items-center md:flex-1" v-for="item in fileShareInfo">
@@ -75,7 +76,7 @@ const fileShareInfo = computed(() => {
             </div>
         </div>
         <div class="w-full">
-            <AsyncButton @click="handleDownload" class="w-full">下载</AsyncButton>
+            <AsyncButton @click="handleDownload" class="w-full">{{ t('page.shareView.fileShare.downloadBtn') }}</AsyncButton>
         </div>
     </div>
 </template>
