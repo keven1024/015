@@ -5,7 +5,6 @@ import (
 
 	"pkg/utils"
 
-	"dario.cat/mergo"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -33,15 +32,21 @@ func GetRedisStat(key string) (*StatData, error) {
 	return &stat, nil
 }
 
-func SetRedisStat(key string, stat StatData) error {
+func SetRedisStat(key string, handler func(stat *StatData) *StatData) error {
 	rdb, ctx := utils.GetRedisClient()
 	old_stat, err := GetRedisStat(key)
 	if err != nil {
 		return err
 	}
-	if old_stat != nil {
-		mergo.Merge(&stat, old_stat)
+	if old_stat == nil {
+		old_stat = &StatData{
+			FileSize:    0,
+			FileNum:     0,
+			ShareNum:    0,
+			DownloadNum: 0,
+		}
 	}
+	stat := handler(old_stat)
 	jsonData, _ := json.Marshal(stat)
 	_, err = rdb.HSet(ctx, "015:stat", key, string(jsonData)).Result()
 	return err

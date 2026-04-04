@@ -241,18 +241,11 @@ func FinishUploadTask(c *echo.Context) error {
 	}
 	// 统计
 	currentDate := time.Now().Format("2006-01-02")
-	statData, _ := models.GetRedisStat(currentDate)
-	if statData == nil {
-		statData = &models.StatData{
-			FileSize:    0,
-			FileNum:     0,
-			ShareNum:    0,
-			DownloadNum: 0,
-		}
-	}
-	statData.FileSize += fileInfo.FileSize
-	statData.FileNum += 1
-	err = models.SetRedisStat(currentDate, *statData)
+	err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+		stat.FileSize += fileInfo.FileSize
+		stat.FileNum += 1
+		return stat
+	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
