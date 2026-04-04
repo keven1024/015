@@ -1,23 +1,11 @@
 <script setup lang="ts">
-import {
-    LucideShare,
-    LucideImage,
-    LucideBot,
-    LucideLanguages,
-    LucideFileText,
-    LucideImageMinus,
-    LucideArrowRightLeft,
-    LucideImagePlus,
-    LucideAudioLines,
-    LucideListMusic,
-} from 'lucide-vue-next'
 import { cx } from 'class-variance-authority'
-import { isObject } from 'lodash-es'
 import showDrawer from '@/lib/showDrawer'
 import FileShareHandle from '@/components/Preprocessing/FileShareHandle.vue'
 import ImageConvertHandle from '@/components/Preprocessing/ImageConvertHandle.vue'
+import { useFeatureMeta, type FeatureKey } from '@/composables/useFeatureMeta'
 import type { FileShareHandleProps } from '../Preprocessing/types'
-const { t } = useI18n()
+
 const props = defineProps<{
     hide: () => void
     file: File[]
@@ -25,43 +13,25 @@ const props = defineProps<{
 }>()
 
 const isImage = computed(() => props.file.every((r) => r?.type?.startsWith('image/')))
-const isVideo = computed(() => props.file.every((r) => r?.type?.startsWith('video/')))
-const isAudio = computed(() => props.file.every((r) => r?.type?.startsWith('audio/')))
-const isMedia = computed(() => isImage.value || isVideo.value || isAudio.value)
 
-const isPDF = computed(() => props.file.every((r) => r?.type?.startsWith('application/pdf')))
-const isDOC = computed(() => props.file.every((r) => r?.type?.startsWith('application/msword')))
-const isXLS = computed(() => props.file.every((r) => r?.type?.startsWith('application/vnd.ms-excel')))
-const isPPT = computed(() => props.file.every((r) => r?.type?.startsWith('application/vnd.ms-powerpoint')))
-const isDocument = computed(() => isPDF.value || isDOC.value || isXLS.value || isPPT.value)
-const actions = [
-    {
-        label: t('page.upload.file.handleType.file-share'),
-        icon: LucideShare,
-        className: 'bg-green-300',
-        onClick: () => {
-            showDrawer({
-                render: ({ hide }) => h(FileShareHandle, { ...props, hide }),
-            })
-        },
+const featureMeta = useFeatureMeta()
+
+type ActionHandler = {
+    condition?: () => boolean
+    onClick: () => void
+}
+
+const actionHandlers: Partial<Record<FeatureKey, ActionHandler>> = {
+    'file-share': {
+        onClick: () => showDrawer({ render: ({ hide }) => h(FileShareHandle, { ...props, hide }) }),
     },
-    isImage.value && {
-        label: t('page.upload.file.handleType.file-image-compress'),
-        icon: LucideImageMinus,
-        className: 'bg-red-300',
-        onClick: () => {
-            props.onFileHandle({ type: 'file-image-compress', config: {} })
-        },
+    'file-image-compress': {
+        condition: () => isImage.value,
+        onClick: () => props.onFileHandle({ type: 'file-image-compress', config: {} }),
     },
-    isImage.value && {
-        label: t('page.upload.file.handleType.file-image-convert'),
-        icon: LucideArrowRightLeft,
-        className: 'bg-purple-300',
-        onClick: () => {
-            showDrawer({
-                render: ({ hide }) => h(ImageConvertHandle, { ...props, hide }),
-            })
-        },
+    'file-image-convert': {
+        condition: () => isImage.value,
+        onClick: () => showDrawer({ render: ({ hide }) => h(ImageConvertHandle, { ...props, hide }) }),
     },
     // isImage.value && {
     //     label: '图片翻译', icon: LucideLanguages, className: 'bg-orange-300', onClick: () => {
@@ -88,19 +58,24 @@ const actions = [
     //         console.log('复制链接')
     //     }
     // },
-]?.filter(isObject) as {
-    label: string
-    icon: any
-    className: string
-    onClick: () => void
-}[]
+}
+
+const actions = computed(() =>
+    featureMeta.value
+        .filter((meta) => {
+            const { key } = meta || {}
+            const handler = actionHandlers?.[key]
+            return handler && (!handler.condition || handler.condition())
+        })
+        .map((meta) => ({ ...meta, onClick: actionHandlers[meta.key]!.onClick }))
+)
 </script>
 <template>
-    <div class="flex flex-col gap-5 p-5">
+    <div class="flex flex-col gap-5 p-5 overflow-x-auto">
         <div class="flex flex-row gap-2">
             <div
                 v-for="item in actions"
-                :key="item.label"
+                :key="item.key"
                 class="flex flex-col items-center gap-2 max-w-20"
                 @click="
                     () => {
