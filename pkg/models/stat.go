@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 
 	"pkg/utils"
@@ -33,22 +34,24 @@ func GetRedisStat(key string) (*StatData, error) {
 }
 
 func SetRedisStat(key string, handler func(stat *StatData) *StatData) error {
-	rdb, ctx := utils.GetRedisClient()
-	old_stat, err := GetRedisStat(key)
-	if err != nil {
-		return err
-	}
-	if old_stat == nil {
-		old_stat = &StatData{
-			FileSize:    0,
-			FileNum:     0,
-			ShareNum:    0,
-			DownloadNum: 0,
+	return utils.WithLocker(context.Background(), "015:stat:"+key, 0, func(ctx context.Context) error {
+		rdb, _ := utils.GetRedisClient()
+		old_stat, err := GetRedisStat(key)
+		if err != nil {
+			return err
 		}
-	}
-	stat := handler(old_stat)
-	jsonData, _ := json.Marshal(stat)
-	return rdb.Do(ctx, rdb.B().Hset().Key("015:stat").FieldValue().FieldValue(key, string(jsonData)).Build()).Error()
+		if old_stat == nil {
+			old_stat = &StatData{
+				FileSize:    0,
+				FileNum:     0,
+				ShareNum:    0,
+				DownloadNum: 0,
+			}
+		}
+		stat := handler(old_stat)
+		jsonData, _ := json.Marshal(stat)
+		return rdb.Do(ctx, rdb.B().Hset().Key("015:stat").FieldValue().FieldValue(key, string(jsonData)).Build()).Error()
+	})
 }
 
 func GetRedisStatAll() (map[string]string, error) {
