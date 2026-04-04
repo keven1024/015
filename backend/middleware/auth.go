@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	"backend/internal/utils"
+
 	"github.com/gorilla/sessions"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v5"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
@@ -11,7 +12,7 @@ import (
 func AuthMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
-			sess, err := session.Get("session", c)
+			sess, err := utils.GetSession(c, "session")
 			if err != nil {
 				return err
 			}
