@@ -27,9 +27,7 @@ func InitRedis() rueidis.Client {
 
 func GetRedisClient() (rueidis.Client, context.Context) {
 	onceRedis.Do(func() {
-		if rdb == nil {
-			rdb = InitRedis()
-		}
+		InitRedis()
 	})
 	return rdb, ctx
 }
