@@ -7,14 +7,13 @@ import (
 
 	"pkg/utils"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 )
 
 func GetRedisTaskInfo(taskId string) (*map[string]any, error) {
 	rdb, ctx := utils.GetRedisClient()
-	taskInfo := rdb.Get(ctx, fmt.Sprintf("015:taskInfoMap:%s", taskId))
-	taskInfoUnmarshalData, err := taskInfo.Result()
-	if err == redis.Nil {
+	taskInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Build()).ToString()
+	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
 	if err != nil {
@@ -31,6 +30,8 @@ func GetRedisTaskInfo(taskId string) (*map[string]any, error) {
 func SetRedisTaskInfo(taskId string, taskInfo map[string]any) error {
 	rdb, ctx := utils.GetRedisClient()
 	jsonData, _ := json.Marshal(taskInfo)
-	_, err := rdb.Set(ctx, fmt.Sprintf("015:taskInfoMap:%s", taskId), jsonData, time.Hour).Result()
-	return err
+	return rdb.Do(
+		ctx,
+		rdb.B().Set().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Value(string(jsonData)).Ex(time.Hour).Build(),
+	).Error()
 }

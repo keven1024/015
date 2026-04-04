@@ -36,8 +36,12 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 			return err
 		}
 		filePath := filepath.Join(uploadPath, payload.FileId)
-		rdb.HDel(ctx, "015:fileShareRelational", payload.FileId)
-		rdb.HDel(ctx, "015:fileInfoMap", payload.FileId)
+		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileShareRelational").Field(payload.FileId).Build()).Error(); err != nil {
+			return err
+		}
+		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
+			return err
+		}
 		os.RemoveAll(filePath)
 		return nil
 	}

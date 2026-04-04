@@ -6,13 +6,13 @@ import (
 
 	"pkg/utils"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 )
 
 func GetRedisPickupData(pickupCode string) (string, error) {
 	rdb, ctx := utils.GetRedisClient()
-	ShareId, err := rdb.Get(ctx, fmt.Sprintf("015:pickupCode:%s", pickupCode)).Result()
-	if err == redis.Nil {
+	ShareId, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Build()).ToString()
+	if rueidis.IsRedisNil(err) {
 		return "", nil
 	}
 	if err != nil {
@@ -23,6 +23,8 @@ func GetRedisPickupData(pickupCode string) (string, error) {
 
 func SetRedisPickupData(pickupCode string, shareId string) (bool, error) {
 	rdb, ctx := utils.GetRedisClient()
-	ok, err := rdb.SetNX(ctx, fmt.Sprintf("015:pickupCode:%s", pickupCode), shareId, time.Until(time.Now().Add(24*time.Hour))).Result()
-	return ok, err
+	return rdb.Do(
+		ctx,
+		rdb.B().Set().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Value(shareId).Nx().Ex(24*time.Hour).Build(),
+	).AsBool()
 }

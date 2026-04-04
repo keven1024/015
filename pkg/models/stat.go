@@ -5,7 +5,7 @@ import (
 
 	"pkg/utils"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 )
 
 // 统计数据结构
@@ -18,8 +18,8 @@ type StatData struct {
 
 func GetRedisStat(key string) (*StatData, error) {
 	rdb, ctx := utils.GetRedisClient()
-	statUnmarshalData, err := rdb.HGet(ctx, "015:stat", key).Result()
-	if err == redis.Nil {
+	statUnmarshalData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:stat").Field(key).Build()).ToString()
+	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
 	if err != nil {
@@ -48,11 +48,10 @@ func SetRedisStat(key string, handler func(stat *StatData) *StatData) error {
 	}
 	stat := handler(old_stat)
 	jsonData, _ := json.Marshal(stat)
-	_, err = rdb.HSet(ctx, "015:stat", key, string(jsonData)).Result()
-	return err
+	return rdb.Do(ctx, rdb.B().Hset().Key("015:stat").FieldValue().FieldValue(key, string(jsonData)).Build()).Error()
 }
 
 func GetRedisStatAll() (map[string]string, error) {
 	rdb, ctx := utils.GetRedisClient()
-	return rdb.HGetAll(ctx, "015:stat").Result()
+	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:stat").Build()).AsStrMap()
 }
