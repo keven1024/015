@@ -13,33 +13,42 @@ var (
 	envOnce sync.Once
 )
 
-func InitEnv(props EnvOption) {
-	if v != nil {
-		return
+func createViperInstance(props EnvOption) *viper.Viper {
+	instance := viper.New()
+	for _, viperConfigType := range props.ConfigType {
+		instance.SetConfigType(viperConfigType)
 	}
+	if props.ConfigData != nil {
+		instance.ReadConfig(props.ConfigData)
+		return instance
+	}
+	for _, name := range props.ConfigName {
+		instance.SetConfigName(name)
+	}
+	instance.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	for _, path := range props.ConfigPath {
+		instance.AddConfigPath(path)
+	}
+	instance.AutomaticEnv()
+	instance.WatchConfig()
+	if err := instance.ReadInConfig(); err != nil {
+		panic(err)
+	}
+	return instance
+}
+
+func InitTestViper(props EnvOption) *viper.Viper {
+	instance := createViperInstance(props)
+	v = instance
+	envOnce.Do(func() {}) // 消费 once，防止 GetViperClient 覆盖已注入的实例
+	return instance
+}
+
+func GetViperClient() *viper.Viper {
 	envOnce.Do(func() {
-		v = viper.New()
-		for _, viperConfigType := range props.ConfigType {
-			v.SetConfigType(viperConfigType)
-		}
-		if props.ConfigData != nil {
-			v.ReadConfig(props.ConfigData)
-			return
-		}
-		for _, name := range props.ConfigName {
-			v.SetConfigName(name)
-		}
-		v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-		for _, path := range props.ConfigPath {
-			v.AddConfigPath(path)
-		}
-		v.AutomaticEnv()
-		v.WatchConfig()
-		err := v.ReadInConfig()
-		if err != nil {
-			panic(err)
-		}
+		v = createViperInstance(getEnvOptions())
 	})
+	return v
 }
 
 type Option interface {
@@ -75,8 +84,7 @@ func getEnvOptions(options ...Option) EnvOption {
 
 func GetEnv(key string, options ...Option) string {
 	props := getEnvOptions(options...)
-	InitEnv(props)
-	value := v.GetString(key)
+	value := GetViperClient().GetString(key)
 
 	if value == "" && props.DefaultValue != "" {
 		return props.DefaultValue
@@ -88,12 +96,10 @@ func GetEnvWithDefault(key string, defaultValue string) string {
 	return GetEnv(key, WithDefaultValue(defaultValue))
 }
 
-func GetEnvMapString(key string) map[string]string {
-	props := getEnvOptions()
-	InitEnv(props)
-	return v.GetStringMapString(key)
+func GetEnvMap(key string) map[string]any {
+	return GetViperClient().GetStringMap(key)
 }
 
 func SetEnv(key string, value string) {
-	v.Set(key, value)
+	GetViperClient().Set(key, value)
 }

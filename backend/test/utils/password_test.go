@@ -38,7 +38,7 @@ func TestGeneratePasswordHash(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 设置环境变量
-			u.InitEnv(u.EnvOption{
+			u.InitTestViper(u.EnvOption{
 				ConfigData: bytes.NewBuffer([]byte(fmt.Sprintf(`
 				share:
 					password_salt: %s

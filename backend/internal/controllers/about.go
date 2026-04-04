@@ -32,7 +32,7 @@ func GetAbout(c *echo.Context) error {
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"bg_url":  u.GetEnv("about.bg_url"),
-		"content": u.GetEnvMapString("about.content"),
+		"content": u.GetEnvMap("about.content"),
 		"email":   u.GetEnv("about.email"),
 		"name":    u.GetEnv("about.name"),
 		"url":     u.GetEnv("about.url"),

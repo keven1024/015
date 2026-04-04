@@ -11,8 +11,8 @@ import (
 
 func GetConfig(c *echo.Context) error {
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"site_title":  u.GetEnvMapString("site.title"),
-		"site_desc":   u.GetEnvMapString("site.desc"),
+		"site_title":  u.GetEnvMap("site.title"),
+		"site_desc":   u.GetEnvMap("site.desc"),
 		"site_url":    u.GetEnv("site.url"),
 		"site_icon":   u.GetEnvWithDefault("site.icon", "/logo.png"),
 		"site_bg_url": u.GetEnvWithDefault("site.bg_url", "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302"),
