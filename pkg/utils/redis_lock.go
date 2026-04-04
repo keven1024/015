@@ -51,35 +51,30 @@ func GetRedisLocker() rueidislock.Locker {
 	return redisLock
 }
 
-func baseLocker(ctx context.Context, key string) (context.Context, context.CancelFunc, error) {
-	locker := GetRedisLocker()
-	return locker.WithContext(ctx, key)
-}
-
-func Locker(key string) (context.CancelFunc, error) {
-	_, cancel, err := baseLocker(context.Background(), key)
-	if err != nil {
-		return nil, err
+func baseLocker(ctx context.Context, key string, expired time.Duration) (context.Context, context.CancelFunc, error) {
+	if expired <= 0 {
+		expired = defaultRedisLockValidity
 	}
-	return cancel, nil
-}
-
-func WithLocker(ctx context.Context, key string, fn func(context.Context) error) error {
-	lockCtx, cancel, err := baseLocker(ctx, key)
-	if err != nil {
-		return err
-	}
-	defer cancel()
-	return fn(lockCtx)
-}
-
-func TryWithLocker(ctx context.Context, key string, fn func(context.Context) error) error {
 	locker := GetRedisLocker()
-	lockCtx, cancel, err := locker.TryWithContext(ctx, key)
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, expired)
+	lockCtx, lockCancel, err := locker.WithContext(timeoutCtx, key)
 	if err != nil {
-		if errors.Is(err, rueidislock.ErrNotLocked) {
-			return ErrRedisLockNotAcquired
-		}
+		return nil, nil, err
+	}
+	return lockCtx, func() {
+		lockCancel()
+		timeoutCancel()
+	}, nil
+}
+
+func Locker(key string, expired time.Duration) (context.CancelFunc, error) {
+	_, cancel, err := baseLocker(context.Background(), key, expired)
+	return cancel, err
+}
+
+func WithLocker(ctx context.Context, key string, expired time.Duration, fn func(context.Context) error) error {
+	lockCtx, cancel, err := baseLocker(ctx, key, expired)
+	if err != nil {
 		return err
 	}
 	defer cancel()
