@@ -201,6 +201,8 @@
             "title": "关于",
             "about": "关于",
             "systemInfo": "系统信息",
+            "enabledFeatures": "实例功能",
+            "enabledFeaturesEmpty": "当前实例暂未启用额外功能",
             "systemVersion": "系统版本",
             "storage": "已托管的文件",
             "analysis": "分析",

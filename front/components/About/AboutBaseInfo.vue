@@ -4,12 +4,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 import getFileSize from '~/lib/getFileSize'
 import SparkMD5 from 'spark-md5'
 import useMyAppConfig from '@/composables/useMyAppConfig'
+import { useFeatureMeta } from '@/composables/useFeatureMeta'
 import Progress from '~/components/ui/progress/Progress.vue'
 import renderI18n from '~/lib/renderI18n'
 import { I18nT } from 'vue-i18n'
 
 const { locale } = useI18n()
 const appConfig = useMyAppConfig()
+const featureMeta = useFeatureMeta()
 const { data, isLoading } = useQuery({
     queryKey: ['about'],
     queryFn: async () => {
@@ -104,6 +106,29 @@ const genUserAvatar = (email: string) => {
                     <span class="text-md opacity-75">/ {{ getFileSize(data?.file?.maximun ?? 0) }}</span>
                 </div>
                 <Progress class="h-1" :model-value="((data?.file?.current ?? 0) / (data?.file?.maximun ?? 0)) * 100" />
+            </div>
+        </div>
+    </template>
+    <template v-if="isLoading">
+        <Skeleton class="w-full h-24 rounded-xl" />
+    </template>
+    <template v-else>
+        <div class="rounded-xl bg-white/50 flex flex-col p-3 gap-3">
+            <div class="font-semibold">{{ t('page.about.enabledFeatures') }}</div>
+            <div v-if="featureMeta.length" class="flex flex-row flex-wrap gap-2">
+                <div
+                    v-for="feature in featureMeta"
+                    :key="feature.key"
+                    class="flex flex-row items-center gap-2 rounded-full bg-black/5 px-2 py-1 text-sm font-medium"
+                >
+                    <div class="flex size-6 items-center justify-center rounded-full text-black/80" :style="feature.style">
+                        <component :is="feature.icon" class="size-3.5" />
+                    </div>
+                    <span>{{ feature.label }}</span>
+                </div>
+            </div>
+            <div v-else class="text-sm opacity-75">
+                {{ t('page.about.enabledFeaturesEmpty') }}
             </div>
         </div>
     </template>

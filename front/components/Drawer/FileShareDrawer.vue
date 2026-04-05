@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { cx } from 'class-variance-authority'
 import showDrawer from '@/lib/showDrawer'
 import FileShareHandle from '@/components/Preprocessing/FileShareHandle.vue'
 import ImageConvertHandle from '@/components/Preprocessing/ImageConvertHandle.vue'
@@ -84,7 +83,7 @@ const actions = computed(() =>
                     }
                 "
             >
-                <div :class="cx('size-14 flex justify-center items-center rounded-full mx-3', item?.className)">
+                <div class="size-14 flex justify-center items-center rounded-full mx-3" :style="item?.style">
                     <component :is="item?.icon" />
                 </div>
                 <div class="text-xs truncate w-full text-center">{{ item?.label }}</div>

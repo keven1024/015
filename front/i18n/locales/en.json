@@ -201,6 +201,8 @@
             "title": "About",
             "about": "About",
             "systemInfo": "System Info",
+            "enabledFeatures": "Instance feature",
+            "enabledFeaturesEmpty": "No extra features are enabled for this instance",
             "systemVersion": "System Version",
             "storage": "Storage",
             "analysis": "Analysis",
