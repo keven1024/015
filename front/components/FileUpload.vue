@@ -59,7 +59,7 @@ onChange((files) => {
 </script>
 
 <template>
-    <div ref="dropZoneRef" @click="open">
+    <div ref="dropZoneRef" @click="() => open()">
         <slot :isOverDropZone="isOverDropZone" />
     </div>
 </template>
