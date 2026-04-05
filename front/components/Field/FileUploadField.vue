@@ -28,9 +28,9 @@ useEventListener(document, 'paste', (evt: ClipboardEvent) => {
 <template>
     <FileUpload
         @onChange="
-            (file) => {
+            (files) => {
                 // 这里没hash，我们姑且认为name和size,type都一样的为同一个文件
-                setValue([...filterOutSameFile(value, [file]), file])
+                setValue([...filterOutSameFile(value, files), ...files])
             }
         "
         v-slot="{ isOverDropZone }"

@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import FilePreviewView from '@/components/FilePreviewView.vue'
 import { Input } from '@/components/ui/input'
-import { useClipboard } from '@vueuse/core'
+import { useClipboard, useShare } from '@vueuse/core'
 import { toast } from 'vue-sonner'
 import { useQuery } from '@tanstack/vue-query'
 import useMyAppShare from '@/composables/useMyAppShare'
@@ -44,16 +44,30 @@ watchEffect(() => {
     }
 })
 
-watchEffect(() => {
-    console.log('data', data?.value)
-})
-
 const appConfig = useMyAppConfig()
 const getShareUrl = (id: string) => {
     return `${appConfig?.value?.site_url}/s/${id}`
 }
 
 const { copy } = useClipboard()
+const { share, isSupported: isShareSupported } = useShare()
+
+const handleShare = async (id: string, fileName?: string) => {
+    await share({
+        title: fileName || 'File Share',
+        url: getShareUrl(id),
+    })
+}
+
+const handleShowQrCode = (id: string) => {
+    showDrawer({
+        render: ({ ...rest }) =>
+            h(QrCoreDrawer, {
+                ...rest,
+                data: getShareUrl(id),
+            }),
+    })
+}
 </script>
 
 <template>
@@ -77,16 +91,26 @@ const { copy } = useClipboard()
                     <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
                         <FileIcon
                             :file="props?.data?.files?.[data?.findIndex((i) => i?.id === file?.id) as number]?.file as File"
-                            :class="cx('!size-7 !rounded-md shrink-0', selectedFile === file?.id && '!bg-white/50')"
+                            size="sm"
+                            :class="cx('shrink-0', selectedFile === file?.id && 'bg-white/50!')"
                         />
                         <div class="text-sm flex-1 truncate">{{ file?.file_name }}</div>
                     </div>
                     <div class="flex flex-row items-center gap-2 shrink-0">
                         <Button
+                            v-if="isShareSupported"
                             variant="outline"
                             :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
                             size="icon"
-                            @click="
+                            @click.stop="handleShare(file?.id as string, file?.file_name)"
+                        >
+                            <LucideShare />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
+                            size="icon"
+                            @click.stop="
                                 () => {
                                     copy(getShareUrl(file?.id as string))
                                     toast.success(t('page.result.file.copySuccess'))
@@ -99,17 +123,7 @@ const { copy } = useClipboard()
                             variant="outline"
                             :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
                             size="icon"
-                            @click="
-                                () => {
-                                    showDrawer({
-                                        render: ({ ...rest }) =>
-                                            h(QrCoreDrawer, {
-                                                ...rest,
-                                                data: getShareUrl(file?.id as string),
-                                            }),
-                                    })
-                                }
-                            "
+                            @click.stop="handleShowQrCode(file?.id as string)"
                         >
                             <LucideQrCode />
                         </Button>
@@ -160,6 +174,20 @@ const { copy } = useClipboard()
                     <div class="flex flex-row gap-2">
                         <Input :model-value="getShareUrl(selectedFileShare?.id as string)" class="bg-white/70" readonly />
                         <Button
+                            v-if="isShareSupported"
+                            variant="outline"
+                            class="bg-white/70"
+                            size="icon"
+                            @click="
+                                handleShare(
+                                    selectedFileShare?.id as string,
+                                    props?.data?.files?.[data?.findIndex((item) => item?.id === selectedFileShare?.id) as number]?.file?.name
+                                )
+                            "
+                        >
+                            <LucideShare />
+                        </Button>
+                        <Button
                             variant="outline"
                             class="bg-white/70"
                             size="icon"
@@ -173,22 +201,7 @@ const { copy } = useClipboard()
                             <LucideCopy />
                         </Button>
 
-                        <Button
-                            variant="outline"
-                            class="bg-white/70"
-                            size="icon"
-                            @click="
-                                () => {
-                                    showDrawer({
-                                        render: ({ ...rest }) =>
-                                            h(QrCoreDrawer, {
-                                                ...rest,
-                                                data: getShareUrl(selectedFileShare?.id as string),
-                                            }),
-                                    })
-                                }
-                            "
-                        >
+                        <Button variant="outline" class="bg-white/70" size="icon" @click="handleShowQrCode(selectedFileShare?.id as string)">
                             <LucideQrCode />
                         </Button>
                     </div>

@@ -7,10 +7,16 @@ export type filePreview = {
 }
 
 import { LucideFileAudio, LucideFileVideo, LucideFile, LucideFileCode, LucideFileArchive, LucideFileText } from 'lucide-vue-next'
-const props = defineProps<{
-    file: File | filePreview
-    class?: string
-}>()
+const props = withDefaults(
+    defineProps<{
+        file: File | filePreview
+        class?: string
+        size?: 'sm' | 'md' | 'lg'
+    }>(),
+    {
+        size: 'md',
+    }
+)
 const imageUrl = computed(() => {
     if (props?.file?.type?.startsWith('image/') && props?.file instanceof File) {
         return URL.createObjectURL(props?.file)
@@ -56,12 +62,20 @@ const fileIcon = computed(() => {
 </script>
 
 <template>
-    <div v-if="!!imageUrl" class="flex max-w-30 max-h-20">
-        <div class="object-contain m-auto h-full">
-            <img :src="imageUrl" class="w-full h-full border border-black/20 rounded" />
-        </div>
+    <div v-if="!!imageUrl" :class="cx('flex overflow-hidden', size === 'sm' && 'max-w-20 max-h-16', size === 'md' && 'max-w-30 max-h-20')">
+        <img :src="imageUrl" class="block max-w-full max-h-full object-contain border border-black/20 rounded" />
     </div>
-    <div v-if="!imageUrl" :class="cx('flex justify-center items-center rounded-xl bg-white/80 size-16', props?.class)">
+    <div
+        v-if="!imageUrl"
+        :class="
+            cx(
+                'flex justify-center items-center bg-white/80',
+                size === 'sm' && 'size-7 rounded-md',
+                size === 'md' && 'size-16 rounded-xl',
+                props?.class
+            )
+        "
+    >
         <component :is="fileIcon" class="size-[62.5%]" />
     </div>
 </template>
