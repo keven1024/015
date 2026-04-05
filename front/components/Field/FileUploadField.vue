@@ -12,6 +12,17 @@ const props = defineProps<{
 }>()
 const { value, setValue } = useField<File[]>(props?.name, props?.rules)
 const { t } = useI18n()
+
+const filterOutSameFile = (files: File[] | undefined, targetFile: File[] | undefined) => {
+    return files?.filter((file) => !targetFile?.some((r) => r?.name === file?.name && r?.type === file?.type && r?.size === file?.size)) || []
+}
+
+useEventListener(document, 'paste', (evt: ClipboardEvent) => {
+    const { files } = evt.clipboardData || {}
+    if (files?.length) {
+        setValue([...filterOutSameFile(value?.value, Array.from(files)), ...Array.from(files)])
+    }
+})
 </script>
 
 <template>
@@ -19,7 +30,7 @@ const { t } = useI18n()
         @onChange="
             (file) => {
                 // 这里没hash，我们姑且认为name和size,type都一样的为同一个文件
-                setValue([...(value?.filter((r) => r?.name !== file?.name || r?.type !== file?.type || r?.size !== file?.size) || []), file])
+                setValue([...filterOutSameFile(value, [file]), file])
             }
         "
         v-slot="{ isOverDropZone }"
@@ -41,9 +52,7 @@ const { t } = useI18n()
                                 @click="
                                     (e: any) => {
                                         e.stopPropagation()
-                                        setValue(
-                                            value?.filter((r) => r?.name !== item?.name || r?.type !== item?.type || r?.size !== item?.size) || []
-                                        )
+                                        setValue(filterOutSameFile(value, [item]))
                                     }
                                 "
                             >
