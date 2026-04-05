@@ -25,7 +25,7 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	if err != nil {
 		return GenStandardFileReturn{}, err
 	}
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	fileInfo, err := file.Stat()
 	if err != nil {
@@ -53,7 +53,7 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	if err != nil {
 		return GenStandardFileReturn{}, err
 	}
-	models.SetRedisFileInfo(fileId, models.RedisFileInfo{
+	if err := models.SetRedisFileInfo(fileId, models.RedisFileInfo{
 		FileInfo: models.FileInfo{
 			FileSize: fileSize,
 			FileHash: fileHash,
@@ -62,7 +62,9 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 		FileType:  models.FileTypeUpload,
 		CreatedAt: time.Now().Unix(),
 		Expire:    expire,
-	})
+	}); err != nil {
+		return GenStandardFileReturn{}, err
+	}
 	return GenStandardFileReturn{
 		FileId: fileId,
 		FileInfo: models.FileInfo{

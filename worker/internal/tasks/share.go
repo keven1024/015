@@ -42,10 +42,14 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
 			return err
 		}
-		os.RemoveAll(filePath)
+		if err := os.RemoveAll(filePath); err != nil {
+			return err
+		}
 		return nil
 	}
-	models.SetRedisFileShareRelational(payload.FileId, shareIDs)
+	if err := models.SetRedisFileShareRelational(payload.FileId, shareIDs); err != nil {
+		return err
+	}
 	return nil
 }
 

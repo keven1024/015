@@ -38,11 +38,11 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 	}
 	compressedFileInfo, err := services.GenStandardFile(compressedPath, originalFileInfo.MimeType)
 	if err != nil {
-		defer os.Remove(compressedPath)
+		defer os.Remove(compressedPath) //nolint:errcheck
 		return err
 	}
 
-	models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+	if err := models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
 		"result": []any{
 			map[string]any{
@@ -56,7 +56,9 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 				},
 			},
 		},
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -84,16 +86,16 @@ func ConvertImage(ctx context.Context, task *asynq.Task) error {
 	}
 	mimeType := mime.TypeByExtension(fmt.Sprintf(".%s", payload.TargetExt))
 	if mimeType == "" {
-		defer os.Remove(convertedPath)
+		defer os.Remove(convertedPath) //nolint:errcheck
 		return ErrUnknown
 	}
 	convertedFileInfo, err := services.GenStandardFile(convertedPath, mimeType)
 	if err != nil {
-		defer os.Remove(convertedPath)
+		defer os.Remove(convertedPath) //nolint:errcheck
 		return err
 	}
 
-	models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+	if err := models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
 		"result": []any{
 			map[string]any{
@@ -107,7 +109,9 @@ func ConvertImage(ctx context.Context, task *asynq.Task) error {
 				},
 			},
 		},
-	})
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
