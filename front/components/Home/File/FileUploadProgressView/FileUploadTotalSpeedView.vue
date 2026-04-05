@@ -45,7 +45,7 @@ const handleShowSpeedInfo = () => {
                 :style="{
                     height: `${clamp((i.value / Math.max(...(speedChartList?.map((r) => r.value) || [1]))) * 100, 1, 100)}%`,
                 }"
-                :layoutId="i.timestamp"
+                :layoutId="String(i.timestamp)"
                 v-for="i in speedChartList"
                 :key="i.timestamp"
                 :initial="{ x: 10, opacity: 0 }"
