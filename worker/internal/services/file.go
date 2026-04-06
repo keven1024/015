@@ -53,8 +53,8 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	if err != nil {
 		return GenStandardFileReturn{}, err
 	}
-	if err := models.SetRedisFileInfo(fileId, models.RedisFileInfo{
-		FileInfo: models.FileInfo{
+	if err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+		fileInfo.FileInfo = models.FileInfo{
 			FileSize: fileSize,
 			FileHash: fileHash,
 			MimeType: mimeType,

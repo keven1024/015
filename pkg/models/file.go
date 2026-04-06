@@ -3,8 +3,10 @@ package models
 import (
 	"encoding/json"
 	"pkg/utils"
+	"time"
 
 	"github.com/redis/rueidis"
+	"github.com/spf13/cast"
 )
 
 type FileInfo struct {
@@ -25,6 +27,7 @@ type RedisFileInfo struct {
 	FileInfo
 	FileType  FileType `json:"type"`
 	CreatedAt int64    `json:"created_at"`
+	UpdatedAt int64    `json:"updated_at"`
 	Expire    int64    `json:"expire"` // 只有上传文件(init)的时候有这个字段
 }
 
@@ -44,21 +47,28 @@ func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	return &fileInfoData, nil
 }
 
-func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *RedisFileInfo) error {
+func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *RedisFileInfo) (*RedisFileInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
 	old_fileInfo, err := GetRedisFileInfo(fileId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if old_fileInfo == nil {
-		old_fileInfo = &RedisFileInfo{}
+		old_fileInfo = &RedisFileInfo{
+			CreatedAt: time.Now().Unix(),
+			Expire:    cast.ToInt64(utils.GetEnvWithDefault("upload.remove_expire", "2")) * 3600,
+		}
 	}
 	fileInfo := handler(old_fileInfo)
+	fileInfo.UpdatedAt = time.Now().Unix()
 	jsonData, err := json.Marshal(fileInfo)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
+	if err := rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error(); err != nil {
+		return nil, err
+	}
+	return fileInfo, nil
 }
 
 func GetRedisFileInfoAll() (map[string]string, error) {
