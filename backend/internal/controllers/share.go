@@ -73,16 +73,16 @@ func CreateShareInfo(c *echo.Context) error {
 		password = hash
 	}
 
-	err = models.SetRedisShareInfo(id, models.RedisShareInfo{
-		Data:      r.Data,
-		Type:      r.Type,
-		CreatedAt: time.Now().Unix(),
-		Owner:     owner,
-		ViewNum:   r.Config.ViewNum,
-		Password:  password,
-		// NotifyEmail: r.Config.NotifyEmail,
-		FileName: r.FileName,
-		ExpireAt: ExpireTime.Unix(),
+	_, err = models.SetRedisShareInfo(id, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
+		shareInfo.Data = r.Data
+		shareInfo.Type = r.Type
+		shareInfo.CreatedAt = time.Now().Unix()
+		shareInfo.Owner = owner
+		shareInfo.ViewNum = r.Config.ViewNum
+		shareInfo.Password = password
+		shareInfo.FileName = r.FileName
+		shareInfo.ExpireAt = ExpireTime.Unix()
+		return shareInfo
 	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
@@ -128,7 +128,7 @@ func CreateShareInfo(c *echo.Context) error {
 
 	// 统计分享数
 	currentDate := time.Now().Format("2006-01-02")
-	err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+	_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
 		stat.ShareNum += 1
 		return stat
 	})

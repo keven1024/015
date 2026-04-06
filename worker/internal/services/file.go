@@ -7,8 +7,6 @@ import (
 	"pkg/services"
 	u "pkg/utils"
 	"time"
-
-	"github.com/spf13/cast"
 )
 
 type GenStandardFileReturn struct {
@@ -48,21 +46,20 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	if err := os.Rename(filePath, newPath); err != nil {
 		return GenStandardFileReturn{}, err
 	}
-	expire := cast.ToInt64(u.GetEnvWithDefault("upload.remove_expire", "2")) * 3600
-	err = services.SetFileRemoveTask(fileId, time.Duration(expire)*time.Second)
-	if err != nil {
-		return GenStandardFileReturn{}, err
-	}
-	if err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+	redisFileInfo, err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
 		fileInfo.FileInfo = models.FileInfo{
 			FileSize: fileSize,
 			FileHash: fileHash,
 			MimeType: mimeType,
-		},
-		FileType:  models.FileTypeUpload,
-		CreatedAt: time.Now().Unix(),
-		Expire:    expire,
-	}); err != nil {
+		}
+		fileInfo.FileType = models.FileTypeUpload
+		return fileInfo
+	})
+	if err != nil {
+		return GenStandardFileReturn{}, err
+	}
+	err = services.SetFileRemoveTask(fileId, time.Duration(redisFileInfo.Expire)*time.Second)
+	if err != nil {
 		return GenStandardFileReturn{}, err
 	}
 	return GenStandardFileReturn{

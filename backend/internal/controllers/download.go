@@ -120,7 +120,7 @@ func VaildateShare(c *echo.Context) error {
 			}
 		}
 		// download_nums 必须放在创建token的时候减掉，不然多线程下载会导致多次减掉
-		err = models.SetRedisShareInfo(r.ShareId, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
+		_, err = models.SetRedisShareInfo(r.ShareId, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
 			shareInfo.ViewNum -= 1
 			return shareInfo
 		})
@@ -130,7 +130,7 @@ func VaildateShare(c *echo.Context) error {
 
 		// 统计分享数
 		currentDate := time.Now().Format("2006-01-02")
-		err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+		_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
 			stat.DownloadNum += 1
 			return stat
 		})
