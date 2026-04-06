@@ -7,7 +7,6 @@ import (
 
 	"pkg/utils"
 
-	"dario.cat/mergo"
 	"github.com/redis/rueidis"
 )
 
@@ -52,15 +51,16 @@ func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 	return &shareInfoData, nil
 }
 
-func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo) error {
+func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *RedisShareInfo) error {
 	rdb, ctx := utils.GetRedisClient()
 	old_shareInfo, err := GetRedisShareInfo(shareId)
 	if err != nil {
 		return err
 	}
-	if old_shareInfo != nil {
-		mergo.Merge(&shareInfo, old_shareInfo)
+	if old_shareInfo == nil {
+		old_shareInfo = &RedisShareInfo{}
 	}
+	shareInfo := handler(old_shareInfo)
 	jsonData, _ := json.Marshal(shareInfo)
 	return rdb.Do(
 		ctx,

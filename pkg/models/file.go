@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"pkg/utils"
 
-	"dario.cat/mergo"
 	"github.com/redis/rueidis"
 )
 
@@ -45,15 +44,16 @@ func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	return &fileInfoData, nil
 }
 
-func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
+func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *RedisFileInfo) error {
 	rdb, ctx := utils.GetRedisClient()
 	old_fileInfo, err := GetRedisFileInfo(fileId)
 	if err != nil {
 		return err
 	}
-	if old_fileInfo != nil {
-		mergo.Merge(&fileInfo, old_fileInfo)
+	if old_fileInfo == nil {
+		old_fileInfo = &RedisFileInfo{}
 	}
+	fileInfo := handler(old_fileInfo)
 	jsonData, _ := json.Marshal(fileInfo)
 	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
 }
