@@ -17,6 +17,6 @@ func SetFileRemoveTask(fileId string, expire time.Duration) error {
 	if err != nil {
 		return err
 	}
-	_, err = client.Enqueue(asynq.NewTask("file:remove", json), asynq.ProcessIn(time.Duration(expire)*time.Second))
+	_, err = client.Enqueue(asynq.NewTask("file:remove", json), asynq.ProcessIn(expire))
 	return err
 }
