@@ -16,6 +16,17 @@ redis:
     # (必填)redis 地址
     url: redis://redis:6379/0
 
+# 实例功能配置
+features:
+    file-share:
+        enabled: true
+    text-share:
+        enabled: true
+    file-image-compress:
+        enabled: true
+    file-image-convert:
+        enabled: true
+
 # 站点基本信息
 site:
     # 必填，对应你的公网域名
