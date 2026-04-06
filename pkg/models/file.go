@@ -54,7 +54,10 @@ func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *Redi
 		old_fileInfo = &RedisFileInfo{}
 	}
 	fileInfo := handler(old_fileInfo)
-	jsonData, _ := json.Marshal(fileInfo)
+	jsonData, err := json.Marshal(fileInfo)
+	if err != nil {
+		return err
+	}
 	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
 }
 

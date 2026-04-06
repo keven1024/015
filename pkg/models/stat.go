@@ -49,7 +49,10 @@ func SetRedisStat(key string, handler func(stat *StatData) *StatData) error {
 			}
 		}
 		stat := handler(old_stat)
-		jsonData, _ := json.Marshal(stat)
+		jsonData, err := json.Marshal(stat)
+		if err != nil {
+			return err
+		}
 		return rdb.Do(ctx, rdb.B().Hset().Key("015:stat").FieldValue().FieldValue(key, string(jsonData)).Build()).Error()
 	})
 }

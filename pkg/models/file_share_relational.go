@@ -25,6 +25,9 @@ func GetRedisFileShareRelational(fileId string) ([]string, error) {
 
 func SetRedisFileShareRelational(fileId string, shareIDs []string) error {
 	rdb, ctx := utils.GetRedisClient()
-	jsonData, _ := json.Marshal(shareIDs)
+	jsonData, err := json.Marshal(shareIDs)
+	if err != nil {
+		return err
+	}
 	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileShareRelational").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
 }

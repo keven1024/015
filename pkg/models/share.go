@@ -61,7 +61,10 @@ func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *
 		old_shareInfo = &RedisShareInfo{}
 	}
 	shareInfo := handler(old_shareInfo)
-	jsonData, _ := json.Marshal(shareInfo)
+	jsonData, err := json.Marshal(shareInfo)
+	if err != nil {
+		return err
+	}
 	return rdb.Do(
 		ctx,
 		rdb.B().Set().
