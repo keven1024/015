@@ -28,17 +28,13 @@ func DownloadShare(c *echo.Context) error {
 	t, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(u.GetEnv("share.download_secret")), nil
 	})
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
+	if err != nil || !t.Valid {
+		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrInvalidRequest))
 	}
-	if !t.Valid {
-		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	shareInfo, err := models.GetRedisShareInfo(claims.ShareId)
+	if err != nil || shareInfo == nil {
+		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
 	}
-	shareInfo, _ := models.GetRedisShareInfo(claims.ShareId)
-	if shareInfo == nil {
-		return utils.HTTPErrorHandler(c, ErrShareNotFound)
-	}
-
 	if shareInfo.Type == models.ShareTypeFile {
 		fileInfo, _ := models.GetRedisFileInfo(shareInfo.Data)
 		uploadPath, err := u.GetUploadDirPath()
