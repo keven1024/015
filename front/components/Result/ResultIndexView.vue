@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import FileShareResult from '@/components/Result/FileShareResult.vue'
 import TextShareResult from '@/components/Result/TextShareResult.vue'
+import TextTranslateResult from '@/components/Result/TextTranslateResult.vue'
 import ImageCompressResult from '@/components/Result/ImageCompressResult.vue'
 import ImageConvertResult from '@/components/Result/ImageConvertResult.vue'
 import type { filehandleData, handleComponent, handleKey, texthandleData } from './types'
@@ -16,6 +17,7 @@ const emit = defineEmits<{
 const handleList: { component: handleComponent; key: handleKey }[] = [
     { component: FileShareResult, key: 'file-share' },
     { component: TextShareResult, key: 'text-share' },
+    { component: TextTranslateResult, key: 'text-translate' },
     { component: ImageCompressResult, key: 'file-image-compress' },
     { component: ImageConvertResult, key: 'file-image-convert' },
 ]

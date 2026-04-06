@@ -20,6 +20,15 @@ const actionHandlers: Partial<Record<FeatureKey, ActionHandler>> = {
     'text-share': {
         onClick: () => showDrawer({ render: ({ hide }) => h(TextShareHandle, { ...props, hide }) }),
     },
+    'text-translate': {
+        onClick: () =>
+            props.onTextHandle({
+                type: 'text-translate',
+                config: {
+                    source: 'auto',
+                },
+            }),
+    },
     // 'text-image-generate': {
     //     label: '生成配图', icon: LucideImage, className: 'bg-red-300',
     //     onClick: () => { console.log('复制链接') }

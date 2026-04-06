@@ -1,4 +1,4 @@
-import { LucideShare, LucideImageMinus, LucideArrowRightLeft } from 'lucide-vue-next'
+import { LucideShare, LucideImageMinus, LucideArrowRightLeft, LucideLanguages } from 'lucide-vue-next'
 import useMyAppConfig from '@/composables/useMyAppConfig'
 import type { FileHandleKey, TextHandleKey } from '../components/Preprocessing/types'
 import generateRandomColors from '@/lib/generateRandomColors'
@@ -32,15 +32,21 @@ const allFeatureMeta = (t: (key: string) => string): FeatureMeta[] => [
         label: t('page.upload.text.handleType.text-share'),
         icon: LucideShare,
     },
+    {
+        key: 'text-translate',
+        label: t('page.upload.text.handleType.text-translate'),
+        icon: LucideLanguages,
+    },
 ]
 
 export function useFeatureMeta() {
     const { t } = useI18n()
     const appConfig = useMyAppConfig()
+    const builtInFeatureKeys: FeatureKey[] = ['text-translate']
 
     return computed(() => {
         const enabledKeys = appConfig.value?.features ?? []
-        const result = allFeatureMeta(t).filter((meta) => enabledKeys.includes(meta.key))
+        const result = allFeatureMeta(t).filter((meta) => enabledKeys.includes(meta.key) || builtInFeatureKeys.includes(meta.key))
         const colors = generateRandomColors(result.length)
         return result.map((meta, index) => ({ ...meta, style: { backgroundColor: colors[index] } }))
     })
