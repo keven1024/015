@@ -5,7 +5,7 @@ import (
 	"pkg/utils"
 
 	"dario.cat/mergo"
-	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 )
 
 type FileInfo struct {
@@ -31,8 +31,8 @@ type RedisFileInfo struct {
 
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
-	fileInfoUnmarshalData, err := rdb.HGet(ctx, "015:fileInfoMap", fileId).Result()
-	if err == redis.Nil {
+	fileInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:fileInfoMap").Field(fileId).Build()).ToString()
+	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
 	if err != nil {
@@ -55,11 +55,10 @@ func SetRedisFileInfo(fileId string, fileInfo RedisFileInfo) error {
 		mergo.Merge(&fileInfo, old_fileInfo)
 	}
 	jsonData, _ := json.Marshal(fileInfo)
-	_, err = rdb.HSet(ctx, "015:fileInfoMap", fileId, string(jsonData)).Result()
-	return err
+	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
 }
 
 func GetRedisFileInfoAll() (map[string]string, error) {
 	rdb, ctx := utils.GetRedisClient()
-	return rdb.HGetAll(ctx, "015:fileInfoMap").Result()
+	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:fileInfoMap").Build()).AsStrMap()
 }

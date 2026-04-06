@@ -128,17 +128,10 @@ func CreateShareInfo(c *echo.Context) error {
 
 	// 统计分享数
 	currentDate := time.Now().Format("2006-01-02")
-	statData, _ := models.GetRedisStat(currentDate)
-	if statData == nil {
-		statData = &models.StatData{
-			FileSize:    0,
-			FileNum:     0,
-			ShareNum:    0,
-			DownloadNum: 0,
-		}
-	}
-	statData.ShareNum += 1
-	err = models.SetRedisStat(currentDate, *statData)
+	err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+		stat.ShareNum += 1
+		return stat
+	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

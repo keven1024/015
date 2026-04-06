@@ -160,6 +160,34 @@
                 "link": "链接",
                 "content": "内容",
                 "copySuccess": "复制成功"
+            },
+            "qrCode": {
+                "title": "分享二维码"
+            }
+        },
+        "shareView": {
+            "linkExpired": "此链接已过期。",
+            "passwall": {
+                "title": "输入密码",
+                "passwordError": "密码错误",
+                "passwordPlaceholder": "请输入密码"
+            },
+            "fileShare": {
+                "title": "下载文件",
+                "downloadBtn": "下载",
+                "needPassword": "需要密码",
+                "expireTime": "过期时间",
+                "remainingDownloads": "剩余下载次数",
+                "getTokenFailed": "获取token失败",
+                "durationFormat": "D天 HH:mm:ss"
+            },
+            "textShare": {
+                "title": "查看文本",
+                "viewBtn": "浏览",
+                "needPassword": "需要密码",
+                "expireTime": "过期时间",
+                "remainingViews": "剩余浏览次数",
+                "durationFormat": "D天 HH:mm:ss"
             }
         },
         "about": {
@@ -173,6 +201,8 @@
             "title": "关于",
             "about": "关于",
             "systemInfo": "系统信息",
+            "enabledFeatures": "实例功能",
+            "enabledFeaturesEmpty": "当前实例暂未启用额外功能",
             "systemVersion": "系统版本",
             "storage": "已托管的文件",
             "analysis": "分析",

@@ -73,6 +73,8 @@ func TestConvertImageWithMagickA2B(t *testing.T) {
 		{"png", "jpg"},
 		{"jpg", "webp"},
 		{"png", "webp"},
+		{"webp", "jpg"},
+		{"webp", "png"},
 	}
 	_, self, _, _ := runtime.Caller(0)
 	for _, test := range testList {

@@ -8,6 +8,7 @@ import TextShareView from '@/components/Share/TextShareView.vue'
 import { useQuery } from '@tanstack/vue-query'
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const id = computed(() => route.params.id)
 
 const { data, isLoading, error } = useQuery({
@@ -51,14 +52,14 @@ const componentMap = {
         <template v-else>
             <div v-if="isExpired || !data" class="flex flex-col gap-5 items-center">
                 <LucideAlertCircle :size="48" class="text-orange-500 rounded-full bg-orange-500/30 p-2" />
-                <div class="text-xl">此链接已过期。</div>
+                <div class="text-xl">{{ t('page.shareView.linkExpired') }}</div>
                 <Button
                     @click="
                         () => {
                             router.push('/')
                         }
                     "
-                    >返回首页</Button
+                    >{{ t('btn.backToHome') }}</Button
                 >
             </div>
             <template v-else>

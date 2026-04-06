@@ -19,7 +19,7 @@ func main() {
 	} else {
 		logger, _ = zap.NewDevelopment()
 	}
-	defer logger.Sync()
+	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
 
 	srv := asynq.NewServer(

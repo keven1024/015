@@ -1,34 +1,33 @@
 <script setup lang="ts">
-import { CurveType } from '@unovis/ts'
-import { AreaChart } from '@/components/ui/chart-area'
 import { cx } from 'class-variance-authority'
 import { useQuery } from '@tanstack/vue-query'
 import { Skeleton } from '@/components/ui/skeleton'
-import AboutChartTooltip from '@/components/AboutChartTooltip.vue'
 import dayjs from 'dayjs'
 import { times } from 'lodash-es'
+import type { ChartConfig } from '@/components/ui/chart'
+import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
+import { ChartContainer, ChartTooltip, ChartCrosshair, ChartLegendContent, componentToString, ChartTooltipContent } from '@/components/ui/chart'
 
 interface StatChartData {
     file_size: number
     file_num: number
     share_num: number
     download_num: number
-    date: string
+    date: Date
 }
 
 interface QueueChartData {
     processed: number
     failed: number
-    date: string
+    date: Date
 }
 
 type ChartDataItem = StatChartData | QueueChartData
 
-type ChartConfig = {
+type AreaChartConfig = {
     data: ChartDataItem[]
     index: string
-    categories: string[]
-    colors: string[]
+    config: ChartConfig
 }
 
 const { data, isLoading } = useQuery({
@@ -82,12 +81,12 @@ const chartTabs = computed(() => {
 })
 
 const currentChartTab = ref<'storage' | 'queue' | 'share' | 'download'>('storage')
-const currentChartData = computed((): ChartConfig => {
+const currentChartData = computed((): AreaChartConfig => {
     const { storage, queue } = data.value?.chart || {}
     if (currentChartTab.value === 'queue') {
         const queueData = times(30, (i) => {
             return {
-                date: dayjs().subtract(i, 'day').format('YYYY-MM-DD'),
+                date: dayjs().subtract(i, 'day').toDate(),
                 processed: queue?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.processed || 0,
                 failed: queue?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.failed || 0,
             }
@@ -95,12 +94,14 @@ const currentChartData = computed((): ChartConfig => {
         return {
             data: queueData,
             index: 'date' as const,
-            categories: ['processed', 'failed'] as const,
-            colors: ['#4ade80', '#f87171'],
+            config: {
+                processed: { color: '#4ade80', label: t('page.about.processed') },
+                failed: { color: '#f87171', label: t('page.about.failed') },
+            },
         }
     }
     const storageData = times(30, (i) => {
-        const base = { date: dayjs().subtract(i, 'day').format('YYYY-MM-DD') }
+        const base = { date: dayjs().subtract(i, 'day').toDate() }
         if (currentChartTab.value === 'share') {
             return {
                 ...base,
@@ -120,25 +121,31 @@ const currentChartData = computed((): ChartConfig => {
         }
     })
 
-    let categories = ['file_size', 'file_num']
     if (currentChartTab.value === 'share') {
-        categories = ['share_num']
+        return {
+            data: storageData as ChartDataItem[],
+            index: 'date' as const,
+            config: {
+                share_num: { color: '#ea580c', label: t('page.about.share') },
+            },
+        }
     }
     if (currentChartTab.value === 'download') {
-        categories = ['download_num']
-    }
-    let colors = ['#38bdf8', '#a78bfa']
-    if (currentChartTab.value === 'share') {
-        colors = ['#ea580c']
-    }
-    if (currentChartTab.value === 'download') {
-        colors = ['#a3e635']
+        return {
+            data: storageData as ChartDataItem[],
+            index: 'date' as const,
+            config: {
+                download_num: { color: '#a3e635', label: t('page.about.download') },
+            },
+        }
     }
     return {
         data: storageData as ChartDataItem[],
         index: 'date' as const,
-        categories,
-        colors,
+        config: {
+            file_size: { color: '#38bdf8', label: t('page.about.fileSize') },
+            file_num: { color: '#a78bfa', label: t('page.about.fileNum') },
+        },
     }
 })
 </script>
@@ -167,21 +174,51 @@ const currentChartData = computed((): ChartConfig => {
                     <div class="text-lg font-semibold">{{ tab.total }}</div>
                 </div>
             </div>
-            <AreaChart
-                v-if="currentChartData"
-                class="h-64 w-full"
-                :key="currentChartTab"
-                :index="currentChartData.index"
-                :data="currentChartData.data"
-                :categories="currentChartData.categories"
-                :show-grid-line="false"
-                :show-legend="false"
-                :show-y-axis="true"
-                :show-x-axis="true"
-                :colors="currentChartData.colors"
-                :custom-tooltip="AboutChartTooltip"
-                :curve-type="CurveType.CatmullRom"
-            />
+            <ChartContainer :config="currentChartData.config" class="h-64 w-full p-5" :cursor="false">
+                <VisXYContainer :data="currentChartData.data" :x-domain="[dayjs().toDate(), dayjs().subtract(29, 'day').toDate()]">
+                    <VisArea
+                        :key="currentChartTab"
+                        :x="(d: ChartDataItem) => d.date"
+                        :y="Object.keys(currentChartData.config).map((key) => (d: ChartDataItem) => d?.[key as keyof ChartDataItem])"
+                        :color="Object.values(currentChartData.config).map((c) => c.color)"
+                        :opacity="0.6"
+                    />
+                    <VisLine
+                        :key="currentChartTab"
+                        :x="(d: ChartDataItem) => d.date"
+                        :y="Object.keys(currentChartData.config).map((key) => (d: ChartDataItem) => d?.[key as keyof ChartDataItem])"
+                        :color="Object.values(currentChartData.config).map((c) => c.color)"
+                        :line-width="1"
+                    />
+                    <VisAxis
+                        :key="currentChartTab"
+                        type="x"
+                        :tick-line="false"
+                        :domain-line="false"
+                        :grid-line="false"
+                        :num-ticks="6"
+                        :tick-format="
+                            (d: Date) => {
+                                return dayjs(d).format('MMM')
+                            }
+                        "
+                        :tick-values="currentChartData.data.map((d) => d.date)"
+                    />
+                    <ChartTooltip />
+                    <ChartCrosshair
+                        :key="currentChartTab"
+                        :template="
+                            componentToString(currentChartData.config, ChartTooltipContent, {
+                                labelFormatter: (d) => {
+                                    return dayjs(d).format('MMM D')
+                                },
+                            })
+                        "
+                        :color="(d: any, i: number) => Object.values(currentChartData.config).map((c) => c.color as string)[i]"
+                    />
+                </VisXYContainer>
+                <ChartLegendContent />
+            </ChartContainer>
         </div>
     </template>
 </template>

@@ -8,7 +8,7 @@ import (
 	"pkg/utils"
 
 	"dario.cat/mergo"
-	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 )
 
 type RedisShareInfo struct {
@@ -34,21 +34,21 @@ const (
 
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 	rdb, ctx := utils.GetRedisClient()
-	shareInfo := rdb.Get(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId))
-	shareInfoUnmarshalData, err := shareInfo.Result()
-	ttl, _ := rdb.TTL(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId)).Result()
-	if err == redis.Nil {
+	key := fmt.Sprintf("015:shareInfoMap:%s", shareId)
+	shareInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Get().Key(key).Build()).ToString()
+	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, err
 	}
+	ttl, _ := rdb.Do(ctx, rdb.B().Ttl().Key(key).Build()).AsInt64()
 	var shareInfoData RedisShareInfo
 
 	if err := json.Unmarshal([]byte(shareInfoUnmarshalData), &shareInfoData); err != nil {
 		return nil, err
 	}
-	shareInfoData.ExpireAt = time.Now().Add(ttl).Unix()
+	shareInfoData.ExpireAt = time.Now().Add(time.Duration(ttl) * time.Second).Unix()
 	return &shareInfoData, nil
 }
 
@@ -62,6 +62,12 @@ func SetRedisShareInfo(shareId string, shareInfo RedisShareInfo) error {
 		mergo.Merge(&shareInfo, old_shareInfo)
 	}
 	jsonData, _ := json.Marshal(shareInfo)
-	_, err = rdb.Set(ctx, fmt.Sprintf("015:shareInfoMap:%s", shareId), string(jsonData), time.Until(time.Unix(shareInfo.ExpireAt, 0))).Result()
-	return err
+	return rdb.Do(
+		ctx,
+		rdb.B().Set().
+			Key(fmt.Sprintf("015:shareInfoMap:%s", shareId)).
+			Value(string(jsonData)).
+			Ex(time.Until(time.Unix(shareInfo.ExpireAt, 0))).
+			Build(),
+	).Error()
 }

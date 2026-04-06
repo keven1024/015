@@ -22,7 +22,7 @@ func TestInitEnvAndGetEnv(t *testing.T) {
 		ConfigData: bytes.NewBufferString(jsonData),
 		ConfigType: []string{"json"},
 	}
-	utils.InitEnv(props)
+	utils.InitTestViper(props)
 
 	// GetEnv应能拿到值
 	val := utils.GetEnv("test.value")
