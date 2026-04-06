@@ -33,6 +33,9 @@ func DownloadShare(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 	shareInfo, _ := models.GetRedisShareInfo(claims.ShareId)
+	if shareInfo == nil {
+		return utils.HTTPErrorHandler(c, ErrShareNotFound)
+	}
 
 	if shareInfo.Type == models.ShareTypeFile {
 		fileInfo, _ := models.GetRedisFileInfo(shareInfo.Data)
