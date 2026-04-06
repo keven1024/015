@@ -22,6 +22,7 @@ jobs:
                   images: fudaoyuanicu/015-app
                   tags: |
                       type=semver,pattern={{version}}
+                      type=raw,value=edge,enable=${{ contains(github.ref_name, '-') }}
                       type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
             - name: Set build time
               id: build-time
@@ -57,6 +58,7 @@ jobs:
                   images: fudaoyuanicu/015-worker
                   tags: |
                       type=semver,pattern={{version}}
+                      type=raw,value=edge,enable=${{ contains(github.ref_name, '-') }}
                       type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
             - name: Set build time
               id: build-time
