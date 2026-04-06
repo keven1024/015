@@ -90,7 +90,9 @@ func CreateUploadTask(c *echo.Context) error {
 		CreatedAt: time.Now().Unix(),
 		Expire:    uploadTaskExpire,
 	}
-	err = models.SetRedisFileInfo(fileId, newFileInfo)
+	err = models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+		return &newFileInfo
+	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -233,8 +235,9 @@ func FinishUploadTask(c *echo.Context) error {
 	}
 
 	// 更新文件信息
-	err = models.SetRedisFileInfo(r.FileId, models.RedisFileInfo{
-		FileType: models.FileTypeUpload,
+	err = models.SetRedisFileInfo(r.FileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+		fileInfo.FileType = models.FileTypeUpload
+		return fileInfo
 	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)

@@ -71,18 +71,13 @@ func MergeFileSlices(fileId string, uploadPath string) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("打开切片文件失败: %v", err)
 		}
-		defer sf.Close() //nolint:errcheck
-		for {
-			n, err := sf.Read(buffer)
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				return "", fmt.Errorf("读取切片文件失败: %v", err)
-			}
-			if _, err := destFile.Write(buffer[:n]); err != nil {
-				return "", fmt.Errorf("写入合并文件失败: %v", err)
-			}
+
+		if _, err := io.CopyBuffer(destFile, sf, buffer); err != nil {
+			sf.Close() //nolint:errcheck
+			return "", fmt.Errorf("合并切片文件失败: %v", err)
+		}
+		if err := sf.Close(); err != nil {
+			return "", fmt.Errorf("关闭切片文件失败: %v", err)
 		}
 	}
 	return mergeFilePath, nil
