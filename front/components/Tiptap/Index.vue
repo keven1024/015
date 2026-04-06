@@ -4,6 +4,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
 import { cx } from 'class-variance-authority'
+import countWords from '@/lib/countWords'
 
 const props = defineProps<{
     modelValue?: string
@@ -15,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const editor = ref<Editor | undefined>(undefined)
+
 onMounted(() => {
     editor.value = new Editor({
         content: props.modelValue,
@@ -58,4 +60,7 @@ onUnmounted(() => {
     >
     </editor-content>
     <!-- <BubbleMenuView :editor="editor as any" /> -->
+    <div v-if="modelValue?.length && modelValue?.length > 0" class="flex justify-end px-1 pt-1 text-xs text-gray-400 select-none">
+        {{ `${modelValue?.length ?? 0} 长度  ·  ${countWords(modelValue ?? '')} 字符` }}
+    </div>
 </template>

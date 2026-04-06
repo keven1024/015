@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { RuleExpression } from 'vee-validate'
 type SelectValue = string | number
 const props = defineProps<{
@@ -19,13 +11,14 @@ const props = defineProps<{
         label?: string
         value: SelectValue
     }[]
+    class?: string
 }>()
 const { value } = useField<SelectValue>(props.name, props?.rules)
 </script>
 
 <template>
     <Select v-model="value">
-        <SelectTrigger>
+        <SelectTrigger :class="class">
             <SelectValue :placeholder="placeholder" />
         </SelectTrigger>
         <SelectContent>
