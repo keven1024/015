@@ -29,7 +29,8 @@
                 "uploadText": "Upload Text",
                 "uploadTextPlaceholder": "Share, translate, summarize, generate images, and ask large models with our text processor",
                 "handleType": {
-                    "text-share": "Text Share"
+                    "text-share": "Text Share",
+                    "text-translate": "Text Translate"
                 }
             },
             "pickup": {
@@ -160,6 +161,25 @@
                 "link": "Link",
                 "content": "Content",
                 "copySuccess": "Copy Success"
+            },
+            "textTranslate": {
+                "title": "Text Translation",
+                "sourceText": "Source Text",
+                "translatedText": "Translated Text",
+                "sourceLanguage": "Source Language",
+                "targetLanguage": "Target Language",
+                "provider": "Provider",
+                "retranslate": "Retranslate",
+                "empty": "Enter text and click retranslate to preview the result",
+                "copy": "Copy Translation",
+                "copySuccess": "Translation copied",
+                "language": {
+                    "auto": "Auto Detect",
+                    "zh-CN": "Chinese",
+                    "en": "English",
+                    "ja": "Japanese",
+                    "ko": "Korean"
+                }
             },
             "qrCode": {
                 "title": "Share QR code"

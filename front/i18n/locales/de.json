@@ -1,0 +1,235 @@
+{
+    "navbar": {
+        "file": "Datei",
+        "text": "Text"
+    },
+    "i18n": {
+        "switchLocale": "Sprache wechseln"
+    },
+    "seo": {
+        "desc": "015 ist eine Plattform zum temporären Teilen von Dateien und unterstützt das hochladen großer Dateien in Blöcken, temporären Text-Upload, Download und Freigabe"
+    },
+    "btn": {
+        "submit": "Absenden",
+        "backToHome": "Zurück zur Startseite"
+    },
+    "page": {
+        "upload": {
+            "file": {
+                "uploadFile": "Datei hochladen",
+                "uploadFilePlaceholder": "Datei per Drag-and-drop hierher ziehen oder zum Hochladen klicken",
+                "addMore": "Mehr hinzufügen",
+                "handleType": {
+                    "file-share": "Dateifreigabe",
+                    "file-image-compress": "Bildkomprimierung",
+                    "file-image-convert": "Formatkonvertierung"
+                }
+            },
+            "text": {
+                "uploadText": "Text hochladen",
+                "uploadTextPlaceholder": "Mit unserem Textwerkzeug können Sie teilen, übersetzen, zusammenfassen, Bilder erzeugen und große Modelle befragen",
+                "handleType": {
+                    "text-share": "Textfreigabe",
+                    "text-translate": "Textübersetzung"
+                }
+            },
+            "pickup": {
+                "title": "Abholcode eingeben",
+                "codeError": "Ungültiger Abholcode",
+                "btn": "Abholen"
+            }
+        },
+        "shareOptions": {
+            "file": {
+                "title": "Freigabeoptionen",
+                "downloadNums": "Anzahl der Downloads",
+                "expireTime": "Ablaufzeit",
+                "or": "oder",
+                "expireAfter": "läuft ab nach",
+                "pickupCode": "Abholcode",
+                "passwordProtection": "Passwortschutz",
+                "downloadNotify": "Download-Benachrichtigung",
+                "passwordPlaceholder": "Passwort eingeben",
+                "emailPlaceholder": "E-Mail eingeben",
+                "downloadOptions": {
+                    "xdownload": "{0} Downloads"
+                },
+                "expireOptions": {
+                    "5min": "5 Minuten",
+                    "1hour": "1 Stunde",
+                    "1day": "1 Tag",
+                    "3days": "3 Tage"
+                }
+            },
+            "imageConvert": {
+                "title": "Bildkonvertierung",
+                "targetFormat": "Zielformat"
+            },
+            "text": {
+                "title": "Freigabeoptionen",
+                "viewNums": "Anzahl der Aufrufe",
+                "expireTime": "Ablaufzeit",
+                "or": "oder",
+                "expireAfter": "läuft ab nach",
+                "pickupCode": "Abholcode",
+                "passwordProtection": "Passwortschutz",
+                "readNotify": "Lesebestätigung",
+                "passwordPlaceholder": "Passwort eingeben",
+                "emailPlaceholder": "E-Mail eingeben",
+                "viewOptions": {
+                    "xview": "{0} Aufrufe"
+                },
+                "expireOptions": {
+                    "5min": "5 Minuten",
+                    "1hour": "1 Stunde",
+                    "1day": "1 Tag",
+                    "3days": "3 Tage"
+                }
+            }
+        },
+        "progress": {
+            "file": {
+                "totalUploadProgress": "Gesamter Upload-Fortschritt",
+                "fileList": "Dateiliste",
+                "fileName": "Dateiname",
+                "fileSize": "Dateigröße",
+                "uploadSpeed": "Upload-Geschwindigkeit",
+                "progress": "Fortschritt",
+                "uploadDetails": "Upload-Details",
+                "chunk": "Block",
+                "completed": "Abgeschlossen",
+                "discarded": "Verworfen",
+                "pending": "Ausstehend",
+                "chunkProgress": "Block-Fortschrittsbalken",
+                "chunkHeatmap": "Block-Heatmap",
+                "heatmap": "Heatmap",
+                "progressBar": "Fortschrittsbalken",
+                "uploadError": "Upload-Fehler",
+                "chunkUploadFailed": "Block {1} der Datei {0} ist mehrfach fehlgeschlagen, der Upload wurde abgebrochen",
+                "chunkUploadRetry": "Block {1} der Datei {0} konnte nicht hochgeladen werden, wir versuchen es später erneut",
+                "fileUploadFailed": "Der Upload der Datei {0} ist fehlgeschlagen, bitte versuchen Sie es erneut",
+                "uploadFailed": "Upload fehlgeschlagen",
+                "processing": {
+                    "hash": "Hash wird berechnet...",
+                    "create": "Upload wird initialisiert...",
+                    "upload": "Wird hochgeladen...",
+                    "finish": "Upload abgeschlossen"
+                },
+                "instantUploadSuccess": "Eine Datei mit demselben Hash existiert bereits in der Cloud, Sofort-Upload erfolgreich",
+                "uploadFailedRetry": "Upload fehlgeschlagen, bitte versuchen Sie es später erneut",
+                "uploadSpeedInfo": {
+                    "title": "Wie wird die Upload-Geschwindigkeit berechnet?",
+                    "desc": {
+                        "base": "Die Upload-Geschwindigkeit wird anhand von {chunkNum} * {chunkSize} geschätzt, die in der aktuellen Sekunde hochgeladen wurden. Sie kann daher leicht von der tatsächlichen Geschwindigkeit abweichen und dient nur als Referenz",
+                        "chunkNum": "Anzahl der Dateiblöcke",
+                        "chunkSize": "Größe jedes Dateiblocks"
+                    }
+                }
+            }
+        },
+        "result": {
+            "file": {
+                "title": "Upload erfolgreich",
+                "fileList": "Dateiliste",
+                "info": "Informationen",
+                "downloadNums": "Anzahl der Downloads",
+                "expireTime": "Ablaufzeit",
+                "pickupCode": "Abholcode",
+                "link": "Link",
+                "copySuccess": "Erfolgreich kopiert"
+            },
+            "imageCompress": {
+                "title": "Bildkomprimierung",
+                "totalSize": "Gesamtgröße",
+                "task": "Aufgabe",
+                "retry": "Wiederholen {0}/{1}",
+                "failed": "Fehlgeschlagen"
+            },
+            "imageConvert": {
+                "title": "Bildkonvertierung",
+                "convert": "Konvertieren",
+                "task": "Aufgabe",
+                "retry": "Wiederholen {0}/{1}",
+                "failed": "Fehlgeschlagen"
+            },
+            "text": {
+                "title": "Freigabe erfolgreich",
+                "info": "Informationen",
+                "viewNums": "Anzahl der Aufrufe",
+                "expireTime": "Ablaufzeit",
+                "pickupCode": "Abholcode",
+                "link": "Link",
+                "content": "Inhalt",
+                "copySuccess": "Erfolgreich kopiert"
+            },
+            "textTranslate": {
+                "title": "Textübersetzung",
+                "sourceText": "Ausgangstext",
+                "translatedText": "Übersetzung",
+                "sourceLanguage": "Ausgangssprache",
+                "targetLanguage": "Zielsprache",
+                "provider": "Anbieter",
+                "retranslate": "Erneut übersetzen",
+                "empty": "Geben Sie Text ein und klicken Sie auf erneut übersetzen, um das Ergebnis anzuzeigen",
+                "copy": "Übersetzung kopieren",
+                "copySuccess": "Übersetzung kopiert",
+                "language": {
+                    "auto": "Automatisch erkennen",
+                    "zh-CN": "Chinesisch",
+                    "en": "Englisch",
+                    "ja": "Japanisch",
+                    "ko": "Koreanisch"
+                }
+            },
+            "qrCode": {
+                "title": "QR-Code zum Teilen"
+            }
+        },
+        "shareView": {
+            "linkExpired": "Dieser Link ist abgelaufen.",
+            "passwall": {
+                "title": "Passwort eingeben",
+                "passwordError": "Falsches Passwort",
+                "passwordPlaceholder": "Passwort eingeben"
+            },
+            "fileShare": {
+                "title": "Datei herunterladen",
+                "downloadBtn": "Herunterladen",
+                "needPassword": "Passwort erforderlich",
+                "expireTime": "Ablaufzeit",
+                "remainingDownloads": "Verbleibende Downloads",
+                "getTokenFailed": "Token konnte nicht abgerufen werden",
+                "durationFormat": "D [Tage] HH:mm:ss"
+            },
+            "textShare": {
+                "title": "Text anzeigen",
+                "viewBtn": "Anzeigen",
+                "needPassword": "Passwort erforderlich",
+                "expireTime": "Ablaufzeit",
+                "remainingViews": "Verbleibende Aufrufe",
+                "durationFormat": "D [Tage] HH:mm:ss"
+            }
+        },
+        "about": {
+            "powerBy": "Open-Source-Plattform zum selbst gehosteten temporären Teilen von Dateien, betrieben von {0}",
+            "file": "Datei",
+            "share": "Teilen",
+            "download": "Herunterladen",
+            "task": "Aufgabe",
+            "admin": "Administrator der Website",
+            "author": "Autor",
+            "title": "Über",
+            "about": "Über",
+            "systemInfo": "Systeminformationen",
+            "enabledFeatures": "Aktivierte Funktionen",
+            "enabledFeaturesEmpty": "Für diese Instanz sind derzeit keine zusätzlichen Funktionen aktiviert",
+            "systemVersion": "Systemversion",
+            "storage": "Speicher",
+            "analysis": "Analyse",
+            "fileSize": "Dateigröße",
+            "fileNum": "Anzahl der Dateien",
+            "processed": "Verarbeitet",
+            "failed": "Fehlgeschlagen"
+        }
+    }
+}
