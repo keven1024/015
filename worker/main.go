@@ -33,6 +33,7 @@ func main() {
 	mux.HandleFunc("file:remove", tasks.RemoveFile)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 	mux.HandleFunc("image:convert", tasks.ConvertImage)
+	mux.HandleFunc("text:translate", tasks.TranslateText)
 
 	if err := srv.Run(mux); err != nil {
 		log.Fatalf("could not run server: %v", err)

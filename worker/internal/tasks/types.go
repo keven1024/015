@@ -23,3 +23,10 @@ type ConvertImageTaskPayload struct {
 	BaseFileTaskPayload
 	TargetExt string `json:"target_ext"`
 }
+
+type TranslateTextTaskPayload struct {
+	Text     string `json:"text"`
+	Source   string `json:"source"`
+	Target   string `json:"target"`
+	Provider string `json:"provider"`
+}
