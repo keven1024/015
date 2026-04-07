@@ -9,6 +9,11 @@ const useMyAppConfig = () => {
             version: string
             build_time: number
             features: string[]
+            text: {
+                translate: {
+                    provider: string[]
+                }
+            }
         }
     }>('/api/config')
     return computed(() => data?.value?.data)

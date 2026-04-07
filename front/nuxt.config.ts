@@ -24,6 +24,11 @@ export default defineNuxtConfig({
         locales: [
             { code: 'zh-CN', name: '中文(简体)', file: 'zh-CN.json' },
             { code: 'en', name: 'English', file: 'en.json' },
+            { code: 'ja', name: '日本語', file: 'ja.json' },
+            { code: 'ko', name: '한국어', file: 'ko.json' },
+            { code: 'fr', name: 'Français', file: 'fr.json' },
+            { code: 'de', name: 'Deutsch', file: 'de.json' },
+            { code: 'zh-TW', name: '中文(繁體)', file: 'zh-TW.json' },
         ],
     },
     vite: {
