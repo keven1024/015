@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { cx } from 'class-variance-authority'
+import FileIcon from './File.vue'
+import ImageIcon from './Image.vue'
+import VideoIcon from './Video.vue'
 export type filePreview = {
     type: string
     name: string
@@ -17,56 +20,20 @@ const props = withDefaults(
         size: 'md',
     }
 )
-const imageUrl = computed(() => {
-    if (props?.file?.type?.startsWith('image/') && props?.file instanceof File) {
-        return URL.createObjectURL(props?.file)
-    }
-    return null
-})
-
-onUnmounted(() => {
-    if (imageUrl.value) {
-        URL.revokeObjectURL(imageUrl.value)
-    }
-})
-
-const fileIcon = computed(() => {
-    const [baseType, type] = props?.file?.type?.split('/')
-    if (baseType === 'video') {
-        return LucideFileVideo
-    }
-    if (baseType === 'audio') {
-        return LucideFileAudio
-    }
-    if (baseType === 'text' || ['json', 'ld+json', 'html']?.includes(type ?? '')) {
-        return LucideFileCode
-    }
-    if (
-        [
-            'pdf',
-            'msword',
-            'vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'vnd.ms-excel',
-            'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'vnd.ms-powerpoint',
-            'vnd.openxmlformats-officedocument.presentationml.presentation',
-        ].includes(type ?? '')
-    ) {
-        return LucideFileText
-    }
-    if (['zip', 'vnd.rar', 'x-tar', 'gz', 'bz2', 'x-7z-compressed'].includes(type ?? '')) {
-        return LucideFileArchive
-    }
-    return LucideFile
-})
+const isImage = computed(() => props?.file?.type?.startsWith('image/'))
+const isVideo = computed(() => props?.file?.type?.startsWith('video/'))
 </script>
 
 <template>
-    <div v-if="!!imageUrl" :class="cx('flex overflow-hidden', size === 'sm' && 'max-w-20 max-h-16', size === 'md' && 'max-w-30 max-h-20')">
-        <img :src="imageUrl" class="block max-w-full max-h-full object-contain border border-black/20 rounded" />
+    <div v-if="isImage || isVideo" :class="cx('flex overflow-hidden', size === 'sm' && 'max-w-20 max-h-16', size === 'md' && 'max-w-30 max-h-20')">
+        <component
+            :is="isImage ? ImageIcon : VideoIcon"
+            :file="props?.file"
+            class="block max-w-full max-h-full object-contain border border-black/20 rounded"
+        />
     </div>
     <div
-        v-if="!imageUrl"
+        v-else
         :class="
             cx(
                 'flex justify-center items-center bg-white/80',
@@ -76,6 +43,6 @@ const fileIcon = computed(() => {
             )
         "
     >
-        <component :is="fileIcon" class="size-[62.5%]" />
+        <component :is="FileIcon" :file="props?.file" class="size-[62.5%]" />
     </div>
 </template>
