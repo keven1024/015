@@ -137,11 +137,14 @@ watchEffect(async () => {
     }
 })
 
+const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024 // 500 MB
+
 const handleHash = async (fileId: string) => {
     const uploadfile = uploadfiles.value.find((item) => item.fileId === fileId)
     if (!uploadfile?.file) return
     uploadfile.procressType = 'hash'
-    const res = await asyncWorker(calcFileHashWorker, { data: { file: uploadfile.file } })
+    const engine = uploadfile.file.size >= LARGE_FILE_THRESHOLD ? 'wasm' : 'native'
+    const res = await asyncWorker(calcFileHashWorker, { data: { file: uploadfile.file, engine } })
     const { hash } = res?.data || {}
     uploadfile.hash = hash
 }
