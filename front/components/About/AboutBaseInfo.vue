@@ -2,12 +2,12 @@
 import { useQuery } from '@tanstack/vue-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import getFileSize from '~/lib/getFileSize'
-import SparkMD5 from 'spark-md5'
 import useMyAppConfig from '@/composables/useMyAppConfig'
 import { useFeatureMeta } from '@/composables/useFeatureMeta'
 import Progress from '~/components/ui/progress/Progress.vue'
 import renderI18n from '~/lib/renderI18n'
 import { I18nT } from 'vue-i18n'
+import { calcNativeHash } from '~/lib/calcFileHash'
 
 const { locale } = useI18n()
 const appConfig = useMyAppConfig()
@@ -34,9 +34,12 @@ const { data, isLoading } = useQuery({
 })
 const { t } = useI18n()
 
-const genUserAvatar = (email: string) => {
-    return `https://www.gravatar.com/avatar/${SparkMD5.hash(email)}?d=retro`
-}
+const { state: userAvatar } = useAsyncState(async () => {
+    if (!data?.value?.email) return null
+    const buffer = new TextEncoder().encode(data?.value?.email)
+    const hash = await calcNativeHash(buffer)
+    return `https://www.gravatar.com/avatar/${hash}?d=retro`
+}, null)
 </script>
 
 <template>
@@ -88,7 +91,7 @@ const genUserAvatar = (email: string) => {
                     "
                 >
                     <Avatar class="size-10">
-                        <AvatarImage v-if="!!data?.avatar || !!data?.email" :src="data?.avatar || genUserAvatar(data?.email as string)" />
+                        <AvatarImage v-if="!!data?.avatar || !!data?.email" :src="data?.avatar || (userAvatar as string)" />
                         <AvatarFallback class="bg-black/10 font-bold">
                             {{ data?.name?.charAt(0)?.toUpperCase() }}
                         </AvatarFallback>

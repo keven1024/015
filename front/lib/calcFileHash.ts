@@ -13,10 +13,7 @@ const calcFileHash = async (props: CalcFileHashProps) => {
 
     if (engine === 'native') {
         const buffer = await file.arrayBuffer()
-        const hashBuffer = await crypto.subtle.digest('SHA-1', buffer)
-        return Array.from(new Uint8Array(hashBuffer))
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
+        return calcNativeHash(buffer)
     }
 
     const chunkBytes = chunkSize * 1024 * 1024
@@ -29,6 +26,13 @@ const calcFileHash = async (props: CalcFileHashProps) => {
         onProgress(Math.min(offset, file.size) / file.size)
     }
     return hasher.digest('hex')
+}
+
+export const calcNativeHash = async (buffer: BufferSource) => {
+    const hashBuffer = await crypto.subtle.digest('SHA-1', buffer)
+    return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
 }
 
 export default calcFileHash
