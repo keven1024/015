@@ -4,7 +4,30 @@
         "text": "Text"
     },
     "i18n": {
-        "switchLocale": "Sprache wechseln"
+        "switchLocale": "Sprache wechseln",
+        "language": {
+            "en": "Englisch",
+            "en-GB": "Englisch (Vereinigtes Königreich)",
+            "ja": "Japanisch",
+            "fr": "Französisch",
+            "de": "Deutsch",
+            "es-ES": "Spanisch (Spanien)",
+            "es-419": "Spanisch (Lateinamerika)",
+            "pt-BR": "Portugiesisch (Brasilien)",
+            "zh-CN": "Chinesisch (vereinfacht)",
+            "zh-TW": "Chinesisch (traditionell)",
+            "nl": "Niederländisch",
+            "no": "Norwegisch",
+            "sv": "Schwedisch",
+            "da": "Dänisch",
+            "fi": "Finnisch",
+            "ko": "Koreanisch",
+            "vi": "Vietnamesisch",
+            "th": "Thailändisch",
+            "id": "Indonesisch",
+            "ar": "Arabisch",
+            "he": "Hebräisch"
+        }
     },
     "seo": {
         "desc": "015 ist eine Plattform zum temporären Teilen von Dateien und unterstützt das hochladen großer Dateien in Blöcken, temporären Text-Upload, Download und Freigabe"

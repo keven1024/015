@@ -4,7 +4,30 @@
         "text": "Texte"
     },
     "i18n": {
-        "switchLocale": "Changer de langue"
+        "switchLocale": "Changer de langue",
+        "language": {
+            "en": "Anglais",
+            "en-GB": "Anglais (Royaume-Uni)",
+            "ja": "Japonais",
+            "fr": "Français",
+            "de": "Allemand",
+            "es-ES": "Espagnol (Espagne)",
+            "es-419": "Espagnol (Amérique latine)",
+            "pt-BR": "Portugais (Brésil)",
+            "zh-CN": "Chinois (simplifié)",
+            "zh-TW": "Chinois (traditionnel)",
+            "nl": "Néerlandais",
+            "no": "Norvégien",
+            "sv": "Suédois",
+            "da": "Danois",
+            "fi": "Finnois",
+            "ko": "Coréen",
+            "vi": "Vietnamien",
+            "th": "Thaï",
+            "id": "Indonésien",
+            "ar": "Arabe",
+            "he": "Hébreu"
+        }
     },
     "seo": {
         "desc": "015 est une plateforme de partage de fichiers temporaires prenant en charge le téléversement fractionné de gros fichiers, le téléversement de texte temporaire, le téléchargement et le partage"

@@ -4,7 +4,30 @@
         "text": "Text"
     },
     "i18n": {
-        "switchLocale": "Switch Language"
+        "switchLocale": "Switch Language",
+        "language": {
+            "en": "English",
+            "en-GB": "English (UK)",
+            "ja": "Japanese",
+            "fr": "French",
+            "de": "German",
+            "es-ES": "Spanish (Spain)",
+            "es-419": "Spanish (Latin America)",
+            "pt-BR": "Portuguese (Brazil)",
+            "zh-CN": "Chinese (Simplified)",
+            "zh-TW": "Chinese (Traditional)",
+            "nl": "Dutch",
+            "no": "Norwegian",
+            "sv": "Swedish",
+            "da": "Danish",
+            "fi": "Finnish",
+            "ko": "Korean",
+            "vi": "Vietnamese",
+            "th": "Thai",
+            "id": "Indonesian",
+            "ar": "Arabic",
+            "he": "Hebrew"
+        }
     },
     "seo": {
         "desc": "015 is a temporary file sharing platform project, supporting temporary large file slicing upload, temporary text upload, download and share"
