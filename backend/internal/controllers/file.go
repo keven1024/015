@@ -212,18 +212,18 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	// 计算文件MD5
+	// 计算文件SHA1
 	file, err := os.Open(mergeFilePath)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	defer file.Close() //nolint:errcheck
 
-	file_hash, err := u.GetFileMd5(file)
+	file_hash, err := u.GetFileSHA1(file)
 	if err != nil || file_hash != fileInfo.FileHash {
 		defer os.Remove(mergeFilePath) //nolint:errcheck
 		if err == nil {
-			return utils.HTTPErrorHandler(c, ErrFileMD5Mismatch)
+			return utils.HTTPErrorHandler(c, ErrFileHashMismatch)
 		}
 		return utils.HTTPErrorHandler(c, err)
 	}

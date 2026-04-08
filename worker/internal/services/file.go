@@ -31,7 +31,7 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	}
 	fileSize := fileInfo.Size()
 
-	fileHash, err := u.GetFileMd5(file)
+	fileHash, err := u.GetFileSHA1(file)
 	if err != nil {
 		return GenStandardFileReturn{}, err
 	}
