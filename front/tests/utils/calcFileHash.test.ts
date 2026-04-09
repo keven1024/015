@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import calcFileHash from './calcFileHash'
+import calcFileHash from '@/lib/calcFileHash'
 
 const makeFile = (content: string) => new File([content], 'test.txt', { type: 'text/plain' })
 
