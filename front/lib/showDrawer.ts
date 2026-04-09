@@ -1,13 +1,13 @@
-interface DrawerProps {
-    render: (props: { hide: () => void }) => Component
-}
+import type { DrawerItem } from '~/components/GlobalDrawer.vue'
 
-const showDrawer = (props: DrawerProps) => {
+type DrawerProps<T = unknown> = Pick<DrawerItem<T>, 'render'>
+
+function showDrawer<T = unknown>(props: DrawerProps<T>): Promise<T | undefined> {
     const key = Math.random().toString(36).slice(2, 8)
-    return new Promise<void>((res) => {
+    return new Promise((res) => {
         const { render } = props || {}
-        const onClose = (data?: any) => {
-            store.drawer = (store.drawer ?? [])?.filter((item: any) => item.key !== key)
+        const onClose = (data?: T) => {
+            store.drawer = (store.drawer ?? [])?.filter((item) => item.key !== key)
             res(data)
         }
         const store = useStore()

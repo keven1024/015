@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
-
-type renderComponent = Component | ((props: { hide: () => null }) => VNode)
+import type { DrawerItem } from '@/components/GlobalDrawer.vue'
 
 type StoreProps = {
     tiptapCommandsView?: any
-    drawer?: { render?: renderComponent; onClose: (data?: any) => void; key: string }[]
+    drawer?: DrawerItem<any>[]
 }
 
 const useStore = defineStore<any, StoreProps>('store', () => {

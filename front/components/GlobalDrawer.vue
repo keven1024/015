@@ -3,6 +3,14 @@ import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { createVNode } from 'vue'
 import useStore from '@/composables/useStore'
 
+type DrawerOnclose<T = unknown> = (data?: T) => void
+type DrawerRender<T = unknown> = VNode | ((props: { hide: DrawerOnclose<T> }) => VNode)
+export type DrawerItem<T = unknown> = {
+    render?: DrawerRender<T>
+    onClose: DrawerOnclose<T>
+    key: string
+}
+
 const store = useStore()
 const currentDrawer = computed(() => store.drawer?.[store.drawer?.length - 1])
 
