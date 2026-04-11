@@ -60,7 +60,10 @@ onUnmounted(() => {
     >
     </editor-content>
     <!-- <BubbleMenuView :editor="editor as any" /> -->
-    <div v-if="modelValue?.length && modelValue?.length > 0" class="flex justify-end px-1 pt-1 text-xs text-gray-400 select-none">
+    <div
+        v-if="modelValue?.length && modelValue?.length > 0"
+        class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
+    >
         {{ `${modelValue?.length ?? 0} 长度  ·  ${countWords(modelValue ?? '')} 字符` }}
     </div>
 </template>
