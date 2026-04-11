@@ -3,6 +3,8 @@ import { cx } from 'class-variance-authority'
 import FileIcon from './File.vue'
 import ImageIcon from './Image.vue'
 import VideoIcon from './Video.vue'
+import { fileTypeFromBuffer } from 'file-type'
+
 export type filePreview = {
     type: string
     name: string
@@ -20,8 +22,19 @@ const props = withDefaults(
     }
 )
 const isFile = computed(() => props?.file instanceof File)
-const isImage = computed(() => isFile.value && props?.file?.type?.startsWith('image/'))
-const isVideo = computed(() => isFile.value && props?.file?.type?.startsWith('video/'))
+const { state: fileType } = useAsyncState(async () => {
+    if (!isFile.value) {
+        return null
+    }
+    if (!!props?.file?.type) {
+        return props?.file?.type
+    }
+    const { mime } = (await fileTypeFromBuffer(await (props?.file as File)?.arrayBuffer())) || {}
+    return mime
+}, null)
+
+const isImage = computed(() => isFile.value && fileType.value?.startsWith('image/'))
+const isVideo = computed(() => isFile.value && fileType.value?.startsWith('video/'))
 </script>
 
 <template>
