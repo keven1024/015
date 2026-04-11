@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "Chunk {1} of file {0} failed to upload, we will try again later",
                 "fileUploadFailed": "File {0} upload failed, please try again",
                 "uploadFailed": "Upload Failed",
+                "hashEngineNotFound": "No file hash engine is available in the current environment",
                 "processing": {
                     "hash": "Calculating Hash...",
                     "create": "Initializing Upload...",

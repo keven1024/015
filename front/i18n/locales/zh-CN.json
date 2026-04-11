@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "文件 {0} 的{1}分块上传失败, 我们将在稍后再次尝试上传",
                 "fileUploadFailed": "文件{0}上传失败, 请重试",
                 "uploadFailed": "上传失败",
+                "hashEngineNotFound": "当前环境不支持文件哈希计算引擎",
                 "processing": {
                     "hash": "计算Hash...",
                     "create": "初始化上传...",

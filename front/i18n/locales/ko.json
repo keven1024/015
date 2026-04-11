@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "파일 {0}의 청크 {1} 업로드에 실패했습니다. 잠시 후 다시 시도합니다",
                 "fileUploadFailed": "파일 {0} 업로드에 실패했습니다. 다시 시도해 주세요",
                 "uploadFailed": "업로드 실패",
+                "hashEngineNotFound": "현재 환경에서는 파일 해시 계산 엔진을 사용할 수 없습니다",
                 "processing": {
                     "hash": "해시 계산 중...",
                     "create": "업로드 초기화 중...",

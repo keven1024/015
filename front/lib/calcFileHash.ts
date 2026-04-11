@@ -35,4 +35,15 @@ export const calcNativeHash = async (buffer: BufferSource) => {
         .join('')
 }
 
+export const detectSupportedEngines = (): ('native' | 'wasm')[] => {
+    const engines: ('native' | 'wasm')[] = []
+    if (typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined') {
+        engines.push('native')
+    }
+    if (typeof WebAssembly !== 'undefined' && typeof WebAssembly.instantiate === 'function') {
+        engines.push('wasm')
+    }
+    return engines
+}
+
 export default calcFileHash

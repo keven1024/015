@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "Le bloc {1} du fichier {0} n'a pas pu être téléversé, une nouvelle tentative sera effectuée plus tard",
                 "fileUploadFailed": "Le téléversement du fichier {0} a échoué, veuillez réessayer",
                 "uploadFailed": "Échec du téléversement",
+                "hashEngineNotFound": "Aucun moteur de calcul de hash de fichier n'est disponible dans l'environnement actuel",
                 "processing": {
                     "hash": "Calcul du hash...",
                     "create": "Initialisation du téléversement...",

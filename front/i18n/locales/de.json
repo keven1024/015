@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "Block {1} der Datei {0} konnte nicht hochgeladen werden, wir versuchen es später erneut",
                 "fileUploadFailed": "Der Upload der Datei {0} ist fehlgeschlagen, bitte versuchen Sie es erneut",
                 "uploadFailed": "Upload fehlgeschlagen",
+                "hashEngineNotFound": "In der aktuellen Umgebung ist keine Engine zur Dateihash-Berechnung verfügbar",
                 "processing": {
                     "hash": "Hash wird berechnet...",
                     "create": "Upload wird initialisiert...",

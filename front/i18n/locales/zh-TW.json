@@ -132,6 +132,7 @@
                 "chunkUploadRetry": "檔案 {0} 的第 {1} 個分塊上傳失敗，稍後將再次嘗試",
                 "fileUploadFailed": "檔案 {0} 上傳失敗，請重試",
                 "uploadFailed": "上傳失敗",
+                "hashEngineNotFound": "目前環境不支援檔案雜湊計算引擎",
                 "processing": {
                     "hash": "計算雜湊中...",
                     "create": "初始化上傳中...",
