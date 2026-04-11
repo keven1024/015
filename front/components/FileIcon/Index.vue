@@ -9,7 +9,6 @@ export type filePreview = {
     size: number
 }
 
-import { LucideFileAudio, LucideFileVideo, LucideFile, LucideFileCode, LucideFileArchive, LucideFileText } from 'lucide-vue-next'
 const props = withDefaults(
     defineProps<{
         file: File | filePreview
@@ -20,15 +19,16 @@ const props = withDefaults(
         size: 'md',
     }
 )
-const isImage = computed(() => props?.file?.type?.startsWith('image/'))
-const isVideo = computed(() => props?.file?.type?.startsWith('video/'))
+const isFile = computed(() => props?.file instanceof File)
+const isImage = computed(() => isFile.value && props?.file?.type?.startsWith('image/'))
+const isVideo = computed(() => isFile.value && props?.file?.type?.startsWith('video/'))
 </script>
 
 <template>
     <div v-if="isImage || isVideo" :class="cx('flex overflow-hidden', size === 'sm' && 'max-w-20 max-h-16', size === 'md' && 'max-w-30 max-h-20')">
         <component
             :is="isImage ? ImageIcon : VideoIcon"
-            :file="props?.file"
+            :file="props?.file as File"
             class="block max-w-full max-h-full object-contain border border-black/20 rounded"
         />
     </div>

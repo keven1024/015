@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import type { filePreview } from './Index.vue'
+import { isHeic, heicTo } from 'heic-to'
 
 const props = defineProps<{
-    file: File | filePreview
+    file: File
 }>()
 
-const imageUrl = computed(() => {
-    if (props?.file?.type?.startsWith('image/') && props?.file instanceof File) {
-        return URL.createObjectURL(props?.file)
+const { state: imageUrl } = useAsyncState(async () => {
+    let blob: Blob = props?.file
+    if (await isHeic(props?.file)) {
+        blob = await heicTo({
+            blob: props?.file,
+            type: 'image/jpeg',
+            quality: 1,
+        })
     }
-    return null
-})
+    return URL.createObjectURL(blob)
+}, null)
 
 onUnmounted(() => {
     if (imageUrl.value) {
