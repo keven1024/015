@@ -10,6 +10,11 @@ import (
 	"github.com/spf13/cast"
 )
 
+var defaultEnabledFeatures = []string{
+	"file-share",
+	"text-share",
+}
+
 func getEnabledKeys(config map[string]any) []string {
 	return lo.FilterMap(lo.Entries(config), func(e lo.Entry[string, any], _ int) (string, bool) {
 		node, ok := e.Value.(map[string]any)
@@ -19,6 +24,13 @@ func getEnabledKeys(config map[string]any) []string {
 
 func GetConfig(c *echo.Context) error {
 	featureConfig := u.GetEnvMap("features")
+	defaultFeatureConfig := lo.SliceToMap(defaultEnabledFeatures, func(item string) (string, any) {
+		return item, map[string]any{
+			"enabled": true,
+		}
+	})
+
+	featureConfig = lo.Assign(defaultFeatureConfig, featureConfig)
 	features := getEnabledKeys(featureConfig)
 	textTranslateProviderConfig := u.GetEnvMap("features.text-translate.provider")
 	textTranslateProviders := getEnabledKeys(textTranslateProviderConfig)
