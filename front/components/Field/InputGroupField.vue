@@ -6,7 +6,7 @@ const props = defineProps<{
     label?: string
     rules?: RuleExpression<string[]>
 }>()
-const { value, setValue } = useField<string[]>(props.name, props?.rules)
+const { value, setValue, errorMessage } = useField<string[]>(props.name, props?.rules)
 const addInput = ref('')
 </script>
 
@@ -17,22 +17,28 @@ const addInput = ref('')
             <Input
                 :model-value="item"
                 @update:model-value="(v: string | number) => setValue(value.map((o, i) => (i === index ? String(v) : o)))"
+                :aria-invalid="!!errorMessage || undefined"
                 v-bind="$attrs"
             />
             <Button variant="ghost" size="icon" @click="setValue(value.filter((_, i) => i !== index))"><LucideX class="size-4" /></Button>
         </div>
         <div class="flex flex-row gap-2 items-center">
-            <Input v-model="addInput" v-bind="$attrs" />
+            <Input v-model="addInput" :aria-invalid="!!errorMessage || undefined" v-bind="$attrs" />
             <Button
                 size="icon"
                 @click="
                     () => {
-                        setValue([...(value || []), addInput])
+                        const nextValue = addInput.trim()
+                        if (!nextValue) {
+                            return
+                        }
+                        setValue([...(value || []), nextValue])
                         addInput = ''
                     }
                 "
                 ><LucidePlus class="size-4"
             /></Button>
         </div>
+        <p v-if="errorMessage" class="text-sm text-destructive">{{ errorMessage }}</p>
     </div>
 </template>
