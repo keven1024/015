@@ -20,7 +20,14 @@ const addInput = ref('')
                 :aria-invalid="!!errorMessage || undefined"
                 v-bind="$attrs"
             />
-            <Button variant="ghost" size="icon" @click="setValue(value.filter((_, i) => i !== index))"><LucideX class="size-4" /></Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
+                @click="setValue(value.filter((_, i) => i !== index))"
+            >
+                <LucideTrash class="size-4" />
+            </Button>
         </div>
         <div class="flex flex-row gap-2 items-center">
             <Input v-model="addInput" :aria-invalid="!!errorMessage || undefined" v-bind="$attrs" />
