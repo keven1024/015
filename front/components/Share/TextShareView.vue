@@ -8,9 +8,6 @@ import { LucideCheck, LucideX } from 'lucide-vue-next'
 import { cx } from 'class-variance-authority'
 import { toast } from 'vue-sonner'
 import MarkdownRender from '@/components/MarkdownRender.vue'
-import { Button } from '@/components/ui/button'
-import { LucideCopy } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
 import showDrawer from '~/lib/showDrawer'
 import PasswallShareDrawer from '~/components/Drawer/PasswallShareDrawer.vue'
 
@@ -29,8 +26,6 @@ const expireSeconds = computed(() => {
 })
 
 const { remaining, start } = useCountdown(expireSeconds.value)
-
-const { copy } = useClipboard()
 
 onMounted(() => {
     start()
@@ -74,19 +69,7 @@ const handlePreview = async () => {
     <div :class="cx('flex flex-col max-h-full', !!previewText ? 'gap-3' : 'gap-16 items-center')">
         <div :class="cx('flex flex-row w-full', !!previewText ? 'justify-between' : 'justify-center')">
             <h1 class="text-xl">{{ t('page.shareView.textShare.title') }}</h1>
-            <Button
-                v-if="!!previewText"
-                variant="outline"
-                size="icon"
-                @click="
-                    () => {
-                        copy(previewText as string)
-                        toast.success(t('page.result.text.copySuccess'))
-                    }
-                "
-            >
-                <LucideCopy />
-            </Button>
+            <CopyButton v-if="!!previewText" :value="previewText as string" />
         </div>
         <template v-if="!previewText">
             <div class="flex flex-col gap-2 md:flex-row w-full">

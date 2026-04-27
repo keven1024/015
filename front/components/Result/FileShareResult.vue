@@ -2,8 +2,7 @@
 import { Button } from '@/components/ui/button'
 import FilePreviewView from '@/components/FilePreviewView.vue'
 import { Input } from '@/components/ui/input'
-import { useClipboard, useShare } from '@vueuse/core'
-import { toast } from 'vue-sonner'
+import { useShare } from '@vueuse/core'
 import { useQuery } from '@tanstack/vue-query'
 import useMyAppShare from '@/composables/useMyAppShare'
 import useMyAppConfig from '@/composables/useMyAppConfig'
@@ -49,7 +48,6 @@ const getShareUrl = (id: string) => {
     return `${appConfig?.value?.site_url}/s/${id}`
 }
 
-const { copy } = useClipboard()
 const { share, isSupported: isShareSupported } = useShare()
 
 const handleShare = async (id: string, fileName?: string) => {
@@ -106,19 +104,11 @@ const handleShowQrCode = (id: string) => {
                         >
                             <LucideShare class="size-1/2" />
                         </Button>
-                        <Button
-                            variant="outline"
+                        <CopyButton
                             :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
-                            size="icon"
-                            @click.stop="
-                                () => {
-                                    copy(getShareUrl(file?.id as string))
-                                    toast.success(t('page.result.file.copySuccess'))
-                                }
-                            "
-                        >
-                            <LucideCopy class="size-1/2" />
-                        </Button>
+                            :value="getShareUrl(file?.id as string)"
+                            @click.stop
+                        />
                         <Button
                             variant="outline"
                             :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
@@ -147,19 +137,7 @@ const handleShowQrCode = (id: string) => {
                         <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1" v-if="selectedFileShare?.pickup_code">
                             <div class="flex flex-row justify-between w-full items-center">
                                 <div class="text-xs font-semibold">{{ t('page.result.file.pickupCode') }}</div>
-                                <Button
-                                    variant="outline"
-                                    class="bg-white/70 p-0 size-6"
-                                    size="icon"
-                                    @click="
-                                        () => {
-                                            copy(selectedFileShare?.pickup_code as string)
-                                            toast.success(t('page.result.file.copySuccess'))
-                                        }
-                                    "
-                                >
-                                    <LucideCopy class="size-1/2" />
-                                </Button>
+                                <CopyButton class="bg-white/70 p-0 size-6" :value="selectedFileShare?.pickup_code as string" />
                             </div>
                             <div class="flex flex-row gap-2">
                                 <div v-for="s in selectedFileShare?.pickup_code" class="text-2xl font-light">
@@ -187,19 +165,7 @@ const handleShowQrCode = (id: string) => {
                         >
                             <LucideShare class="size-1/2" />
                         </Button>
-                        <Button
-                            variant="outline"
-                            class="bg-white/70"
-                            size="icon"
-                            @click="
-                                () => {
-                                    copy(getShareUrl(selectedFileShare?.id as string))
-                                    toast.success(t('page.result.file.copySuccess'))
-                                }
-                            "
-                        >
-                            <LucideCopy class="size-4" />
-                        </Button>
+                        <CopyButton class="bg-white/70" :value="getShareUrl(selectedFileShare?.id as string)" />
 
                         <Button variant="outline" class="bg-white/70" size="icon" @click="handleShowQrCode(selectedFileShare?.id as string)">
                             <LucideQrCode class="size-1/2" />
