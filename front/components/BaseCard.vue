@@ -21,7 +21,7 @@ const router = useRouter()
                     }
                 "
             >
-                <LucideHome />
+                <LucideHome class="size-4" />
             </Button>
         </div>
         <slot />

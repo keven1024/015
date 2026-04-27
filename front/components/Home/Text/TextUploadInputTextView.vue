@@ -44,7 +44,7 @@ const handleTextShare = ({ type, config }: { type: string; config: any }) => {
                     }
                 "
             >
-                <LucideX />
+                <LucideX class="size-4" />
             </Button>
         </div>
         <div class="flex flex-row gap-3">

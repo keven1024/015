@@ -104,7 +104,7 @@ const handleShowQrCode = (id: string) => {
                             size="icon"
                             @click.stop="handleShare(file?.id as string, file?.file_name)"
                         >
-                            <LucideShare />
+                            <LucideShare class="size-1/2" />
                         </Button>
                         <Button
                             variant="outline"
@@ -117,7 +117,7 @@ const handleShowQrCode = (id: string) => {
                                 }
                             "
                         >
-                            <LucideCopy />
+                            <LucideCopy class="size-1/2" />
                         </Button>
                         <Button
                             variant="outline"
@@ -125,7 +125,7 @@ const handleShowQrCode = (id: string) => {
                             size="icon"
                             @click.stop="handleShowQrCode(file?.id as string)"
                         >
-                            <LucideQrCode />
+                            <LucideQrCode class="size-1/2" />
                         </Button>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ const handleShowQrCode = (id: string) => {
                                         }
                                     "
                                 >
-                                    <LucideCopy class="size-3" />
+                                    <LucideCopy class="size-1/2" />
                                 </Button>
                             </div>
                             <div class="flex flex-row gap-2">
@@ -185,7 +185,7 @@ const handleShowQrCode = (id: string) => {
                                 )
                             "
                         >
-                            <LucideShare />
+                            <LucideShare class="size-1/2" />
                         </Button>
                         <Button
                             variant="outline"
@@ -198,11 +198,11 @@ const handleShowQrCode = (id: string) => {
                                 }
                             "
                         >
-                            <LucideCopy />
+                            <LucideCopy class="size-4" />
                         </Button>
 
                         <Button variant="outline" class="bg-white/70" size="icon" @click="handleShowQrCode(selectedFileShare?.id as string)">
-                            <LucideQrCode />
+                            <LucideQrCode class="size-1/2" />
                         </Button>
                     </div>
                 </div>
