@@ -46,6 +46,5 @@ const addInput = ref('')
                 ><LucidePlus class="size-4"
             /></Button>
         </div>
-        <p v-if="errorMessage" class="text-xs text-destructive">{{ errorMessage }}</p>
     </div>
 </template>

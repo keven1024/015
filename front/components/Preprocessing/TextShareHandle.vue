@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import SwitchField from '../Field/SwitchField.vue'
 import InputField from '../Field/InputField.vue'
 import SelectField from '../Field/SelectField.vue'
+import SwitchField from '../Field/SwitchField.vue'
 import FormButton from '../Field/FormButton.vue'
+import NotifyConfigField from './NotifyConfigField.vue'
 import type { TextShareHandleProps } from './types'
 const { t } = useI18n()
 const props = defineProps<{
@@ -76,15 +77,7 @@ const props = defineProps<{
                         rules="required"
                     />
                 </div>
-                <div class="flex flex-row gap-3 min-h-9">
-                    <SwitchField name="has_notify" :label="t('page.shareOptions.text.readNotify')" />
-                    <InputField
-                        v-if="!!values.has_notify"
-                        name="notify_email"
-                        :placeholder="t('page.shareOptions.text.emailPlaceholder')"
-                        rules="required"
-                    />
-                </div>
+                <NotifyConfigField :switchLabel="t('page.shareOptions.text.readNotify')" />
             </div>
             <FormButton
                 @click="

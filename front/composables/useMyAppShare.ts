@@ -1,6 +1,5 @@
 import { times } from 'lodash-es'
 import { toast } from 'vue-sonner'
-declare const window: any
 let shareIdTokenMap: WeakMap<{ share_id: string }, string>
 
 const getShareToken = async (
@@ -38,7 +37,12 @@ const getShareToken = async (
 }
 
 const downloadFile = (token: string) => {
-    window?.open(`/api/download?token=${token}`)
+    const a = document.createElement('a')
+    a.href = `/api/download?token=${token}`
+    a.download = ''
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
 }
 
 const downloadFileByShareId = async (share_id: string) => {

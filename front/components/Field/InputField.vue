@@ -16,6 +16,5 @@ const { value, errorMessage } = useField<string>(props.name, props.rules)
     <div class="flex flex-col gap-2">
         <Label v-if="props.label">{{ props.label }}</Label>
         <Input v-model="value" :aria-invalid="!!errorMessage || undefined" v-bind="$attrs" />
-        <p v-if="errorMessage" class="text-xs text-destructive">{{ errorMessage }}</p>
     </div>
 </template>
