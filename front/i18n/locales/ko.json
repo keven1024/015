@@ -159,8 +159,7 @@
                 "downloadNums": "다운로드 횟수",
                 "expireTime": "만료 시간",
                 "pickupCode": "수령 코드",
-                "link": "링크",
-                "copySuccess": "복사되었습니다"
+                "link": "링크"
             },
             "imageCompress": {
                 "title": "이미지 압축",
@@ -183,8 +182,7 @@
                 "expireTime": "만료 시간",
                 "pickupCode": "수령 코드",
                 "link": "링크",
-                "content": "내용",
-                "copySuccess": "복사되었습니다"
+                "content": "내용"
             },
             "textTranslate": {
                 "title": "텍스트 번역",

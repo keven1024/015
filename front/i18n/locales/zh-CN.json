@@ -36,6 +36,9 @@
         "submit": "提交",
         "backToHome": "返回首页"
     },
+    "common": {
+        "copySuccess": "复制成功"
+    },
     "page": {
         "upload": {
             "file": {
@@ -159,8 +162,7 @@
                 "downloadNums": "下载次数",
                 "expireTime": "过期时间",
                 "pickupCode": "提取码",
-                "link": "链接",
-                "copySuccess": "复制成功"
+                "link": "链接"
             },
             "imageCompress": {
                 "title": "图片压缩",
@@ -183,8 +185,7 @@
                 "expireTime": "过期时间",
                 "pickupCode": "提取码",
                 "link": "链接",
-                "content": "内容",
-                "copySuccess": "复制成功"
+                "content": "内容"
             },
             "textTranslate": {
                 "title": "文本翻译",

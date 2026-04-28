@@ -36,6 +36,9 @@
         "submit": "Submit",
         "backToHome": "Back to Home"
     },
+    "common": {
+        "copySuccess": "Copy Success"
+    },
     "page": {
         "upload": {
             "file": {
@@ -159,8 +162,7 @@
                 "downloadNums": "Download Count",
                 "expireTime": "Expire Time",
                 "pickupCode": "Pickup Code",
-                "link": "Link",
-                "copySuccess": "Copy Success"
+                "link": "Link"
             },
             "imageCompress": {
                 "title": "Image Compress",
@@ -183,8 +185,7 @@
                 "expireTime": "Expire Time",
                 "pickupCode": "Pickup Code",
                 "link": "Link",
-                "content": "Content",
-                "copySuccess": "Copy Success"
+                "content": "Content"
             },
             "textTranslate": {
                 "title": "Text Translation",

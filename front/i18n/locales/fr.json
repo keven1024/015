@@ -36,6 +36,9 @@
         "submit": "Envoyer",
         "backToHome": "Retour à l'accueil"
     },
+    "common": {
+        "copySuccess": "Copié avec succès"
+    },
     "page": {
         "upload": {
             "file": {
@@ -159,8 +162,7 @@
                 "downloadNums": "Nombre de téléchargements",
                 "expireTime": "Date d'expiration",
                 "pickupCode": "Code de retrait",
-                "link": "Lien",
-                "copySuccess": "Copié avec succès"
+                "link": "Lien"
             },
             "imageCompress": {
                 "title": "Compression d'image",
@@ -183,8 +185,7 @@
                 "expireTime": "Date d'expiration",
                 "pickupCode": "Code de retrait",
                 "link": "Lien",
-                "content": "Contenu",
-                "copySuccess": "Copié avec succès"
+                "content": "Contenu"
             },
             "textTranslate": {
                 "title": "Traduction de texte",

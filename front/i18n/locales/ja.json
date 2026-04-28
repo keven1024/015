@@ -36,6 +36,9 @@
         "submit": "送信",
         "backToHome": "ホームに戻る"
     },
+    "common": {
+        "copySuccess": "コピーしました"
+    },
     "page": {
         "upload": {
             "file": {
@@ -159,8 +162,7 @@
                 "downloadNums": "ダウンロード回数",
                 "expireTime": "有効期限",
                 "pickupCode": "受取コード",
-                "link": "リンク",
-                "copySuccess": "コピーしました"
+                "link": "リンク"
             },
             "imageCompress": {
                 "title": "画像圧縮",
@@ -183,8 +185,7 @@
                 "expireTime": "有効期限",
                 "pickupCode": "受取コード",
                 "link": "リンク",
-                "content": "内容",
-                "copySuccess": "コピーしました"
+                "content": "内容"
             },
             "textTranslate": {
                 "title": "テキスト翻訳",

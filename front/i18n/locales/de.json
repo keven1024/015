@@ -36,6 +36,9 @@
         "submit": "Absenden",
         "backToHome": "Zurück zur Startseite"
     },
+    "common": {
+        "copySuccess": "Erfolgreich kopiert"
+    },
     "page": {
         "upload": {
             "file": {
@@ -159,8 +162,7 @@
                 "downloadNums": "Anzahl der Downloads",
                 "expireTime": "Ablaufzeit",
                 "pickupCode": "Abholcode",
-                "link": "Link",
-                "copySuccess": "Erfolgreich kopiert"
+                "link": "Link"
             },
             "imageCompress": {
                 "title": "Bildkomprimierung",
@@ -183,8 +185,7 @@
                 "expireTime": "Ablaufzeit",
                 "pickupCode": "Abholcode",
                 "link": "Link",
-                "content": "Inhalt",
-                "copySuccess": "Erfolgreich kopiert"
+                "content": "Inhalt"
             },
             "textTranslate": {
                 "title": "Textübersetzung",
