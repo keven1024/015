@@ -19,22 +19,24 @@ const props = defineProps<{
 
 const queryClient = useQueryClient()
 const { downloadFile, getShareToken } = useMyAppShare()
+const token = ref<string>()
 
 const handleDownload = async () => {
     const { id } = props?.data || {}
     try {
-        let token = null
-        if (props?.data?.has_password) {
-            token = await showDrawer({
-                render: ({ ...rest }) => h(PasswallShareDrawer, { ...rest, share_id: id }),
-            })
-        } else {
-            token = await getShareToken(id)
+        if (!token.value) {
+            if (props?.data?.has_password) {
+                token.value = await showDrawer({
+                    render: ({ ...rest }) => h(PasswallShareDrawer, { ...rest, share_id: id }),
+                })
+            } else {
+                token.value = await getShareToken(id)
+            }
+            if (!token.value) {
+                throw new Error(t('page.shareView.fileShare.getTokenFailed'))
+            }
         }
-        if (!token) {
-            throw new Error(t('page.shareView.fileShare.getTokenFailed'))
-        }
-        downloadFile(token)
+        downloadFile(token.value)
     } catch (error: any) {
         toast.error(error?.data?.message || error?.message || error)
     } finally {

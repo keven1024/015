@@ -21,7 +21,7 @@ const { t } = useI18n()
             async () => {
                 await copy(props?.value)
                 isCopy = true
-                toast.success(t('page.result.text.copySuccess'))
+                toast.success(t('common.copySuccess'))
                 await asyncWait(3000)
                 isCopy = false
             }
