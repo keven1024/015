@@ -36,6 +36,9 @@
         "submit": "제출",
         "backToHome": "홈으로 돌아가기"
     },
+    "common": {
+        "copySuccess": "복사되었습니다"
+    },
     "page": {
         "upload": {
             "file": {
@@ -108,6 +111,26 @@
                     "1day": "1일",
                     "3days": "3일"
                 }
+            },
+            "notify": {
+                "notifyVia": "알림 방법",
+                "email": "이메일",
+                "webhook": "Webhook",
+                "emailPlaceholder": "이메일 주소를 입력하세요",
+                "emailInvalid": "이메일 주소 형식이 올바르지 않습니다",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL 형식이 올바르지 않습니다",
+                "webhookMethod": "메서드",
+                "webhookHeaders": "헤더",
+                "webhookBody": "본문",
+                "webhookAdvanced": "고급 옵션",
+                "webhookBodyType": "본문 유형",
+                "webhookBodyTypeNone": "없음",
+                "webhookBodyTypeFormData": "폼 데이터",
+                "webhookBodyTypeRaw": "Raw",
+                "webhookHeaderKey": "키",
+                "webhookHeaderValue": "값",
+                "addWebhook": "Webhook 추가"
             }
         },
         "progress": {

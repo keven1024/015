@@ -111,6 +111,26 @@
                     "1day": "1 天",
                     "3days": "3 天"
                 }
+            },
+            "notify": {
+                "notifyVia": "通知方式",
+                "email": "郵件",
+                "webhook": "Webhook",
+                "emailPlaceholder": "請輸入郵箱地址",
+                "emailInvalid": "郵箱格式不正確",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL 格式不正確",
+                "webhookMethod": "請求方法",
+                "webhookHeaders": "請求頭",
+                "webhookBody": "請求體",
+                "webhookAdvanced": "進階選項",
+                "webhookBodyType": "請求體類型",
+                "webhookBodyTypeNone": "無",
+                "webhookBodyTypeFormData": "表單資料",
+                "webhookBodyTypeRaw": "原始內容",
+                "webhookHeaderKey": "鍵",
+                "webhookHeaderValue": "值",
+                "addWebhook": "新增 Webhook"
             }
         },
         "progress": {

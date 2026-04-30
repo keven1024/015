@@ -111,6 +111,26 @@
                     "1day": "1 jour",
                     "3days": "3 jours"
                 }
+            },
+            "notify": {
+                "notifyVia": "Notifier par",
+                "email": "E-mail",
+                "webhook": "Webhook",
+                "emailPlaceholder": "Entrez l'adresse e-mail",
+                "emailInvalid": "Adresse e-mail invalide",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL invalide",
+                "webhookMethod": "Méthode",
+                "webhookHeaders": "En-têtes",
+                "webhookBody": "Corps",
+                "webhookAdvanced": "Options avancées",
+                "webhookBodyType": "Type de corps",
+                "webhookBodyTypeNone": "Aucun",
+                "webhookBodyTypeFormData": "Donnees de formulaire",
+                "webhookBodyTypeRaw": "Brut",
+                "webhookHeaderKey": "Cle",
+                "webhookHeaderValue": "Valeur",
+                "addWebhook": "Ajouter un Webhook"
             }
         },
         "progress": {

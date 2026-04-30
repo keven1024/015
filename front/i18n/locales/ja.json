@@ -111,6 +111,26 @@
                     "1day": "1日",
                     "3days": "3日"
                 }
+            },
+            "notify": {
+                "notifyVia": "通知方法",
+                "email": "メール",
+                "webhook": "Webhook",
+                "emailPlaceholder": "メールアドレスを入力",
+                "emailInvalid": "メールアドレスの形式が正しくありません",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL の形式が正しくありません",
+                "webhookMethod": "メソッド",
+                "webhookHeaders": "ヘッダー",
+                "webhookBody": "ボディ",
+                "webhookAdvanced": "詳細オプション",
+                "webhookBodyType": "ボディタイプ",
+                "webhookBodyTypeNone": "なし",
+                "webhookBodyTypeFormData": "フォームデータ",
+                "webhookBodyTypeRaw": "Raw",
+                "webhookHeaderKey": "キー",
+                "webhookHeaderValue": "値",
+                "addWebhook": "Webhook を追加"
             }
         },
         "progress": {

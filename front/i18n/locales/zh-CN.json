@@ -111,6 +111,26 @@
                     "1day": "1天",
                     "3days": "3天"
                 }
+            },
+            "notify": {
+                "notifyVia": "通知方式",
+                "email": "邮件",
+                "webhook": "Webhook",
+                "emailPlaceholder": "请输入邮箱地址",
+                "emailInvalid": "邮箱格式不正确",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL 格式不正确",
+                "webhookMethod": "请求方法",
+                "webhookHeaders": "请求头",
+                "webhookBody": "请求体",
+                "webhookAdvanced": "高级选项",
+                "webhookBodyType": "请求体类型",
+                "webhookBodyTypeNone": "无",
+                "webhookBodyTypeFormData": "表单数据",
+                "webhookBodyTypeRaw": "原始内容",
+                "webhookHeaderKey": "键",
+                "webhookHeaderValue": "值",
+                "addWebhook": "添加 Webhook"
             }
         },
         "progress": {
