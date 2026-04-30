@@ -23,13 +23,16 @@ type CreateShareProps struct {
 }
 
 type ShareConfig struct {
-	ExpireAt      int      `json:"expire_time"` // 分钟
-	ViewNum       int64    `json:"download_nums"`
-	HasPassword   bool     `json:"has_password"`
-	Password      string   `json:"password"`
-	HasNotify     bool     `json:"has_notify"`
-	NotifyEmail   []string `json:"notify_email"`
-	HasPickupCode bool     `json:"has_pickup_code"`
+	ExpireAt       int                    `json:"expire_time"` // 分钟
+	ViewNum        int64                  `json:"download_nums"`
+	HasPassword    bool                   `json:"has_password"`
+	Password       string                 `json:"password"`
+	HasNotify      bool                   `json:"has_notify"`
+	NotifyTypes    []string               `json:"notify_types"`
+	NotifyEmails   []string               `json:"notify_emails"`
+	NotifyWebhooks []models.NotifyWebhook `json:"notify_webhooks"`
+	Locale         string                 `json:"locale"`
+	HasPickupCode  bool                   `json:"has_pickup_code"`
 }
 
 func CreateShareInfo(c *echo.Context) error {
@@ -73,6 +76,28 @@ func CreateShareInfo(c *echo.Context) error {
 		password = hash
 	}
 
+	var notifyEmails []string
+	var notifyWebhooks []models.NotifyWebhook
+	if r.Config.HasNotify {
+		hasEmail, hasWebhook := false, false
+		for _, nt := range r.Config.NotifyTypes {
+			switch nt {
+			case "email":
+				hasEmail = true
+			case "webhook":
+				hasWebhook = true
+			default:
+				return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+			}
+		}
+		if hasEmail {
+			notifyEmails = r.Config.NotifyEmails
+		}
+		if hasWebhook {
+			notifyWebhooks = r.Config.NotifyWebhooks
+		}
+	}
+
 	_, err = models.SetRedisShareInfo(id, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
 		shareInfo.Data = r.Data
 		shareInfo.Type = r.Type
@@ -81,6 +106,9 @@ func CreateShareInfo(c *echo.Context) error {
 		shareInfo.ViewNum = r.Config.ViewNum
 		shareInfo.Password = password
 		shareInfo.FileName = r.FileName
+		shareInfo.NotifyEmails = notifyEmails
+		shareInfo.NotifyWebhooks = notifyWebhooks
+		shareInfo.Locale = r.Config.Locale
 		shareInfo.ExpireAt = ExpireTime.Unix()
 		return shareInfo
 	})

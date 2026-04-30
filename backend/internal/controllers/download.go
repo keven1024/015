@@ -3,12 +3,14 @@ package controllers
 import (
 	"backend/internal/utils"
 	"context"
+	"encoding/json"
 	"fmt"
 	"pkg/models"
 	u "pkg/utils"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v5"
 	"github.com/samber/lo"
 	"github.com/spf13/cast"
@@ -132,6 +134,13 @@ func VaildateShare(c *echo.Context) error {
 		})
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
+		}
+
+		if len(shareInfo.NotifyEmails) > 0 || len(shareInfo.NotifyWebhooks) > 0 {
+			payload, err := json.Marshal(map[string]string{"share_id": r.ShareId})
+			if err == nil {
+				_, _ = u.GetQueueClient().Enqueue(asynq.NewTask("share:notify", payload))
+			}
 		}
 
 		if shareInfo.Type == models.ShareTypeFile {
