@@ -122,7 +122,7 @@
                 "webhookUrlInvalid": "URL 형식이 올바르지 않습니다",
                 "webhookMethod": "메서드",
                 "webhookHeaders": "헤더",
-                "webhookBody": "본문",
+                "webhookBody": "요청 본문",
                 "webhookAdvanced": "고급 옵션",
                 "webhookBodyType": "본문 유형",
                 "webhookBodyTypeNone": "없음",

@@ -122,7 +122,7 @@
                 "webhookUrlInvalid": "URL の形式が正しくありません",
                 "webhookMethod": "メソッド",
                 "webhookHeaders": "ヘッダー",
-                "webhookBody": "ボディ",
+                "webhookBody": "リクエストボディ",
                 "webhookAdvanced": "詳細オプション",
                 "webhookBodyType": "ボディタイプ",
                 "webhookBodyTypeNone": "なし",

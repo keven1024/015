@@ -122,7 +122,7 @@
                 "webhookUrlInvalid": "Ungueltige URL",
                 "webhookMethod": "Methode",
                 "webhookHeaders": "Header",
-                "webhookBody": "Body",
+                "webhookBody": "Anfrage-Body",
                 "webhookAdvanced": "Erweiterte Optionen",
                 "webhookBodyType": "Body-Typ",
                 "webhookBodyTypeNone": "Kein Body",
