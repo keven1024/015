@@ -12,7 +12,7 @@ const { value, setValue, errorMessage } = useField<string[]>(props.name, props?.
 <template>
     <div class="flex flex-col gap-2">
         <Label v-if="label">{{ label }}</Label>
-        <div v-for="(item, index) in value" :key="`${index}-${item}`" class="flex flex-row gap-2 items-center">
+        <div v-for="(item, index) in value" class="flex flex-row gap-2 items-center">
             <Input
                 :model-value="item"
                 @update:model-value="(v: string | number) => setValue(value.map((o, i) => (i === index ? String(v) : o)))"

@@ -110,29 +110,23 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                     <KvInputField
                         :name="`notify_webhooks.${index}.headers`"
                         :label="t('page.shareOptions.notify.webhookHeaders')"
-                        :key-placeholder="t('page.shareOptions.notify.webhookHeaderKey')"
-                        :value-placeholder="t('page.shareOptions.notify.webhookHeaderValue')"
+                        :config="{
+                            key: {
+                                placeholder: t('page.shareOptions.notify.webhookHeaderKey'),
+                                enum: ['Content-Type', 'User-Agent', 'Authorization', 'Accept', 'Content-Length'],
+                            },
+                            value: {
+                                placeholder: t('page.shareOptions.notify.webhookHeaderValue'),
+                                component: [
+                                    [
+                                        (key: string) => key === 'Content-Type',
+                                        ({ ...props }) =>
+                                            h(SelectField, { ...props, options: [{ value: 'text/plain' }, { value: 'application/json' }] }),
+                                    ],
+                                ],
+                            },
+                        }"
                     />
-                    <div v-if="((values.notify_webhooks as WebhookItem[]) || [])[index]?.method === 'POST'" class="flex flex-col gap-3">
-                        <Label class="w-20 pt-2">{{ t('page.shareOptions.notify.webhookBody') }}</Label>
-                        <div class="flex flex-1 flex-col gap-2">
-                            <SelectField
-                                :name="`notify_webhooks.${index}.bodyType`"
-                                :placeholder="t('page.shareOptions.notify.webhookBodyType')"
-                                :label="t('page.shareOptions.notify.webhookBodyType')"
-                                :options="[
-                                    { label: t('page.shareOptions.notify.webhookBodyTypeNone'), value: 'none' },
-                                    { label: t('page.shareOptions.notify.webhookBodyTypeFormData'), value: 'form-data' },
-                                    { label: t('page.shareOptions.notify.webhookBodyTypeRaw'), value: 'raw' },
-                                ]"
-                            />
-                            <TextareaField
-                                v-if="['form-data', 'raw'].includes(((values.notify_webhooks as WebhookItem[]) || [])[index]?.bodyType || '')"
-                                :name="`notify_webhooks.${index}.body`"
-                                :placeholder="t('page.shareOptions.notify.webhookBody')"
-                            />
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="flex justify-start">
@@ -142,7 +136,7 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                     @click="
                         setFieldValue('notify_webhooks', [
                             ...((values.notify_webhooks as WebhookItem[]) || []),
-                            { url: '', method: 'POST', headers: {}, bodyType: 'none', body: '' },
+                            { url: '', method: 'POST', headers: [] },
                         ])
                     "
                 >
