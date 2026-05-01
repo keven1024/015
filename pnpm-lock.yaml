@@ -149,6 +149,9 @@ importers:
       shadcn-nuxt:
         specifier: 2.0.1
         version: 2.0.1(magicast@0.5.2)
+      sweet-curl-parser:
+        specifier: ^1.0.4
+        version: 1.0.4
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -5797,6 +5800,9 @@ packages:
     resolution: {integrity: sha512-XDpWUOPC6FEibaLzjfe0ucaV0YrOjYotGJO1WpF0Zd+n6ZGEQUsSugaoLq9QkEZtAfQIxT42UChcssDVPP3+/w==}
     engines: {node: '>=16'}
     hasBin: true
+
+  sweet-curl-parser@1.0.4:
+    resolution: {integrity: sha512-hMcHEjK9MYmNryzYLyKsuEjNx1ep6ezFwONdTXeC5aLOPepvrnzpRhGxkRMbaw0py5wT7hTGzz6SY6lQ4TxrWQ==}
 
   tagged-tag@1.0.0:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
@@ -12534,6 +12540,8 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.6.0
+
+  sweet-curl-parser@1.0.4: {}
 
   tagged-tag@1.0.0: {}
 
