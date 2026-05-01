@@ -7,7 +7,6 @@ const props = defineProps<{
     rules?: RuleExpression<string[]>
 }>()
 const { value, setValue, errorMessage } = useField<string[]>(props.name, props?.rules)
-const addInput = ref('')
 </script>
 
 <template>
@@ -29,22 +28,9 @@ const addInput = ref('')
                 <LucideTrash class="size-4" />
             </Button>
         </div>
-        <div class="flex flex-row gap-2 items-center">
-            <Input v-model="addInput" :aria-invalid="!!errorMessage || undefined" v-bind="$attrs" />
-            <Button
-                size="icon"
-                @click="
-                    () => {
-                        const nextValue = addInput.trim()
-                        if (!nextValue) {
-                            return
-                        }
-                        setValue([...(value || []), nextValue])
-                        addInput = ''
-                    }
-                "
-                ><LucidePlus class="size-4"
-            /></Button>
-        </div>
+        <Button class="self-start" size="sm" @click="() => setValue([...(value || []), ''])">
+            <LucidePlus class="size-4" />
+            添加
+        </Button>
     </div>
 </template>

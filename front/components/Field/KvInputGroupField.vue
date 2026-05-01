@@ -8,77 +8,44 @@ const props = defineProps<{
     valuePlaceholder?: string
 }>()
 
-const { value, setValue } = useField<Record<string, any>>(props.name)
-const addKey = ref('')
-const addValue = ref('')
+const { value, setValue } = useField<[string, string][]>(props.name)
 
-const currentValue = computed(() => (value.value && typeof value.value === 'object' && !Array.isArray(value.value) ? value.value : {}))
-
-const entries = computed(() => Object.entries(currentValue.value))
-
-const removeItem = (key: string) => {
-    const nextValue = { ...currentValue.value }
-    delete nextValue[key]
-    setValue(nextValue)
+const updateKey = (index: number, nextKey: string | number) => {
+    const next = [...(value.value ?? [])]
+    next[index] = [String(nextKey), next[index]?.[1] ?? '']
+    setValue(next)
 }
 
-const updateKey = (oldKey: string, nextKeyValue: string | number) => {
-    const nextKey = String(nextKeyValue).trim()
-    if (!nextKey || nextKey === oldKey) {
-        return
-    }
-
-    const nextValue = { ...currentValue.value }
-    const oldValue = nextValue[oldKey]
-    delete nextValue[oldKey]
-    nextValue[nextKey] = oldValue
-    setValue(nextValue)
-}
-
-const updateValue = (key: string, nextItemValue: string | number) => {
-    setValue({ ...currentValue.value, [key]: String(nextItemValue) })
-}
-
-const addItem = () => {
-    const nextKey = addKey.value.trim()
-    const nextValue = addValue.value.trim()
-
-    if (!nextKey || !nextValue) {
-        return
-    }
-
-    setValue({ ...currentValue.value, [nextKey]: nextValue })
-    addKey.value = ''
-    addValue.value = ''
+const updateValue = (index: number, nextVal: string | number) => {
+    const next = [...(value.value ?? [])]
+    next[index] = [next[index]?.[0] ?? '', String(nextVal)]
+    setValue(next)
 }
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
         <Label v-if="label">{{ label }}</Label>
-        <div v-for="[key, itemValue] in entries" :key="key" class="flex flex-row gap-2 items-center">
-            <Input :model-value="key" :placeholder="keyPlaceholder" @update:model-value="(nextValue: string | number) => updateKey(key, nextValue)" />
+        <div v-for="([key, itemValue], index) in value" :key="index" class="flex flex-row gap-2 items-center">
+            <Input :model-value="key" :placeholder="keyPlaceholder" @update:model-value="(v: string | number) => updateKey(index, v)" />
             <Input
                 :model-value="String(itemValue ?? '')"
                 :placeholder="valuePlaceholder"
-                @update:model-value="(nextValue: string | number) => updateValue(key, nextValue)"
+                @update:model-value="(v: string | number) => updateValue(index, v)"
             />
             <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
-                @click="removeItem(key)"
+                @click="() => setValue(value?.filter((_, i) => i !== index))"
             >
                 <LucideTrash class="size-4" />
             </Button>
         </div>
-        <div class="flex flex-row gap-2 items-center">
-            <Input v-model="addKey" :placeholder="keyPlaceholder" />
-            <Input v-model="addValue" :placeholder="valuePlaceholder" />
-            <Button type="button" size="icon" @click="addItem">
-                <LucidePlus class="size-4" />
-            </Button>
-        </div>
+        <Button type="button" class="self-start" size="sm" @click="() => setValue([...(value ?? []), ['', '']])">
+            <LucidePlus class="size-4" />
+            添加
+        </Button>
     </div>
 </template>
