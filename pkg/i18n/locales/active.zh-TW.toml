@@ -1,0 +1,5 @@
+[notify_email_subject]
+other = "分享下載通知 - {{.SiteURL}}"
+
+[notify_email_body]
+other = "IP為{{.IP}}的使用者下載了你的{{.FileName}}的{{.ShareType}}。"
