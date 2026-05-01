@@ -170,7 +170,7 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                     "
                 >
                     <LucidePlus class="size-4" />
-                    添加
+                    {{ t('common.add') }}
                 </Button>
             </div>
         </div>

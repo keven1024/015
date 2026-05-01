@@ -6,6 +6,7 @@ const props = defineProps<{
     label?: string
     rules?: RuleExpression<string[]>
 }>()
+const { t } = useI18n()
 const { value, setValue, errorMessage } = useField<string[]>(props.name, props?.rules)
 </script>
 
@@ -30,7 +31,7 @@ const { value, setValue, errorMessage } = useField<string[]>(props.name, props?.
         </div>
         <Button class="self-start" size="sm" @click="() => setValue([...(value || []), ''])">
             <LucidePlus class="size-4" />
-            添加
+            {{ t('common.add') }}
         </Button>
     </div>
 </template>

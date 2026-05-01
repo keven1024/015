@@ -31,6 +31,7 @@ const props = defineProps<{
     config?: KvInputConfig
 }>()
 
+const { t } = useI18n()
 const config = computed(() => {
     return {
         key: { ...defaultConfig.key, ...(props.config?.key ?? {}) },
@@ -95,7 +96,7 @@ const updateKey = (index: number, nextKey: string | number) => {
         </div>
         <Button type="button" class="self-start" size="sm" @click="() => setValue([...(value ?? []), ['', '']])">
             <LucidePlus class="size-4" />
-            添加
+            {{ t('common.add') }}
         </Button>
     </div>
 </template>
