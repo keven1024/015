@@ -8,14 +8,14 @@ import InputGroupField from '../Field/InputGroupField.vue'
 import InputField from '../Field/InputField.vue'
 import KvInputField from '../Field/KvInputGroupField.vue'
 import TextareaField from '../Field/TextareaField.vue'
+import { parseCurl } from 'sweet-curl-parser'
 
 interface WebhookItem {
     id: string
     url: string
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
-    headers: Record<string, any>
-    bodyType: 'none' | 'form-data' | 'raw'
-    body: string
+    headers: [string, string][]
+    body?: string
 }
 
 const { t } = useI18n()
@@ -67,7 +67,30 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                         />
                     </div>
                     <div class="flex-1">
-                        <InputField :name="`notify_webhooks.${index}.url`" :label="t('page.shareOptions.notify.webhookUrl')" rules="required|url" />
+                        <InputField
+                            :name="`notify_webhooks.${index}.url`"
+                            :label="t('page.shareOptions.notify.webhookUrl')"
+                            rules="required|url"
+                            @blur="
+                                (e: FocusEvent) => {
+                                    const input = (e?.target as HTMLInputElement)?.value
+                                    if (!input.startsWith('curl ')) return
+                                    try {
+                                        const { success, data } = parseCurl(input) || {}
+                                        if (!success) return
+                                        const { url, method, headers, body } = data || {}
+                                        setFieldValue(`notify_webhooks.${index}.url`, url?.fullUrl)
+                                        setFieldValue(`notify_webhooks.${index}.method`, method?.toUpperCase())
+                                        setFieldValue(
+                                            `notify_webhooks.${index}.headers`,
+                                            headers?.map((h: any) => [h.name, h.value])
+                                        )
+                                        if (body) setFieldValue(`notify_webhooks.${index}.body`, body)
+                                        expandedAdvanced = new Set([...expandedAdvanced, index])
+                                    } catch {}
+                                }
+                            "
+                        />
                     </div>
                     <Button
                         type="button"
@@ -127,6 +150,12 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                             },
                         }"
                     />
+                    <TextareaField
+                        :name="`notify_webhooks.${index}.body`"
+                        :label="t('page.shareOptions.notify.webhookBody')"
+                        :rows="4"
+                        placeholder='{"key": "value"}'
+                    />
                 </div>
             </div>
             <div class="flex justify-start">
@@ -136,7 +165,7 @@ const expandedAdvanced = ref<Set<number>>(new Set())
                     @click="
                         setFieldValue('notify_webhooks', [
                             ...((values.notify_webhooks as WebhookItem[]) || []),
-                            { url: '', method: 'POST', headers: [] },
+                            { url: '', method: 'POST', headers: [], body: '' },
                         ])
                     "
                 >
