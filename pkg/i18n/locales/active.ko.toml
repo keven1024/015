@@ -3,3 +3,9 @@ other = "공유 다운로드 알림 - {{.SiteURL}}"
 
 [notify_email_body]
 other = "공유한 {{.ShareType}} {{.FileName}} 이(가) 다운로드되었습니다."
+
+[share_type_file]
+other = "파일"
+
+[share_type_text]
+other = "텍스트"

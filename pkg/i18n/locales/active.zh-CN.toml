@@ -2,4 +2,10 @@
 other = "分享下载通知 - {{.SiteURL}}"
 
 [notify_email_body]
-other = "IP为{{.IP}}的用户下载了你的{{.FileName}}的{{.ShareType}}。"
+other = "IP为{{.IP}}的访客下载了你的{{.FileName}}的{{.ShareType}}。"
+
+[share_type_file]
+other = "文件"
+
+[share_type_text]
+other = "文本"

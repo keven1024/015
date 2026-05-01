@@ -3,3 +3,9 @@ other = "Benachrichtigung zum Share-Download - {{.SiteURL}}"
 
 [notify_email_body]
 other = "Ihr geteilter {{.ShareType}} {{.FileName}} wurde heruntergeladen."
+
+[share_type_file]
+other = "Datei"
+
+[share_type_text]
+other = "Text"

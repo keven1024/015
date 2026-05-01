@@ -3,3 +3,9 @@ other = "共有ダウンロード通知 - {{.SiteURL}}"
 
 [notify_email_body]
 other = "共有した{{.ShareType}} {{.FileName}} がダウンロードされました。"
+
+[share_type_file]
+other = "ファイル"
+
+[share_type_text]
+other = "テキスト"

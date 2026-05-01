@@ -3,3 +3,9 @@ other = "Share download notification - {{.SiteURL}}"
 
 [notify_email_body]
 other = "Your shared {{.ShareType}} {{.FileName}} was downloaded."
+
+[share_type_file]
+other = "file"
+
+[share_type_text]
+other = "text"
