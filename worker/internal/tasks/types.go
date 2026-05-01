@@ -15,6 +15,11 @@ type RemoveFileTaskPayload struct {
 	BaseFileTaskPayload
 }
 
+type ShareNotifyTaskPayload struct {
+	ShareId string `json:"share_id"`
+	IP      string `json:"ip"`
+}
+
 type CompressImageTaskPayload struct {
 	BaseFileTaskPayload
 }

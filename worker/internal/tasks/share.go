@@ -3,10 +3,13 @@ package tasks
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"pkg/models"
 	u "pkg/utils"
+	"worker/internal/services"
 
 	"github.com/hibiken/asynq"
 	"github.com/samber/lo"
@@ -54,5 +57,36 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 }
 
 func ShareNotify(ctx context.Context, task *asynq.Task) error {
-	return nil
+	var payload ShareNotifyTaskPayload
+	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
+		return err
+	}
+	shareInfo, err := models.GetRedisShareInfo(payload.ShareId)
+	if err != nil || shareInfo == nil {
+		return err
+	}
+
+	var errs []error
+	successCount := 0
+
+	for _, webhook := range shareInfo.NotifyWebhooks {
+		if err := services.SendWebhook(webhook); err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		successCount++
+	}
+
+	for _, email := range shareInfo.NotifyEmails {
+		if err := services.SendEmail(email, shareInfo, payload.IP); err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		successCount++
+	}
+
+	if successCount > 0 || len(errs) == 0 {
+		return nil
+	}
+	return fmt.Errorf("all share notify targets failed: %w", errors.Join(errs...))
 }

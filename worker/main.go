@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"pkg/i18n"
 	"pkg/utils"
 	"worker/internal/tasks"
 	"worker/middleware"
@@ -22,6 +23,10 @@ func main() {
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
 
+	if err := i18n.Init(); err != nil {
+		log.Fatalf("failed to init i18n: %v", err)
+	}
+
 	srv := asynq.NewServer(
 		utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")),
 		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
@@ -30,6 +35,7 @@ func main() {
 	mux := asynq.NewServeMux()
 	mux.Use(middleware.LoggerMiddleware)
 	mux.HandleFunc("share:remove", tasks.RemoveShare)
+	mux.HandleFunc("share:notify", tasks.ShareNotify)
 	mux.HandleFunc("file:remove", tasks.RemoveFile)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 	mux.HandleFunc("image:convert", tasks.ConvertImage)
