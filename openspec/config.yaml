@@ -1,0 +1,11 @@
+schema: spec-driven
+
+context: |
+    技术栈: Vue3, Tailwind, Golang, Asynq, Redis, TypeScript
+    生成md使用中文
+    Domain: 临时文件和文本分享平台
+
+rules:
+    proposal:
+        - 将提案控制在 500 字以内
+        - 不要把i18n加到任务里
