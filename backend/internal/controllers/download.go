@@ -137,7 +137,10 @@ func VaildateShare(c *echo.Context) error {
 		}
 
 		if len(shareInfo.NotifyEmails) > 0 || len(shareInfo.NotifyWebhooks) > 0 {
-			payload, err := json.Marshal(map[string]string{"share_id": r.ShareId})
+			payload, err := json.Marshal(map[string]string{
+				"share_id": r.ShareId,
+				"ip":       c.RealIP(),
+			})
 			if err == nil {
 				_, _ = u.GetQueueClient().Enqueue(asynq.NewTask("share:notify", payload))
 			}
