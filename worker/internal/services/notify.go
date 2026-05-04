@@ -5,11 +5,11 @@ import (
 	"pkg/i18n"
 	"pkg/models"
 	u "pkg/utils"
-	"strconv"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/samber/lo"
+	"github.com/spf13/cast"
 	mail "github.com/wneessen/go-mail"
 	"go.uber.org/zap"
 )
@@ -41,30 +41,40 @@ func SendWebhook(webhook models.NotifyWebhook) error {
 	return nil
 }
 
-func SendEmail(to string, shareInfo *models.RedisShareInfo, ip string) error {
-	host := u.GetEnv("smtp.host")
-	if host == "" {
+type EmailTemplateData struct {
+	Locale    string
+	IP        string
+	ShareType models.ShareType
+	FileName  string
+}
+
+func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
+	smtp := u.GetEnvMap("smtp")
+	if smtp["host"] == "" {
 		zap.L().Warn("smtp host is empty, skip share notify email", zap.String("to", to))
 		return nil
 	}
 
-	username := u.GetEnv("smtp.username")
-	password := u.GetEnv("smtp.password")
-	from := u.GetEnvWithDefault("smtp.from", username)
-	if from == "" {
-		return fmt.Errorf("smtp.from or smtp.username is required")
+	host := cast.ToString(smtp["host"])
+	if host == "" {
+		return fmt.Errorf("smtp.host is required")
 	}
+	username := cast.ToString(smtp["username"])
+	if username == "" {
+		return fmt.Errorf("smtp.username is required")
+	}
+	port := lo.Ternary(cast.ToInt(smtp["port"]) != 0, cast.ToInt(smtp["port"]), mail.DefaultPortSSL)
 
 	templateData := map[string]any{
-		"IP":        ip,
+		"IP":        emailTemplateData.IP,
 		"SiteURL":   u.GetEnv("site.url"),
-		"ShareType": i18n.T(shareInfo.Locale, lo.Ternary(shareInfo.Type == models.ShareTypeText, "share_type_text", "share_type_file")),
-		"FileName":  shareInfo.FileName,
+		"ShareType": i18n.T(emailTemplateData.Locale, lo.Ternary(emailTemplateData.ShareType == models.ShareTypeText, "share_type_text", "share_type_file")),
+		"FileName":  emailTemplateData.FileName,
 	}
-	subject := i18n.TWithData(shareInfo.Locale, "notify_email_subject", templateData)
-	body := i18n.TWithData(shareInfo.Locale, "notify_email_body", templateData)
+	subject := i18n.TWithData(emailTemplateData.Locale, "notify_email_subject", templateData)
+	body := i18n.TWithData(emailTemplateData.Locale, "notify_email_body", templateData)
 	message := mail.NewMsg()
-	if err := message.From(from); err != nil {
+	if err := message.From(username); err != nil {
 		return err
 	}
 	if err := message.To(to); err != nil {
@@ -73,21 +83,22 @@ func SendEmail(to string, shareInfo *models.RedisShareInfo, ip string) error {
 	message.Subject(subject)
 	message.SetBodyString(mail.TypeTextPlain, body)
 
-	port, err := strconv.Atoi(u.GetEnvWithDefault("smtp.port", "587"))
-	if err != nil {
-		return err
+	options = append([]mail.Option{
+		mail.WithPort(port),
+		mail.WithUsername(username),
+		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
+	}, options...)
+
+	password := cast.ToString(smtp["password"])
+	if password != "" {
+		options = append(options, mail.WithPassword(password))
 	}
 
-	options := []mail.Option{
-		mail.WithPort(port),
-	}
-	if port == mail.DefaultPortSSL {
+	if cast.ToString(smtp["protocol"]) == "ssl" {
 		options = append(options, mail.WithSSL())
-	} else {
-		options = append(options, mail.WithTLSPortPolicy(mail.TLSMandatory))
 	}
-	if username != "" {
-		options = append(options, mail.WithUsername(username), mail.WithPassword(password), mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover))
+	if cast.ToString(smtp["protocol"]) == "tls" {
+		options = append(options, mail.WithTLSPortPolicy(mail.TLSMandatory))
 	}
 
 	client, err := mail.NewClient(host, options...)

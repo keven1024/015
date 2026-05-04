@@ -78,7 +78,12 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 	}
 
 	for _, email := range shareInfo.NotifyEmails {
-		if err := services.SendEmail(email, shareInfo, payload.IP); err != nil {
+		if err := services.SendEmail(email, services.EmailTemplateData{
+			Locale:    shareInfo.Locale,
+			ShareType: shareInfo.Type,
+			FileName:  shareInfo.FileName,
+			IP:        payload.IP,
+		}); err != nil {
 			errs = append(errs, err)
 			continue
 		}
