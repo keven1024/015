@@ -18,7 +18,8 @@ type StatData struct {
 }
 
 func GetRedisStat(key string) (*StatData, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	statUnmarshalData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:stat").Field(key).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
@@ -36,7 +37,7 @@ func GetRedisStat(key string) (*StatData, error) {
 func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData, error) {
 	var updatedStat *StatData
 	err := utils.WithLocker(context.Background(), "015:stat:"+key, 0, func(ctx context.Context) error {
-		rdb, _ := utils.GetRedisClient()
+		rdb := utils.GetRedisClient()
 		old_stat, err := GetRedisStat(key)
 		if err != nil {
 			return err
@@ -62,6 +63,7 @@ func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData
 }
 
 func GetRedisStatAll() (map[string]string, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:stat").Build()).AsStrMap()
 }

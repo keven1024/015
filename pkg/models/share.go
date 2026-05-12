@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -43,7 +44,8 @@ const (
 )
 
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	key := fmt.Sprintf("015:shareInfoMap:%s", shareId)
 	shareInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Get().Key(key).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
@@ -63,7 +65,8 @@ func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 }
 
 func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *RedisShareInfo) (*RedisShareInfo, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	old_shareInfo, err := GetRedisShareInfo(shareId)
 	if err != nil {
 		return nil, err

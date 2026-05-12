@@ -23,6 +23,11 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	// redis
+	if err := utils.InitRedis(); err != nil {
+		logger.Fatal("redis init failed", zap.Error(err))
+		panic(err)
+	}
 
 	if err := i18n.Init(); err != nil {
 		log.Fatalf("failed to init i18n: %v", err)

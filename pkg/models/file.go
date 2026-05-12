@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 	"pkg/utils"
 	"time"
@@ -32,7 +33,8 @@ type RedisFileInfo struct {
 }
 
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	fileInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:fileInfoMap").Field(fileId).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
@@ -48,7 +50,8 @@ func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 }
 
 func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *RedisFileInfo) (*RedisFileInfo, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	old_fileInfo, err := GetRedisFileInfo(fileId)
 	if err != nil {
 		return nil, err
@@ -72,6 +75,7 @@ func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *Redi
 }
 
 func GetRedisFileInfoAll() (map[string]string, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:fileInfoMap").Build()).AsStrMap()
 }

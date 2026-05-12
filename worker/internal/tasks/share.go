@@ -34,7 +34,7 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 		return x != payload.ShareId
 	})
 	if len(shareIDs) == 0 {
-		rdb, ctx := u.GetRedisClient()
+		rdb := u.GetRedisClient()
 		uploadPath, err := u.GetUploadDirPath()
 		if err != nil {
 			return err
