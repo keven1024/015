@@ -32,8 +32,8 @@ func GetConfig(c *echo.Context) error {
 
 	featureConfig = lo.Assign(defaultFeatureConfig, featureConfig)
 	features := getEnabledKeys(featureConfig)
-	textTranslateProviderConfig := u.GetEnvMap("features.text-translate.provider")
-	textTranslateProviders := getEnabledKeys(textTranslateProviderConfig)
+	// textTranslateProviderConfig := u.GetEnvMap("features.text-translate.provider")
+	// textTranslateProviders := getEnabledKeys(textTranslateProviderConfig)
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"site_title":     u.GetEnvMap("site.title"),
@@ -45,10 +45,10 @@ func GetConfig(c *echo.Context) error {
 		"version":        u.GetEnvWithDefault("VERSION", "dev"),
 		"build_time":     cast.ToInt(u.GetEnvWithDefault("BUILD_TIME", cast.ToString(time.Now().Unix()))),
 		"features":       features,
-		"config": map[string]any{
-			"text-translate": map[string]any{
-				"provider": textTranslateProviders,
-			},
+		"config":         map[string]any{
+			// "text-translate": map[string]any{
+			// 	"provider": textTranslateProviders,
+			// },
 		},
 	})
 }
