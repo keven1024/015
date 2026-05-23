@@ -6,6 +6,7 @@ const useMyAppConfig = () => {
             site_url: string
             site_icon: string
             site_bg_url: string
+            site_enable_bg: boolean
             version: string
             build_time: number
             features: string[]
