@@ -12,17 +12,27 @@ import (
 
 type RedisShareInfo struct {
 	// Id          string    `json:"id"`
-	CreatedAt   int64     `json:"created_at"`
-	UpdatedAt   int64     `json:"updated_at"`
-	Owner       string    `json:"owner"`
-	Type        ShareType `json:"type"`
-	Data        string    `json:"data"` // 分享数据 文件分享为文件id 文本分享为文本内容
-	ExpireAt    int64     `json:"expire_time"`
-	ViewNum     int64     `json:"download_nums"`
-	Password    string    `json:"password"`
-	NotifyEmail []string  `json:"notify_email"`
-	FileName    string    `json:"file_name"`
+	CreatedAt      int64           `json:"created_at"`
+	UpdatedAt      int64           `json:"updated_at"`
+	Owner          string          `json:"owner"`
+	Type           ShareType       `json:"type"`
+	Data           string          `json:"data"` // 分享数据 文件分享为文件id 文本分享为文本内容
+	ExpireAt       int64           `json:"expire_time"`
+	ViewNum        int64           `json:"download_nums"`
+	Password       string          `json:"password"`
+	NotifyEmails   []string        `json:"notify_emails"`
+	NotifyWebhooks []NotifyWebhook `json:"notify_webhooks"`
+	Locale         string          `json:"locale"`
+	FileName       string          `json:"file_name"`
 	// PickupCode  bool      `json:"pickup_code"`
+}
+
+type NotifyWebhook struct {
+	URL      string            `json:"url"`
+	Method   string            `json:"method"`
+	Headers  map[string]string `json:"headers"`
+	BodyType string            `json:"bodyType"`
+	Body     string            `json:"body"`
 }
 
 type ShareType string
