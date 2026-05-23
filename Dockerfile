@@ -10,6 +10,7 @@ RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist --lega
 
 FROM front-base AS front-builder
 WORKDIR /app
+ENV CI=true
 COPY --from=front-deps /app/dist/ .
 RUN corepack enable pnpm && pnpm build
 
