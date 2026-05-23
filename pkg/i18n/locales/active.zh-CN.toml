@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "分享下载通知 - {{.SiteURL}}"
+other = "分享访问通知 - {{.SiteURL}}"
 
-[notify_email_body]
-other = "IP为{{.IP}}的访客下载了你的{{.FileName}}的{{.ShareType}}。"
+[notify_email_intro]
+other = "您的分享已被其他用户访问"
 
-[share_type_file]
-other = "文件"
-
-[share_type_text]
-other = "文本"
+[notify_email_label_region]
+other = "区域"

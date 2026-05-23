@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "Share download notification - {{.SiteURL}}"
+other = "Share access notification - {{.SiteURL}}"
 
-[notify_email_body]
-other = "Your shared {{.ShareType}} {{.FileName}} was downloaded."
+[notify_email_intro]
+other = "Your share has been accessed by another user"
 
-[share_type_file]
-other = "file"
-
-[share_type_text]
-other = "text"
+[notify_email_label_region]
+other = "Region"

@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "共有ダウンロード通知 - {{.SiteURL}}"
+other = "共有アクセス通知 - {{.SiteURL}}"
 
-[notify_email_body]
-other = "共有した{{.ShareType}} {{.FileName}} がダウンロードされました。"
+[notify_email_intro]
+other = "あなたの共有が別のユーザーにアクセスされました"
 
-[share_type_file]
-other = "ファイル"
-
-[share_type_text]
-other = "テキスト"
+[notify_email_label_region]
+other = "地域"

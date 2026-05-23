@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "分享下載通知 - {{.SiteURL}}"
+other = "分享存取通知 - {{.SiteURL}}"
 
-[notify_email_body]
-other = "IP為{{.IP}}的訪客下載了你的{{.FileName}}的{{.ShareType}}。"
+[notify_email_intro]
+other = "您的分享已被其他用戶存取"
 
-[share_type_file]
-other = "檔案"
-
-[share_type_text]
-other = "文字"
+[notify_email_label_region]
+other = "區域"

@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "Notification de téléchargement du partage - {{.SiteURL}}"
+other = "Notification d'accès au partage - {{.SiteURL}}"
 
-[notify_email_body]
-other = "Votre {{.ShareType}} partagé {{.FileName}} a été téléchargé."
+[notify_email_intro]
+other = "Votre partage a été consulté par un autre utilisateur"
 
-[share_type_file]
-other = "fichier"
-
-[share_type_text]
-other = "texte"
+[notify_email_label_region]
+other = "Région"

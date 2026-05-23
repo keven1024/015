@@ -1,11 +1,8 @@
 [notify_email_subject]
-other = "Benachrichtigung zum Share-Download - {{.SiteURL}}"
+other = "Benachrichtigung zum Zugriff auf die Freigabe - {{.SiteURL}}"
 
-[notify_email_body]
-other = "Ihr geteilter {{.ShareType}} {{.FileName}} wurde heruntergeladen."
+[notify_email_intro]
+other = "Ihre Freigabe wurde von einem anderen Nutzer abgerufen"
 
-[share_type_file]
-other = "Datei"
-
-[share_type_text]
-other = "Text"
+[notify_email_label_region]
+other = "Region"
