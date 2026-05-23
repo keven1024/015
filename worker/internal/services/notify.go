@@ -72,6 +72,9 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 	}
 
 	p, err := url.Parse(u.GetEnv("site.url"))
+	if err != nil {
+		return err
+	}
 	subject := i18n.TWithData(emailTemplateData.Locale, "notify_email_subject", map[string]any{
 		"SiteURL": p.Host,
 	})
