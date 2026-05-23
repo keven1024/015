@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"pkg/geoip"
 	"pkg/models"
 	u "pkg/utils"
 	"worker/internal/services"
@@ -77,12 +78,18 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		successCount++
 	}
 
+	region := "-"
+	if info := geoip.GetIpGeoInfo(payload.IP); info != nil {
+		region = info.Emoji + " " + info.Country.Country.Names.English
+	}
+
 	for _, email := range shareInfo.NotifyEmails {
 		if err := services.SendEmail(email, services.EmailTemplateData{
 			Locale:    shareInfo.Locale,
-			ShareType: shareInfo.Type,
-			FileName:  shareInfo.FileName,
+			FileName:  lo.Ternary(shareInfo.Type == models.ShareTypeFile, shareInfo.FileName, lo.Substring(shareInfo.Data, 0, 7)+"..."),
 			IP:        payload.IP,
+			Region:    region,
+			ShareType: shareInfo.Type,
 		}); err != nil {
 			errs = append(errs, err)
 			continue

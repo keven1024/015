@@ -2,7 +2,9 @@ package services
 
 import (
 	"fmt"
+	"net/url"
 	"pkg/i18n"
+	pkgmail "pkg/mail"
 	"pkg/models"
 	u "pkg/utils"
 	"strings"
@@ -44,8 +46,9 @@ func SendWebhook(webhook models.NotifyWebhook) error {
 type EmailTemplateData struct {
 	Locale    string
 	IP        string
-	ShareType models.ShareType
+	Region    string
 	FileName  string
+	ShareType models.ShareType
 }
 
 func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
@@ -63,16 +66,27 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 	if username == "" {
 		return fmt.Errorf("smtp.username is required")
 	}
-	port := lo.Ternary(cast.ToInt(smtp["port"]) != 0, cast.ToInt(smtp["port"]), mail.DefaultPortSSL)
-
-	templateData := map[string]any{
-		"IP":        emailTemplateData.IP,
-		"SiteURL":   u.GetEnv("site.url"),
-		"ShareType": i18n.T(emailTemplateData.Locale, lo.Ternary(emailTemplateData.ShareType == models.ShareTypeText, "share_type_text", "share_type_file")),
-		"FileName":  emailTemplateData.FileName,
+	port := mail.DefaultPortSSL
+	if smtpPort := cast.ToInt(smtp["port"]); smtpPort != 0 {
+		port = smtpPort
 	}
-	subject := i18n.TWithData(emailTemplateData.Locale, "notify_email_subject", templateData)
-	body := i18n.TWithData(emailTemplateData.Locale, "notify_email_body", templateData)
+
+	p, err := url.Parse(u.GetEnv("site.url"))
+	subject := i18n.TWithData(emailTemplateData.Locale, "notify_email_subject", map[string]any{
+		"SiteURL": p.Host,
+	})
+	htmlBody, err := pkgmail.RenderMailTemplate("pull-notify", map[string]string{
+		"EMAIL-TITLE":        subject,
+		"EMAIL-INTRO":        i18n.T(emailTemplateData.Locale, "notify_email_intro"),
+		"EMAIL-FILEICON":     lo.Ternary(emailTemplateData.ShareType == models.ShareTypeText, "spiral_notepad", "file_folder"),
+		"EMAIL-FILENAME":     emailTemplateData.FileName,
+		"EMAIL-IP":           emailTemplateData.IP,
+		"EMAIL-REGION":       emailTemplateData.Region,
+		"EMAIL-LABEL-REGION": i18n.T(emailTemplateData.Locale, "notify_email_label_region"),
+	})
+	if err != nil {
+		return err
+	}
 	message := mail.NewMsg()
 	if err := message.From(username); err != nil {
 		return err
@@ -81,7 +95,7 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 		return err
 	}
 	message.Subject(subject)
-	message.SetBodyString(mail.TypeTextPlain, body)
+	message.SetBodyString(mail.TypeTextHTML, htmlBody)
 
 	options = append([]mail.Option{
 		mail.WithPort(port),

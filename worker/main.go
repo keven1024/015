@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"pkg/geoip"
 	"pkg/i18n"
 	"pkg/utils"
 	"worker/internal/tasks"
@@ -25,6 +26,9 @@ func main() {
 
 	if err := i18n.Init(); err != nil {
 		log.Fatalf("failed to init i18n: %v", err)
+	}
+	if err := geoip.Init(); err != nil {
+		log.Fatalf("failed to init geoip: %v", err)
 	}
 
 	srv := asynq.NewServer(

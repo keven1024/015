@@ -6,6 +6,7 @@ require (
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/uuid v1.6.0
 	github.com/hibiken/asynq v0.26.0
+	github.com/mocktools/go-smtp-mock/v2 v2.5.4
 	github.com/openai/openai-go/v3 v3.30.0
 	github.com/samber/lo v1.53.0
 	github.com/spf13/cast v1.10.0
@@ -18,7 +19,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/mocktools/go-smtp-mock/v2 v2.5.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/redis/go-redis/v9 v9.18.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
