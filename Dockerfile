@@ -5,7 +5,7 @@ FROM front-base AS front-deps
 RUN apk add --no-cache gcompat
 WORKDIR /app
 COPY . .
-RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist --legacy
+RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist --legacy && pnpm gen:mail
 
 
 FROM front-base AS front-builder
@@ -20,6 +20,8 @@ COPY go.work go.work.sum ./
 COPY backend/ ./backend/
 COPY worker/ ./worker/
 COPY pkg/ ./pkg/
+# Inject built email templates so Go can embed them
+COPY --from=front-deps /app/pkg/mail/out/ ./pkg/mail/out/
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && \
     go mod download
 # Build from workspace root so pkg/utils, pkg/models, pkg/services resolve
