@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"pkg/i18n"
-	pkgmail "pkg/mail"
+	pkgmail "pkg/mail" //nolint:typecheck
 	"pkg/models"
 	u "pkg/utils"
 	"strings"
