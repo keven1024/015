@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LucideAlertCircle } from 'lucide-vue-next'
+import { LucideAlertCircle } from '@lucide/vue'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
