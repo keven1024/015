@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LucideFileAudio, LucideFileVideo, LucideFile, LucideFileCode, LucideFileArchive, LucideFileText } from 'lucide-vue-next'
+import { LucideFileAudio, LucideFileVideo, LucideFile, LucideFileCode, LucideFileArchive, LucideFileText } from '@lucide/vue'
 import type { filePreview } from './Index.vue'
 
 const props = defineProps<{

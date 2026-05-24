@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LucideSquare, LucideInfo, LucideFolders, LucideArrowUpFromLine, LucideCircleX, LucideCheckCircle, LucideLoaderCircle } from 'lucide-vue-next'
+import { LucideSquare, LucideInfo, LucideFolders, LucideArrowUpFromLine, LucideCircleX, LucideCheckCircle, LucideLoaderCircle } from '@lucide/vue'
 import Button from '@/components/ui/button/Button.vue'
 
 import getFileSize from '~/lib/getFileSize'

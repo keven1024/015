@@ -3,7 +3,7 @@ import FileUpload from '@/components/FileUpload.vue'
 import { cx } from 'class-variance-authority'
 import type { RuleExpression } from 'vee-validate'
 import Button from '../ui/button/Button.vue'
-import { PlusIcon } from 'lucide-vue-next'
+import { PlusIcon } from '@lucide/vue'
 import { isEmpty } from 'lodash-es'
 
 const props = defineProps<{
