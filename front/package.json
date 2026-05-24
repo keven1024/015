@@ -46,6 +46,7 @@
         "motion-v": "^2.2.1",
         "nanoid": "^5.1.11",
         "nuxt": "4.4.6",
+        "nuxt-lucide-icons": "2.1.0",
         "pinia": "^3.0.4",
         "pixi.js": "^8.18.1",
         "qrcode": "^1.5.4",

@@ -16,6 +16,7 @@ export default defineNuxtConfig({
         '@nuxt/image',
         '@nuxtjs/i18n',
         'vue3-pixi-nuxt',
+        'nuxt-lucide-icons',
     ],
     // serwist: {},
     i18n: {
