@@ -11,9 +11,9 @@ const enableBg = computed(() => appConfig.value?.site_enable_bg ?? true)
         <GlobalDrawer />
         <GlobalDayjs />
         <Toaster position="top-center" richColors closeButton />
-        <div class="w-full h-full absolute inset-0 z-[-1] bg-linear-to-bl from-primary/40 to-primary">
-            <img v-if="enableBg" class="w-full h-full object-cover" :src="bgUrl" />
-        </div>
+        <p class="absolute inset-0 z-[-1] bg-linear-to-bl from-primary/40 to-primary">
+            <img v-if="enableBg" class="w-full h-full block object-cover" :src="bgUrl" />
+        </p>
         <div class="h-full w-full flex flex-col items-center lg:p-10 p-5 overflow-y-auto">
             <Navbar />
             <slot />
