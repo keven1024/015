@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Toaster } from 'vue-sonner'
+import { Toaster } from '@/components/ui/sonner'
 const { locale } = useI18n()
 await useSeo({ locale: locale.value })
 const appConfig = useMyAppConfig()
