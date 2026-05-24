@@ -5,6 +5,7 @@ WORKDIR /app
 FROM front-base AS front-builder
 RUN apk add --no-cache gcompat
 ENV CI=true
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY . .
 RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build && pnpm --dir pkg/mail export
 
