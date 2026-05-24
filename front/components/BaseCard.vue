@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
 const props = defineProps<{
     title?: string
     showBackButton?: boolean
