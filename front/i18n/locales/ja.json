@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "追加",
-        "copySuccess": "コピーしました"
+        "copySuccess": "コピーしました",
+        "length": "長さ",
+        "words": "文字"
     },
     "page": {
         "upload": {

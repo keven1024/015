@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "Ajouter",
-        "copySuccess": "Copié avec succès"
+        "copySuccess": "Copié avec succès",
+        "length": "longueur",
+        "words": "mots"
     },
     "page": {
         "upload": {

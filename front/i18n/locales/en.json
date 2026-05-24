@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "Add",
-        "copySuccess": "Copy Success"
+        "copySuccess": "Copy Success",
+        "length": "length",
+        "words": "words"
     },
     "page": {
         "upload": {

@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "추가",
-        "copySuccess": "복사되었습니다"
+        "copySuccess": "복사되었습니다",
+        "length": "길이",
+        "words": "단어"
     },
     "page": {
         "upload": {

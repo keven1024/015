@@ -5,6 +5,7 @@ import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
 import { cx } from 'class-variance-authority'
 import countWords from '@/lib/countWords'
+const { t } = useI18n()
 
 const props = defineProps<{
     modelValue?: string
@@ -64,6 +65,6 @@ onUnmounted(() => {
         v-if="modelValue?.length && modelValue?.length > 0"
         class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
     >
-        {{ `${modelValue?.length ?? 0} 长度  ·  ${countWords(modelValue ?? '')} 字符` }}
+        {{ `${modelValue?.length ?? 0} ${t('common.length')}  ·  ${countWords(modelValue ?? '')} ${t('common.words')}` }}
     </div>
 </template>

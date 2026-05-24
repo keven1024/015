@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "新增",
-        "copySuccess": "複製成功"
+        "copySuccess": "複製成功",
+        "length": "長度",
+        "words": "字符"
     },
     "page": {
         "upload": {
