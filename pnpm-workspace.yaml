@@ -1,11 +1,11 @@
 packages:
-  # all packages in direct subdirs of packages/
-  - 'front'
-  - 'pkg/*'
-  # - '*'
+    # all packages in direct subdirs of packages/
+    - 'front'
+    - 'pkg/*'
+    # - '*'
 allowBuilds:
-  '@parcel/watcher': true
-  esbuild: true
-  maplibre-gl: true
-  sharp: true
-  vue-demi: true
+    '@parcel/watcher': true
+    esbuild: true
+    maplibre-gl: true
+    sharp: true
+    vue-demi: true
