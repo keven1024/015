@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import asyncWait from '~/lib/asyncWait'
 import { toast } from 'vue-sonner'
-import { LucideCheck, LucideCopy } from 'lucide-vue-next'
+import { LucideCheck, LucideCopy } from '@lucide/vue'
 
 const isCopy = ref(false)
 const props = defineProps<{

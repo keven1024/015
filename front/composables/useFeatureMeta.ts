@@ -1,4 +1,4 @@
-import { LucideShare, LucideImageMinus, LucideArrowRightLeft, LucideLanguages } from 'lucide-vue-next'
+import { LucideShare, LucideImageMinus, LucideArrowRightLeft, LucideLanguages } from '@lucide/vue'
 import useMyAppConfig from '@/composables/useMyAppConfig'
 import type { FileHandleKey, TextHandleKey } from '../components/Preprocessing/types'
 import generateRandomColors from '@/lib/generateRandomColors'
