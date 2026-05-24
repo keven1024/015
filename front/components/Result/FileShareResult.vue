@@ -21,6 +21,7 @@ const { t } = useI18n()
 const { createFileShare } = useMyAppShare()
 const { data } = useQuery({
     queryKey: ['create-share', ...props?.data?.files?.map((item) => item.id)],
+    staleTime: Infinity,
     queryFn: async () => {
         const { files, config } = props?.data || {}
         const data = await createFileShare({
