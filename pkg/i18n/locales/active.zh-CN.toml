@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "分享访问通知 - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "您的分享已被其他用户访问"
+
+[notify_email_label_region]
+other = "区域"

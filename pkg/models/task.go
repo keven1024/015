@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -11,7 +12,8 @@ import (
 )
 
 func GetRedisTaskInfo(taskId string) (*map[string]any, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	taskInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
@@ -28,8 +30,12 @@ func GetRedisTaskInfo(taskId string) (*map[string]any, error) {
 }
 
 func SetRedisTaskInfo(taskId string, taskInfo map[string]any) error {
-	rdb, ctx := utils.GetRedisClient()
-	jsonData, _ := json.Marshal(taskInfo)
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
+	jsonData, err := json.Marshal(taskInfo)
+	if err != nil {
+		return err
+	}
 	return rdb.Do(
 		ctx,
 		rdb.B().Set().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Value(string(jsonData)).Ex(time.Hour).Build(),

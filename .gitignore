@@ -22,7 +22,7 @@ logs
 .env
 .env.*
 !.env.example
-config.yaml
+/config.yaml
 
 # Serwist
 /front/public/sw*
@@ -31,3 +31,6 @@ config.yaml
 # backend
 **/uploads/**
 **/tmp/**
+
+# worker
+pkg/mail/out/

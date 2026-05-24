@@ -18,6 +18,15 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	// redis
+	if err := utils.InitRedis(); err != nil {
+		logger.Fatal("redis init failed", zap.Error(err))
+		panic(err)
+	}
+	if err := utils.InitAsynq(); err != nil {
+		logger.Fatal("asynq init failed", zap.Error(err))
+		panic(err)
+	}
 
 	e := echo.New()
 	for _, middleware := range middlewares {

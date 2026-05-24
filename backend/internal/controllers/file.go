@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v5"
-	"github.com/spf13/cast"
 )
 
 func CreateUploadTask(c *echo.Context) error {
@@ -78,36 +77,33 @@ func CreateUploadTask(c *echo.Context) error {
 	for r.FileSize/ChunkSize > 1000 {
 		ChunkSize *= 2
 	}
-	uploadTaskExpire := cast.ToInt64(u.GetEnvWithDefault("upload.remove_expire", "2")) * 3600
-	newFileInfo := models.RedisFileInfo{
-		FileType: models.FileTypeInit,
-		FileInfo: models.FileInfo{
+	redisFileInfo, err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+		fileInfo.FileType = models.FileTypeInit
+		fileInfo.FileInfo = models.FileInfo{
 			FileSize:  r.FileSize,
 			MimeType:  r.MimeType,
 			FileHash:  r.FileHash,
 			ChunkSize: ChunkSize,
-		},
-		CreatedAt: time.Now().Unix(),
-		Expire:    uploadTaskExpire,
-	}
-	err = models.SetRedisFileInfo(fileId, newFileInfo)
+		}
+		return fileInfo
+	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	err = s.SetFileRemoveTask(fileId, time.Duration(uploadTaskExpire)*time.Second)
+	err = s.SetFileRemoveTask(fileId, time.Duration(redisFileInfo.Expire)*time.Second)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"size":       newFileInfo.FileSize,
-		"mime_type":  newFileInfo.MimeType,
-		"hash":       newFileInfo.FileHash,
-		"type":       newFileInfo.FileType,
-		"expire":     newFileInfo.Expire,
+		"size":       redisFileInfo.FileSize,
+		"mime_type":  redisFileInfo.MimeType,
+		"hash":       redisFileInfo.FileHash,
+		"type":       redisFileInfo.FileType,
+		"expire":     redisFileInfo.Expire,
 		"id":         fileId,
-		"chunk_size": newFileInfo.ChunkSize,
+		"chunk_size": redisFileInfo.ChunkSize,
 	})
 }
 
@@ -216,32 +212,33 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	// 计算文件MD5
+	// 计算文件SHA1
 	file, err := os.Open(mergeFilePath)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	defer file.Close() //nolint:errcheck
 
-	file_hash, err := u.GetFileMd5(file)
+	file_hash, err := u.GetFileSHA1(file)
 	if err != nil || file_hash != fileInfo.FileHash {
 		defer os.Remove(mergeFilePath) //nolint:errcheck
 		if err == nil {
-			return utils.HTTPErrorHandler(c, ErrFileMD5Mismatch)
+			return utils.HTTPErrorHandler(c, ErrFileHashMismatch)
 		}
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	// 更新文件信息
-	err = models.SetRedisFileInfo(r.FileId, models.RedisFileInfo{
-		FileType: models.FileTypeUpload,
+	fileInfo, err = models.SetRedisFileInfo(r.FileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
+		fileInfo.FileType = models.FileTypeUpload
+		return fileInfo
 	})
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	// 统计
 	currentDate := time.Now().Format("2006-01-02")
-	err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+	_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
 		stat.FileSize += fileInfo.FileSize
 		stat.FileNum += 1
 		return stat

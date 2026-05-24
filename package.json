@@ -7,7 +7,7 @@
         "dev": "concurrently -n front,backend,worker -c blue,green,yellow 'pnpm:dev:front' 'pnpm:dev:backend' 'pnpm:dev:worker'",
         "dev:front": "cd front && pnpm run dev",
         "dev:backend": "cd backend && air",
-        "dev:worker": "cd worker && air",
+        "dev:worker": "pnpm gen:mail && cd worker && air",
         "lint": "concurrently -n front,backend,worker -c blue,green,yellow 'pnpm:lint:front' 'pnpm:lint:backend' 'pnpm:lint:worker'",
         "lint:front": "cd front && pnpm nuxt typecheck",
         "lint:backend": "cd backend && golangci-lint run",
@@ -20,7 +20,8 @@
         "up-deps:backend": "cd backend && go get -u",
         "up-deps:worker": "cd worker && go get -u",
         "up-deps:models": "cd pkg/models && go get -u",
-        "up-deps:utils": "cd pkg/utils && go get -u"
+        "up-deps:utils": "cd pkg/utils && go get -u",
+        "gen:mail": "cd pkg/mail && pnpm export"
     },
     "workspaces": [
         "front"
@@ -41,7 +42,6 @@
         "concurrently": "^9.2.1",
         "husky": "^9.1.7",
         "lint-staged": "^15.5.2",
-        "prettier": "^3.8.1"
-    },
-    "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017"
+        "prettier": "^3.8.3"
+    }
 }

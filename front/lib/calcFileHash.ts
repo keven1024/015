@@ -1,47 +1,49 @@
 import { noop } from 'lodash-es'
-import { md5 } from 'js-md5'
+import { createSHA1 } from 'hash-wasm'
 
 interface CalcFileHashProps {
     file: File
     onProgress?: (current: number) => void
     chunkSize?: number
+    engine?: 'native' | 'wasm'
 }
 
 const calcFileHash = async (props: CalcFileHashProps) => {
-    const { file, onProgress = noop, chunkSize = 100 } = props || {}
-    const blob = await file.arrayBuffer()
-    const hash = md5(blob)
-    return hash
-    // const finalChunkSize = chunkSize * 1024 * 1024;
-    // const chunks = Math.ceil(file.size / finalChunkSize);
-    // const spark = new SparkMD5.ArrayBuffer(); // 使用 SparkMD5 增量计算哈希
-    // const fileReader = new FileReader();
+    const { file, onProgress = noop, chunkSize = 100, engine = 'native' } = props || {}
 
-    // const readChunk = (start: number): Promise<ArrayBuffer> => {
-    //     return new Promise((resolve, reject) => {
-    //         const chunk = file.slice(start, Math.min(start + finalChunkSize, file.size));
-    //         fileReader.onload = (e) => resolve(e.target?.result as ArrayBuffer);
-    //         fileReader.onerror = reject;
-    //         fileReader.readAsArrayBuffer(chunk);
-    //     });
-    // };
+    if (engine === 'native') {
+        const buffer = await file.arrayBuffer()
+        return calcNativeHash(buffer)
+    }
 
-    // try {
-    //     const progressCallback = (current: number) => {
-    //         const percentage = Math.round((current / chunks) * 100);
-    //         onProgress(percentage);
-    //     };
+    const chunkBytes = chunkSize * 1024 * 1024
+    const hasher = await createSHA1()
+    let offset = 0
+    while (offset < file.size) {
+        const buffer = await file.slice(offset, offset + chunkBytes).arrayBuffer()
+        hasher.update(new Uint8Array(buffer))
+        offset += chunkBytes
+        onProgress(Math.min(offset, file.size) / file.size)
+    }
+    return hasher.digest('hex')
+}
 
-    //     for (let i = 0; i < chunks; i++) {
-    //         const chunk = await readChunk(i * chunkSize);
-    //         spark.append(chunk);
-    //         progressCallback(i + 1);
-    //     }
+export const calcNativeHash = async (buffer: BufferSource) => {
+    const hashBuffer = await crypto.subtle.digest('SHA-1', buffer)
+    return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+}
 
-    //     return spark.end();
-    // } catch (error) {
-    //     throw error;
-    // }
+export const detectSupportedEngines = (): ('native' | 'wasm')[] => {
+    const engines: ('native' | 'wasm')[] = []
+    if (typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined') {
+        engines.push('native')
+    }
+    if (typeof WebAssembly !== 'undefined' && typeof WebAssembly.instantiate === 'function') {
+        engines.push('wasm')
+    }
+    return engines
 }
 
 export default calcFileHash

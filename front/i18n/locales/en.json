@@ -4,7 +4,30 @@
         "text": "Text"
     },
     "i18n": {
-        "switchLocale": "Switch Language"
+        "switchLocale": "Switch Language",
+        "language": {
+            "en": "English",
+            "en-GB": "English (UK)",
+            "ja": "Japanese",
+            "fr": "French",
+            "de": "German",
+            "es-ES": "Spanish (Spain)",
+            "es-419": "Spanish (Latin America)",
+            "pt-BR": "Portuguese (Brazil)",
+            "zh-CN": "Chinese (Simplified)",
+            "zh-TW": "Chinese (Traditional)",
+            "nl": "Dutch",
+            "no": "Norwegian",
+            "sv": "Swedish",
+            "da": "Danish",
+            "fi": "Finnish",
+            "ko": "Korean",
+            "vi": "Vietnamese",
+            "th": "Thai",
+            "id": "Indonesian",
+            "ar": "Arabic",
+            "he": "Hebrew"
+        }
     },
     "seo": {
         "desc": "015 is a temporary file sharing platform project, supporting temporary large file slicing upload, temporary text upload, download and share"
@@ -12,6 +35,12 @@
     "btn": {
         "submit": "Submit",
         "backToHome": "Back to Home"
+    },
+    "common": {
+        "add": "Add",
+        "copySuccess": "Copy Success",
+        "length": "length",
+        "words": "words"
     },
     "page": {
         "upload": {
@@ -29,7 +58,8 @@
                 "uploadText": "Upload Text",
                 "uploadTextPlaceholder": "Share, translate, summarize, generate images, and ask large models with our text processor",
                 "handleType": {
-                    "text-share": "Text Share"
+                    "text-share": "Text Share",
+                    "text-translate": "Text Translate"
                 }
             },
             "pickup": {
@@ -84,6 +114,26 @@
                     "1day": "1 day",
                     "3days": "3 days"
                 }
+            },
+            "notify": {
+                "notifyVia": "Notify via",
+                "email": "Email",
+                "webhook": "Webhook",
+                "emailPlaceholder": "Enter email address",
+                "emailInvalid": "Invalid email address",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "Invalid URL",
+                "webhookMethod": "Method",
+                "webhookHeaders": "Headers",
+                "webhookBody": "Request Body",
+                "webhookAdvanced": "Advanced options",
+                "webhookBodyType": "Body type",
+                "webhookBodyTypeNone": "None",
+                "webhookBodyTypeFormData": "Form data",
+                "webhookBodyTypeRaw": "Raw",
+                "webhookHeaderKey": "Key",
+                "webhookHeaderValue": "Value",
+                "addWebhook": "Add Webhook"
             }
         },
         "progress": {
@@ -108,6 +158,7 @@
                 "chunkUploadRetry": "Chunk {1} of file {0} failed to upload, we will try again later",
                 "fileUploadFailed": "File {0} upload failed, please try again",
                 "uploadFailed": "Upload Failed",
+                "hashEngineNotFound": "No file hash engine is available in the current environment",
                 "processing": {
                     "hash": "Calculating Hash...",
                     "create": "Initializing Upload...",
@@ -134,8 +185,7 @@
                 "downloadNums": "Download Count",
                 "expireTime": "Expire Time",
                 "pickupCode": "Pickup Code",
-                "link": "Link",
-                "copySuccess": "Copy Success"
+                "link": "Link"
             },
             "imageCompress": {
                 "title": "Image Compress",
@@ -158,8 +208,26 @@
                 "expireTime": "Expire Time",
                 "pickupCode": "Pickup Code",
                 "link": "Link",
-                "content": "Content",
-                "copySuccess": "Copy Success"
+                "content": "Content"
+            },
+            "textTranslate": {
+                "title": "Text Translation",
+                "sourceText": "Source Text",
+                "translatedText": "Translated Text",
+                "sourceLanguage": "Source Language",
+                "targetLanguage": "Target Language",
+                "provider": "Provider",
+                "retranslate": "Retranslate",
+                "empty": "Enter text and click retranslate to preview the result",
+                "copy": "Copy Translation",
+                "copySuccess": "Translation copied",
+                "language": {
+                    "auto": "Auto Detect",
+                    "zh-CN": "Chinese",
+                    "en": "English",
+                    "ja": "Japanese",
+                    "ko": "Korean"
+                }
             },
             "qrCode": {
                 "title": "Share QR code"

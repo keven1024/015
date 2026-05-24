@@ -2,7 +2,7 @@ package utils
 
 import (
 	"bufio"
-	"crypto/md5"
+	"crypto/sha1"
 	"fmt"
 	"io"
 	"os"
@@ -15,9 +15,9 @@ func GetFileId(fileHash string, fileSize int64) string {
 	return fmt.Sprintf("%s_%d", fileHash, fileSize)
 }
 
-func GetFileMd5(file io.Reader) (string, error) {
+func GetFileSHA1(file io.Reader) (string, error) {
 	const bufferSize = 1024 * 1000 // 1MB
-	hash := md5.New()
+	hash := sha1.New()
 	buf := make([]byte, bufferSize)
 	reader := bufio.NewReader(file)
 	for {

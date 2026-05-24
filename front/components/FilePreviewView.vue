@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import getFileSize from '~/lib/getFileSize'
-import type { filePreview } from './FileIcon.vue'
+import type { filePreview } from './FileIcon/Index.vue'
 const props = defineProps<{
     value: File | filePreview
 }>()

@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "共有アクセス通知 - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "あなたの共有が別のユーザーにアクセスされました"
+
+[notify_email_label_region]
+other = "地域"

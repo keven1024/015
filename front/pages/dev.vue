@@ -25,7 +25,38 @@ if (!isDev) {
                 @click="
                     async () => {
                         await showDrawer({
-                            render: ({ ...rest }) => h('div', { style: { height: '30vh' } }, '内容'),
+                            render: ({ hide }) =>
+                                h('div', { class: 'flex h-[30vh] flex-col gap-4' }, [
+                                    h('div', '第一层内容'),
+                                    h(
+                                        Button,
+                                        {
+                                            variant: 'outline',
+                                            onClick: () =>
+                                                showDrawer({
+                                                    render: ({ hide: hideInner }) =>
+                                                        h('div', { class: 'flex h-[30vh] flex-col gap-4' }, [
+                                                            h('div', '第二层内容'),
+                                                            h(
+                                                                Button,
+                                                                {
+                                                                    onClick: () => hideInner(),
+                                                                },
+                                                                () => '关闭第二层'
+                                                            ),
+                                                        ]),
+                                                }),
+                                        },
+                                        () => '打开第二层(showDrawer)'
+                                    ),
+                                    h(
+                                        Button,
+                                        {
+                                            onClick: () => hide(),
+                                        },
+                                        () => '关闭第一层'
+                                    ),
+                                ]),
                         })
                         toast.success('被关闭')
                     }
@@ -72,7 +103,6 @@ if (!isDev) {
                 </FormButton>
             </div>
         </VeeForm>
-        <div>测试dayjs语言包渲染:{{ dayjs().add(1, 'day').fromNow() }}</div>
     </BaseCard>
 </template>
 <style scoped></style>

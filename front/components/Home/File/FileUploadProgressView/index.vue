@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { LucideSquare, LucideInfo, LucideFolders, LucideArrowUpFromLine, LucideCircleX, LucideCheckCircle, LucideLoaderCircle } from 'lucide-vue-next'
+import { LucideSquare, LucideInfo, LucideFolders, LucideArrowUpFromLine, LucideCircleX, LucideCheckCircle, LucideLoaderCircle } from '@lucide/vue'
 import Button from '@/components/ui/button/Button.vue'
 
 import getFileSize from '~/lib/getFileSize'
 import { cx } from 'class-variance-authority'
 import asyncWorker from '@/lib/asyncWorker'
 import calcFileHashWorker from '@/lib/calcFileHashWorker?worker'
+import { detectSupportedEngines } from '@/lib/calcFileHash'
 import { clamp, get, isEmpty, isNumber, sample, shuffle, throttle, times } from 'lodash-es'
 import { nanoid } from 'nanoid'
 import { toast } from 'vue-sonner'
@@ -137,11 +138,20 @@ watchEffect(async () => {
     }
 })
 
+const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024 // 500 MB
+
 const handleHash = async (fileId: string) => {
     const uploadfile = uploadfiles.value.find((item) => item.fileId === fileId)
     if (!uploadfile?.file) return
     uploadfile.procressType = 'hash'
-    const res = await asyncWorker(calcFileHashWorker, { data: { file: uploadfile.file } })
+    const supportedEngines = detectSupportedEngines()
+    if (supportedEngines.length === 0) {
+        throw new Error(t('page.progress.file.hashEngineNotFound'))
+    }
+    const preferredEngine = uploadfile.file.size >= LARGE_FILE_THRESHOLD ? 'wasm' : 'native'
+    const res = await asyncWorker(calcFileHashWorker, {
+        data: { file: uploadfile.file, engine: supportedEngines.includes(preferredEngine) ? preferredEngine : supportedEngines?.[0] },
+    })
     const { hash } = res?.data || {}
     uploadfile.hash = hash
 }

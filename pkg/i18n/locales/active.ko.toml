@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "공유 접근 알림 - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "공유가 다른 사용자에 의해 접근되었습니다"
+
+[notify_email_label_region]
+other = "지역"

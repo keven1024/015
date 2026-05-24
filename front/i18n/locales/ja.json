@@ -1,0 +1,283 @@
+{
+    "navbar": {
+        "file": "ファイル",
+        "text": "テキスト"
+    },
+    "i18n": {
+        "switchLocale": "言語を切り替える",
+        "language": {
+            "en": "英語",
+            "en-GB": "英語（イギリス）",
+            "ja": "日本語",
+            "fr": "フランス語",
+            "de": "ドイツ語",
+            "es-ES": "スペイン語（スペイン）",
+            "es-419": "スペイン語（ラテンアメリカ）",
+            "pt-BR": "ポルトガル語（ブラジル）",
+            "zh-CN": "中国語（簡体字）",
+            "zh-TW": "中国語（繁体字）",
+            "nl": "オランダ語",
+            "no": "ノルウェー語",
+            "sv": "スウェーデン語",
+            "da": "デンマーク語",
+            "fi": "フィンランド語",
+            "ko": "韓国語",
+            "vi": "ベトナム語",
+            "th": "タイ語",
+            "id": "インドネシア語",
+            "ar": "アラビア語",
+            "he": "ヘブライ語"
+        }
+    },
+    "seo": {
+        "desc": "015 は一時的なファイル共有プラットフォームであり、大容量ファイルの分割アップロード、一時テキストのアップロード、ダウンロード、共有をサポートします"
+    },
+    "btn": {
+        "submit": "送信",
+        "backToHome": "ホームに戻る"
+    },
+    "common": {
+        "add": "追加",
+        "copySuccess": "コピーしました",
+        "length": "長さ",
+        "words": "文字"
+    },
+    "page": {
+        "upload": {
+            "file": {
+                "uploadFile": "ファイルをアップロード",
+                "uploadFilePlaceholder": "ファイルをドラッグ&ドロップ、またはクリックしてアップロード",
+                "addMore": "さらに追加",
+                "handleType": {
+                    "file-share": "ファイル共有",
+                    "file-image-compress": "画像圧縮",
+                    "file-image-convert": "形式変換"
+                }
+            },
+            "text": {
+                "uploadText": "テキストをアップロード",
+                "uploadTextPlaceholder": "テキスト処理機能で共有、翻訳、要約、画像生成、大規模モデルへの質問を簡単に行えます",
+                "handleType": {
+                    "text-share": "テキスト共有",
+                    "text-translate": "テキスト翻訳"
+                }
+            },
+            "pickup": {
+                "title": "受取コードを入力",
+                "codeError": "受取コードが正しくありません",
+                "btn": "受け取る"
+            }
+        },
+        "shareOptions": {
+            "file": {
+                "title": "共有オプション",
+                "downloadNums": "ダウンロード回数",
+                "expireTime": "有効期限",
+                "or": "または",
+                "expireAfter": "後に期限切れ",
+                "pickupCode": "受取コード",
+                "passwordProtection": "パスワード保護",
+                "downloadNotify": "ダウンロード通知",
+                "passwordPlaceholder": "パスワードを入力",
+                "emailPlaceholder": "メールアドレスを入力",
+                "downloadOptions": {
+                    "xdownload": "{0} 回ダウンロード"
+                },
+                "expireOptions": {
+                    "5min": "5分",
+                    "1hour": "1時間",
+                    "1day": "1日",
+                    "3days": "3日"
+                }
+            },
+            "imageConvert": {
+                "title": "画像変換",
+                "targetFormat": "変換先形式"
+            },
+            "text": {
+                "title": "共有オプション",
+                "viewNums": "閲覧回数",
+                "expireTime": "有効期限",
+                "or": "または",
+                "expireAfter": "後に期限切れ",
+                "pickupCode": "受取コード",
+                "passwordProtection": "パスワード保護",
+                "readNotify": "既読通知",
+                "passwordPlaceholder": "パスワードを入力",
+                "emailPlaceholder": "メールアドレスを入力",
+                "viewOptions": {
+                    "xview": "{0} 回閲覧"
+                },
+                "expireOptions": {
+                    "5min": "5分",
+                    "1hour": "1時間",
+                    "1day": "1日",
+                    "3days": "3日"
+                }
+            },
+            "notify": {
+                "notifyVia": "通知方法",
+                "email": "メール",
+                "webhook": "Webhook",
+                "emailPlaceholder": "メールアドレスを入力",
+                "emailInvalid": "メールアドレスの形式が正しくありません",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL の形式が正しくありません",
+                "webhookMethod": "メソッド",
+                "webhookHeaders": "ヘッダー",
+                "webhookBody": "リクエストボディ",
+                "webhookAdvanced": "詳細オプション",
+                "webhookBodyType": "ボディタイプ",
+                "webhookBodyTypeNone": "なし",
+                "webhookBodyTypeFormData": "フォームデータ",
+                "webhookBodyTypeRaw": "Raw",
+                "webhookHeaderKey": "キー",
+                "webhookHeaderValue": "値",
+                "addWebhook": "Webhook を追加"
+            }
+        },
+        "progress": {
+            "file": {
+                "totalUploadProgress": "全体のアップロード進捗",
+                "fileList": "ファイル一覧",
+                "fileName": "ファイル名",
+                "fileSize": "ファイルサイズ",
+                "uploadSpeed": "アップロード速度",
+                "progress": "進捗",
+                "uploadDetails": "アップロード詳細",
+                "chunk": "チャンク",
+                "completed": "完了",
+                "discarded": "破棄済み",
+                "pending": "保留中",
+                "chunkProgress": "チャンク進捗バー",
+                "chunkHeatmap": "チャンクヒートマップ",
+                "heatmap": "ヒートマップ",
+                "progressBar": "進捗バー",
+                "uploadError": "アップロードエラー",
+                "chunkUploadFailed": "ファイル {0} のチャンク {1} は複数回失敗したため、アップロードを中止しました",
+                "chunkUploadRetry": "ファイル {0} のチャンク {1} のアップロードに失敗しました。後でもう一度試します",
+                "fileUploadFailed": "ファイル {0} のアップロードに失敗しました。もう一度お試しください",
+                "uploadFailed": "アップロード失敗",
+                "hashEngineNotFound": "現在の環境ではファイルハッシュ計算エンジンを利用できません",
+                "processing": {
+                    "hash": "ハッシュを計算中...",
+                    "create": "アップロードを初期化中...",
+                    "upload": "アップロード中...",
+                    "finish": "アップロード完了"
+                },
+                "instantUploadSuccess": "同じハッシュのファイルがクラウドに存在するため、秒でアップロード完了しました",
+                "uploadFailedRetry": "アップロードに失敗しました。しばらくしてから再試行してください",
+                "uploadSpeedInfo": {
+                    "title": "アップロード速度はどのように計算されますか？",
+                    "desc": {
+                        "base": "アップロード速度は、現在の1秒間にアップロードされた {chunkNum} * {chunkSize} を元に推定しており、実際の速度と多少の誤差がある場合があります。参考値としてご利用ください",
+                        "chunkNum": "ファイルチャンク数",
+                        "chunkSize": "各ファイルチャンクのサイズ"
+                    }
+                }
+            }
+        },
+        "result": {
+            "file": {
+                "title": "アップロード成功",
+                "fileList": "ファイル一覧",
+                "info": "情報",
+                "downloadNums": "ダウンロード回数",
+                "expireTime": "有効期限",
+                "pickupCode": "受取コード",
+                "link": "リンク"
+            },
+            "imageCompress": {
+                "title": "画像圧縮",
+                "totalSize": "合計サイズ",
+                "task": "タスク",
+                "retry": "再試行 {0}/{1}",
+                "failed": "失敗"
+            },
+            "imageConvert": {
+                "title": "画像変換",
+                "convert": "変換",
+                "task": "タスク",
+                "retry": "再試行 {0}/{1}",
+                "failed": "失敗"
+            },
+            "text": {
+                "title": "共有成功",
+                "info": "情報",
+                "viewNums": "閲覧回数",
+                "expireTime": "有効期限",
+                "pickupCode": "受取コード",
+                "link": "リンク",
+                "content": "内容"
+            },
+            "textTranslate": {
+                "title": "テキスト翻訳",
+                "sourceText": "入力テキスト",
+                "translatedText": "翻訳結果",
+                "sourceLanguage": "元の言語",
+                "targetLanguage": "翻訳先の言語",
+                "provider": "プロバイダー",
+                "retranslate": "再翻訳",
+                "empty": "テキストを入力して再翻訳をクリックすると結果が表示されます",
+                "copy": "翻訳文をコピー",
+                "copySuccess": "翻訳文をコピーしました",
+                "language": {
+                    "auto": "自動検出",
+                    "zh-CN": "中国語",
+                    "en": "英語",
+                    "ja": "日本語",
+                    "ko": "韓国語"
+                }
+            },
+            "qrCode": {
+                "title": "共有QRコード"
+            }
+        },
+        "shareView": {
+            "linkExpired": "このリンクは期限切れです。",
+            "passwall": {
+                "title": "パスワードを入力",
+                "passwordError": "パスワードが正しくありません",
+                "passwordPlaceholder": "パスワードを入力"
+            },
+            "fileShare": {
+                "title": "ファイルをダウンロード",
+                "downloadBtn": "ダウンロード",
+                "needPassword": "パスワードが必要です",
+                "expireTime": "有効期限",
+                "remainingDownloads": "残りダウンロード回数",
+                "getTokenFailed": "トークンの取得に失敗しました",
+                "durationFormat": "D日 HH:mm:ss"
+            },
+            "textShare": {
+                "title": "テキストを表示",
+                "viewBtn": "表示",
+                "needPassword": "パスワードが必要です",
+                "expireTime": "有効期限",
+                "remainingViews": "残り閲覧回数",
+                "durationFormat": "D日 HH:mm:ss"
+            }
+        },
+        "about": {
+            "powerBy": "{0} によって支えられているオープンソースのセルフホスト型一時ファイル共有プラットフォーム",
+            "file": "ファイル",
+            "share": "共有",
+            "download": "ダウンロード",
+            "task": "タスク",
+            "admin": "サイト管理者",
+            "author": "作者",
+            "title": "このサイトについて",
+            "about": "概要",
+            "systemInfo": "システム情報",
+            "enabledFeatures": "有効な機能",
+            "enabledFeaturesEmpty": "このインスタンスでは追加機能は有効化されていません",
+            "systemVersion": "システムバージョン",
+            "storage": "保存済みファイル",
+            "analysis": "分析",
+            "fileSize": "ファイルサイズ",
+            "fileNum": "ファイル数",
+            "processed": "処理済み",
+            "failed": "失敗"
+        }
+    }
+}

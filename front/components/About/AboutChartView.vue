@@ -3,6 +3,7 @@ import { cx } from 'class-variance-authority'
 import { useQuery } from '@tanstack/vue-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
+import { filesize } from 'filesize'
 import { times } from 'lodash-es'
 import type { ChartConfig } from '@/components/ui/chart'
 import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
@@ -209,8 +210,15 @@ const currentChartData = computed((): AreaChartConfig => {
                         :key="currentChartTab"
                         :template="
                             componentToString(currentChartData.config, ChartTooltipContent, {
+                                class: 'w-[14rem]',
                                 labelFormatter: (d) => {
-                                    return dayjs(d).format('MMM D')
+                                    return dayjs(d).format('MM-DD')
+                                },
+                                valueFormatter: (value, key) => {
+                                    if (key === 'file_size' && typeof value === 'number') {
+                                        return filesize(value)
+                                    }
+                                    return String(value)
                                 },
                             })
                         "

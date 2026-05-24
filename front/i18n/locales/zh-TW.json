@@ -1,0 +1,283 @@
+{
+    "navbar": {
+        "file": "檔案",
+        "text": "文字"
+    },
+    "i18n": {
+        "switchLocale": "切換語言",
+        "language": {
+            "en": "英語",
+            "en-GB": "英語（英國）",
+            "ja": "日語",
+            "fr": "法語",
+            "de": "德語",
+            "es-ES": "西班牙語（西班牙）",
+            "es-419": "西班牙語（拉丁美洲）",
+            "pt-BR": "葡萄牙語（巴西）",
+            "zh-CN": "中文（簡體）",
+            "zh-TW": "中文（繁體）",
+            "nl": "荷蘭語",
+            "no": "挪威語",
+            "sv": "瑞典語",
+            "da": "丹麥語",
+            "fi": "芬蘭語",
+            "ko": "韓語",
+            "vi": "越南語",
+            "th": "泰語",
+            "id": "印尼語",
+            "ar": "阿拉伯語",
+            "he": "希伯來語"
+        }
+    },
+    "seo": {
+        "desc": "015 是一個開源的臨時檔案分享平台專案，支援臨時大檔案分片上傳、臨時文字上傳、下載與分享"
+    },
+    "btn": {
+        "submit": "提交",
+        "backToHome": "返回首頁"
+    },
+    "common": {
+        "add": "新增",
+        "copySuccess": "複製成功",
+        "length": "長度",
+        "words": "字符"
+    },
+    "page": {
+        "upload": {
+            "file": {
+                "uploadFile": "上傳檔案",
+                "uploadFilePlaceholder": "拖曳檔案或點擊上傳",
+                "addMore": "新增更多",
+                "handleType": {
+                    "file-share": "檔案分享",
+                    "file-image-compress": "圖片壓縮",
+                    "file-image-convert": "格式轉換"
+                }
+            },
+            "text": {
+                "uploadText": "上傳文字",
+                "uploadTextPlaceholder": "使用我們的文字處理器輕鬆分享、翻譯、總結、生成圖片，並向大型模型提問",
+                "handleType": {
+                    "text-share": "文字分享",
+                    "text-translate": "文字翻譯"
+                }
+            },
+            "pickup": {
+                "title": "輸入取件碼",
+                "codeError": "取件碼錯誤",
+                "btn": "取件"
+            }
+        },
+        "shareOptions": {
+            "file": {
+                "title": "分享選項",
+                "downloadNums": "下載次數",
+                "expireTime": "過期時間",
+                "or": "或",
+                "expireAfter": "後過期",
+                "pickupCode": "取件碼",
+                "passwordProtection": "密碼保護",
+                "downloadNotify": "下載通知",
+                "passwordPlaceholder": "請輸入密碼",
+                "emailPlaceholder": "請輸入電子郵件",
+                "downloadOptions": {
+                    "xdownload": "{0} 次下載"
+                },
+                "expireOptions": {
+                    "5min": "5 分鐘",
+                    "1hour": "1 小時",
+                    "1day": "1 天",
+                    "3days": "3 天"
+                }
+            },
+            "imageConvert": {
+                "title": "圖片轉換",
+                "targetFormat": "目標格式"
+            },
+            "text": {
+                "title": "分享選項",
+                "viewNums": "瀏覽次數",
+                "expireTime": "過期時間",
+                "or": "或",
+                "expireAfter": "後過期",
+                "pickupCode": "取件碼",
+                "passwordProtection": "密碼保護",
+                "readNotify": "已讀通知",
+                "passwordPlaceholder": "請輸入密碼",
+                "emailPlaceholder": "請輸入電子郵件",
+                "viewOptions": {
+                    "xview": "{0} 次瀏覽"
+                },
+                "expireOptions": {
+                    "5min": "5 分鐘",
+                    "1hour": "1 小時",
+                    "1day": "1 天",
+                    "3days": "3 天"
+                }
+            },
+            "notify": {
+                "notifyVia": "通知方式",
+                "email": "郵件",
+                "webhook": "Webhook",
+                "emailPlaceholder": "請輸入郵箱地址",
+                "emailInvalid": "郵箱格式不正確",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL 格式不正確",
+                "webhookMethod": "請求方法",
+                "webhookHeaders": "請求頭",
+                "webhookBody": "請求體",
+                "webhookAdvanced": "進階選項",
+                "webhookBodyType": "請求體類型",
+                "webhookBodyTypeNone": "無",
+                "webhookBodyTypeFormData": "表單資料",
+                "webhookBodyTypeRaw": "原始內容",
+                "webhookHeaderKey": "鍵",
+                "webhookHeaderValue": "值",
+                "addWebhook": "新增 Webhook"
+            }
+        },
+        "progress": {
+            "file": {
+                "totalUploadProgress": "總上傳進度",
+                "fileList": "檔案列表",
+                "fileName": "檔名",
+                "fileSize": "檔案大小",
+                "uploadSpeed": "上傳速度",
+                "progress": "進度",
+                "uploadDetails": "上傳詳情",
+                "chunk": "區塊",
+                "completed": "已完成",
+                "discarded": "已捨棄",
+                "pending": "待完成",
+                "chunkProgress": "區塊進度條",
+                "chunkHeatmap": "區塊熱力圖",
+                "heatmap": "熱力圖",
+                "progressBar": "進度條",
+                "uploadError": "上傳錯誤",
+                "chunkUploadFailed": "檔案 {0} 的第 {1} 個分塊多次上傳失敗，我們已終止該檔案上傳",
+                "chunkUploadRetry": "檔案 {0} 的第 {1} 個分塊上傳失敗，稍後將再次嘗試",
+                "fileUploadFailed": "檔案 {0} 上傳失敗，請重試",
+                "uploadFailed": "上傳失敗",
+                "hashEngineNotFound": "目前環境不支援檔案雜湊計算引擎",
+                "processing": {
+                    "hash": "計算雜湊中...",
+                    "create": "初始化上傳中...",
+                    "upload": "上傳中...",
+                    "finish": "上傳完成"
+                },
+                "instantUploadSuccess": "雲端已存在相同雜湊的檔案，秒傳成功",
+                "uploadFailedRetry": "上傳失敗，請稍後重試",
+                "uploadSpeedInfo": {
+                    "title": "上傳速度如何計算",
+                    "desc": {
+                        "base": "上傳速度根據當前秒內上傳的 {chunkNum} * {chunkSize} 估算，可能與實際速度存在一定誤差，僅供參考",
+                        "chunkNum": "檔案區塊數量",
+                        "chunkSize": "每個檔案區塊大小"
+                    }
+                }
+            }
+        },
+        "result": {
+            "file": {
+                "title": "上傳成功",
+                "fileList": "檔案列表",
+                "info": "資訊",
+                "downloadNums": "下載次數",
+                "expireTime": "過期時間",
+                "pickupCode": "提取碼",
+                "link": "連結"
+            },
+            "imageCompress": {
+                "title": "圖片壓縮",
+                "totalSize": "總大小",
+                "task": "任務",
+                "retry": "重試 {0}/{1}",
+                "failed": "失敗"
+            },
+            "imageConvert": {
+                "title": "圖片轉換",
+                "convert": "轉換",
+                "task": "任務",
+                "retry": "重試 {0}/{1}",
+                "failed": "失敗"
+            },
+            "text": {
+                "title": "分享成功",
+                "info": "資訊",
+                "viewNums": "瀏覽次數",
+                "expireTime": "過期時間",
+                "pickupCode": "提取碼",
+                "link": "連結",
+                "content": "內容"
+            },
+            "textTranslate": {
+                "title": "文字翻譯",
+                "sourceText": "輸入文字",
+                "translatedText": "翻譯結果",
+                "sourceLanguage": "來源語言",
+                "targetLanguage": "目標語言",
+                "provider": "提供者",
+                "retranslate": "重新翻譯",
+                "empty": "輸入文字後點擊重新翻譯即可查看結果",
+                "copy": "複製譯文",
+                "copySuccess": "譯文已複製",
+                "language": {
+                    "auto": "自動偵測",
+                    "zh-CN": "中文",
+                    "en": "英語",
+                    "ja": "日語",
+                    "ko": "韓語"
+                }
+            },
+            "qrCode": {
+                "title": "分享 QR Code"
+            }
+        },
+        "shareView": {
+            "linkExpired": "此連結已過期。",
+            "passwall": {
+                "title": "輸入密碼",
+                "passwordError": "密碼錯誤",
+                "passwordPlaceholder": "請輸入密碼"
+            },
+            "fileShare": {
+                "title": "下載檔案",
+                "downloadBtn": "下載",
+                "needPassword": "需要密碼",
+                "expireTime": "過期時間",
+                "remainingDownloads": "剩餘下載次數",
+                "getTokenFailed": "取得 token 失敗",
+                "durationFormat": "D天 HH:mm:ss"
+            },
+            "textShare": {
+                "title": "查看文字",
+                "viewBtn": "瀏覽",
+                "needPassword": "需要密碼",
+                "expireTime": "過期時間",
+                "remainingViews": "剩餘瀏覽次數",
+                "durationFormat": "D天 HH:mm:ss"
+            }
+        },
+        "about": {
+            "powerBy": "由 {0} 驅動的開源自託管臨時檔案分享平台",
+            "file": "檔案",
+            "share": "分享",
+            "download": "下載",
+            "task": "任務",
+            "admin": "本站管理員",
+            "author": "作者",
+            "title": "關於",
+            "about": "關於",
+            "systemInfo": "系統資訊",
+            "enabledFeatures": "實例功能",
+            "enabledFeaturesEmpty": "目前此實例尚未啟用額外功能",
+            "systemVersion": "系統版本",
+            "storage": "已託管的檔案",
+            "analysis": "分析",
+            "fileSize": "檔案大小",
+            "fileNum": "檔案數量",
+            "processed": "處理數量",
+            "failed": "失敗數量"
+        }
+    }
+}

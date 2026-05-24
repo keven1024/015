@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "Notification d'accès au partage - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "Votre partage a été consulté par un autre utilisateur"
+
+[notify_email_label_region]
+other = "Région"

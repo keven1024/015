@@ -13,10 +13,11 @@ jobs:
                   node-version: '24'
             - uses: pnpm/action-setup@v4
               with:
-                cache: true
+                  version: latest
+                  cache: true
             - name: Install dependencies
               run: |
-                pnpm install --frozen-lockfile
+                  pnpm install --frozen-lockfile
             - name: Run frontend lint
               run: pnpm lint:front
 

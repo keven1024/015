@@ -2,6 +2,9 @@ go 1.25.5
 
 use (
 	./backend
+	./pkg/geoip
+	./pkg/i18n
+	./pkg/mail
 	./pkg/models
 	./pkg/services
 	./pkg/utils

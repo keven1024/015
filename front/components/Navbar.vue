@@ -22,9 +22,8 @@
 
 <script setup lang="ts">
 import { cx } from 'class-variance-authority'
-import { LucideClipboardType, LucidePaperclip } from '#components'
 import { motion } from 'motion-v'
-import { LucideGlobe } from 'lucide-vue-next'
+import { LucideGlobe, LucideClipboardType, LucidePaperclip } from '@lucide/vue'
 import showDrawer from '@/lib/showDrawer'
 import I18nSwitchDrawer from './Drawer/I18nSwitchDrawer.vue'
 const { t } = useI18n()

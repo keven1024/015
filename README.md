@@ -41,17 +41,34 @@ English | [中文](README-zh.md)
 
 ## 📸 Screenshots
 
-| File Selection Upload Page                                   | Text Input Upload Page                                          |
-|---------------------------------------|-----------------------------------------------|
-| ![](/.github/image/1.png) | ![](/.github/image/2.png) |
+| File Selection Upload Page | Text Input Upload Page    |
+| -------------------------- | ------------------------- |
+| ![](/.github/image/1.png)  | ![](/.github/image/2.png) |
 
-| Multiple File Upload                                           | Upload Progress Heatmap                                              |
-|------------------------------------------------|---------------------------------------------------|
-| ![](/.github/image/3.png) | ![](/.github/image/4.png) |
+| Multiple File Upload       | Upload Progress Heatmap   |
+| -------------------------- | ------------------------- |
+| ![](/.github/image/3.png)  | ![](/.github/image/4.png) |
 
-| Upload Progress Bar                                           | Upload Success Page                                           |
-|------------------------------------------------|-------------------------------------------------|
-| ![](/.github/image/5.png) | ![](/.github/image/6.png) |
+| Upload Progress Bar        | Upload Success Page       |
+| -------------------------- | ------------------------- |
+| ![](/.github/image/5.png)  | ![](/.github/image/6.png) |
+
+## 🚀 Quick Start
+
+### Docker
+
+1. Download files
+   - config.example.yaml
+   - docker-compose.yml
+
+2. Rename config.example.yaml to config.yaml after configuration
+
+3. Start
+```bash
+docker compose up -d
+```
+
+4. Visit `http://localhost:8080`
 
 ## 🏗️ Technical Architecture
 
@@ -90,36 +107,21 @@ English | [中文](README-zh.md)
 - **Redis Cache** - Share information and file metadata caching
 - **Queue System** - Asynchronous task processing queue
 
-## 🚀 Quick Start
-
-### Docker
-
-1. Download files
-   - config.example.yaml
-   - docker-compose.yml
-
-2. Rename config.example.yaml to config.yaml after configuration
-
-3. Start
-```bash
-docker compose up -d
-```
-
 ## 📁 Project Structure
 
 ```
 015/
 ├── front/                 # Frontend application (Vue 3 + Nuxt 3)
 │   ├── components/       # Vue components
-│   │   ├── pages/           # Page routes
-│   │   ├── composables/     # Composable functions
-│   │   ├── i18n/           # Internationalization files
-│   │   └── assets/         # Static assets
-│   └── middleware/     # Middleware
+│   ├── pages/            # Page routes
+│   ├── composables/      # Composable functions
+│   ├── i18n/             # Internationalization files
+│   ├── assets/           # Static assets
+│   ├── plugins/          # Nuxt plugins
+│   └── server/           # Server-side routes
 ├── backend/             # Backend service (Go + Echo)
 │   ├── internal/       # Internal packages
 │   │   ├── controllers/ # Controllers
-│   │   ├── models/     # Data models
 │   │   ├── services/   # Business logic
 │   │   └── utils/      # Utility functions
 │   └── middleware/     # Middleware
@@ -128,7 +130,7 @@ docker compose up -d
 │   │   ├── tasks/      # Task processors
 │   │   └── utils/      # Utility functions
 │   └── middleware/     # Middleware
-└── tmp/               # Temporary files
+└── pkg/               # Shared packages
 ```
 
 ## 🔧 Development Guide
@@ -167,19 +169,19 @@ cd worker && go build -o worker .
 - Frontend hash calculation and instant transfer
 - Concurrent chunked upload (using Web Worker)
 - File upload/text upload and sharing
+- Multiple file upload support
 - Upload statistics page
 - Multi-language support
 - Maximum upload limits
 - Backend queue system and Worker file processing
+- Resume upload (backend calculates uploaded parts and returns)
+- Image format conversion and compression
 
 ### Planned Features 🚧
 
-- Resume upload (backend calculates uploaded parts and returns)
-- Image format conversion and compression
 - Image OCR copy
 - Document to Markdown conversion
 - Text translation/summarization
-- Support for multiple file uploads
 
 ## 🤝 Contributing
 

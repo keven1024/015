@@ -1,25 +1,23 @@
 FROM node:22-alpine AS front-base
+WORKDIR /app
 
 # Install dependencies only when needed
-FROM front-base AS front-deps
-RUN apk add --no-cache gcompat
-WORKDIR /app
-COPY . .
-RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front deploy dist --legacy
-
-
 FROM front-base AS front-builder
-WORKDIR /app
-COPY --from=front-deps /app/dist/ .
-RUN corepack enable pnpm && pnpm build
+RUN apk add --no-cache gcompat
+ENV CI=true
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+COPY . .
+RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build && pnpm --dir pkg/mail export
 
-FROM golang:1.25.5 AS backend-builder
+FROM golang:1.26.3 AS backend-builder
 WORKDIR /app
 # Workspace and module manifests for cache
 COPY go.work go.work.sum ./
 COPY backend/ ./backend/
 COPY worker/ ./worker/
 COPY pkg/ ./pkg/
+# Inject built email templates so Go can embed them
+COPY --from=front-builder /app/pkg/mail/out/ ./pkg/mail/out/
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && \
     go mod download
 # Build from workspace root so pkg/utils, pkg/models, pkg/services resolve
@@ -29,7 +27,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o backend-bin ./backend
 FROM front-base AS runner
 ARG VERSION
 ARG BUILD_TIME
-WORKDIR /app
 RUN apk add --no-cache curl openssl
 ENV NODE_ENV production
 
@@ -37,7 +34,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nuxtjs
 
 # Only `.output` folder is needed from the build stage
-COPY --from=front-builder --chown=nuxtjs:nodejs /app/.output/ ./
+COPY --from=front-builder --chown=nuxtjs:nodejs /app/front/.output/ ./
 COPY --from=backend-builder /app/backend-bin /bin/backend
 COPY 015.sh /app/015.sh
 

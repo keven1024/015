@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useClipboard } from '@vueuse/core'
-import { toast } from 'vue-sonner'
 import { useQuery } from '@tanstack/vue-query'
 import useMyAppShare from '@/composables/useMyAppShare'
 import useMyAppConfig from '@/composables/useMyAppConfig'
@@ -37,7 +35,6 @@ const url = computed(() => {
     return `${appConfig?.value?.site_url}/s/${id}`
 })
 
-const { copy } = useClipboard()
 const { t } = useI18n()
 </script>
 
@@ -60,19 +57,7 @@ const { t } = useI18n()
                     <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1" v-if="data?.pickup_code">
                         <div class="flex flex-row justify-between w-full items-center">
                             <div class="text-xs font-semibold">{{ t('page.result.text.pickupCode') }}</div>
-                            <Button
-                                variant="outline"
-                                class="bg-white/70 p-0 size-6"
-                                size="icon"
-                                @click="
-                                    () => {
-                                        copy(data?.pickup_code as string)
-                                        toast.success(t('page.result.text.copySuccess'))
-                                    }
-                                "
-                            >
-                                <LucideCopy class="size-3" />
-                            </Button>
+                            <CopyButton class="bg-white/70 p-0 size-6" :value="data?.pickup_code as string" />
                         </div>
                         <div class="flex flex-row gap-2">
                             <div v-for="s in data?.pickup_code" class="text-2xl font-light">
@@ -86,19 +71,7 @@ const { t } = useI18n()
                 <div class="text-sm font-semibold">{{ t('page.result.text.link') }}</div>
                 <div class="flex flex-row gap-2">
                     <Input v-model="url" class="bg-white/70" readonly />
-                    <Button
-                        variant="outline"
-                        class="bg-white/70"
-                        size="icon"
-                        @click="
-                            () => {
-                                copy(url)
-                                toast.success(t('page.result.text.copySuccess'))
-                            }
-                        "
-                    >
-                        <LucideCopy />
-                    </Button>
+                    <CopyButton class="bg-white/70" :value="url" />
 
                     <Button
                         variant="outline"

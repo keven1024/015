@@ -17,7 +17,7 @@ var (
 	ErrInvalidFileSliceIndex  = errors.New("InvalidFileSliceIndex")  // 文件切片索引错误
 	ErrInvalidFileSliceSize   = errors.New("InvalidFileSliceSize")   // 文件切片大小错误
 	ErrIncompleteFileSlices   = errors.New("IncompleteFileSlices")   // 文件切片不完整
-	ErrFileMD5Mismatch        = errors.New("FileMD5Mismatch")        // 文件MD5不一致
+	ErrFileHashMismatch       = errors.New("FileHashMismatch")       // 文件Hash不一致
 
 	// 分享相关
 	ErrShareFileNotFound     = errors.New("ShareFileNotFound")     // 分享文件不存在

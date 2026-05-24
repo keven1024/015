@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 	"pkg/utils"
 
@@ -8,7 +9,8 @@ import (
 )
 
 func GetRedisFileShareRelational(fileId string) ([]string, error) {
-	rdb, ctx := utils.GetRedisClient()
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
 	fileShareRelationalUnmarshalData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:fileShareRelational").Field(fileId).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
@@ -24,7 +26,11 @@ func GetRedisFileShareRelational(fileId string) ([]string, error) {
 }
 
 func SetRedisFileShareRelational(fileId string, shareIDs []string) error {
-	rdb, ctx := utils.GetRedisClient()
-	jsonData, _ := json.Marshal(shareIDs)
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
+	jsonData, err := json.Marshal(shareIDs)
+	if err != nil {
+		return err
+	}
 	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileShareRelational").FieldValue().FieldValue(fileId, string(jsonData)).Build()).Error()
 }

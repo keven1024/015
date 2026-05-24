@@ -1,0 +1,283 @@
+{
+    "navbar": {
+        "file": "Fichier",
+        "text": "Texte"
+    },
+    "i18n": {
+        "switchLocale": "Changer de langue",
+        "language": {
+            "en": "Anglais",
+            "en-GB": "Anglais (Royaume-Uni)",
+            "ja": "Japonais",
+            "fr": "Français",
+            "de": "Allemand",
+            "es-ES": "Espagnol (Espagne)",
+            "es-419": "Espagnol (Amérique latine)",
+            "pt-BR": "Portugais (Brésil)",
+            "zh-CN": "Chinois (simplifié)",
+            "zh-TW": "Chinois (traditionnel)",
+            "nl": "Néerlandais",
+            "no": "Norvégien",
+            "sv": "Suédois",
+            "da": "Danois",
+            "fi": "Finnois",
+            "ko": "Coréen",
+            "vi": "Vietnamien",
+            "th": "Thaï",
+            "id": "Indonésien",
+            "ar": "Arabe",
+            "he": "Hébreu"
+        }
+    },
+    "seo": {
+        "desc": "015 est une plateforme de partage de fichiers temporaires prenant en charge le téléversement fractionné de gros fichiers, le téléversement de texte temporaire, le téléchargement et le partage"
+    },
+    "btn": {
+        "submit": "Envoyer",
+        "backToHome": "Retour à l'accueil"
+    },
+    "common": {
+        "add": "Ajouter",
+        "copySuccess": "Copié avec succès",
+        "length": "longueur",
+        "words": "mots"
+    },
+    "page": {
+        "upload": {
+            "file": {
+                "uploadFile": "Téléverser un fichier",
+                "uploadFilePlaceholder": "Glissez-déposez un fichier ou cliquez pour téléverser",
+                "addMore": "Ajouter plus",
+                "handleType": {
+                    "file-share": "Partage de fichier",
+                    "file-image-compress": "Compression d'image",
+                    "file-image-convert": "Conversion de format"
+                }
+            },
+            "text": {
+                "uploadText": "Téléverser du texte",
+                "uploadTextPlaceholder": "Partagez, traduisez, résumez, générez des images et interrogez de grands modèles avec notre processeur de texte",
+                "handleType": {
+                    "text-share": "Partage de texte",
+                    "text-translate": "Traduction de texte"
+                }
+            },
+            "pickup": {
+                "title": "Saisir le code de retrait",
+                "codeError": "Code de retrait invalide",
+                "btn": "Récupérer"
+            }
+        },
+        "shareOptions": {
+            "file": {
+                "title": "Options de partage",
+                "downloadNums": "Nombre de téléchargements",
+                "expireTime": "Date d'expiration",
+                "or": "ou",
+                "expireAfter": "expire après",
+                "pickupCode": "Code de retrait",
+                "passwordProtection": "Protection par mot de passe",
+                "downloadNotify": "Notification de téléchargement",
+                "passwordPlaceholder": "Saisissez le mot de passe",
+                "emailPlaceholder": "Saisissez l'adresse e-mail",
+                "downloadOptions": {
+                    "xdownload": "{0} téléchargements"
+                },
+                "expireOptions": {
+                    "5min": "5 minutes",
+                    "1hour": "1 heure",
+                    "1day": "1 jour",
+                    "3days": "3 jours"
+                }
+            },
+            "imageConvert": {
+                "title": "Conversion d'image",
+                "targetFormat": "Format cible"
+            },
+            "text": {
+                "title": "Options de partage",
+                "viewNums": "Nombre de vues",
+                "expireTime": "Date d'expiration",
+                "or": "ou",
+                "expireAfter": "expire après",
+                "pickupCode": "Code de retrait",
+                "passwordProtection": "Protection par mot de passe",
+                "readNotify": "Notification de lecture",
+                "passwordPlaceholder": "Saisissez le mot de passe",
+                "emailPlaceholder": "Saisissez l'adresse e-mail",
+                "viewOptions": {
+                    "xview": "{0} vues"
+                },
+                "expireOptions": {
+                    "5min": "5 minutes",
+                    "1hour": "1 heure",
+                    "1day": "1 jour",
+                    "3days": "3 jours"
+                }
+            },
+            "notify": {
+                "notifyVia": "Notifier par",
+                "email": "E-mail",
+                "webhook": "Webhook",
+                "emailPlaceholder": "Entrez l'adresse e-mail",
+                "emailInvalid": "Adresse e-mail invalide",
+                "webhookUrl": "URL",
+                "webhookUrlInvalid": "URL invalide",
+                "webhookMethod": "Méthode",
+                "webhookHeaders": "En-têtes",
+                "webhookBody": "Corps de la requête",
+                "webhookAdvanced": "Options avancées",
+                "webhookBodyType": "Type de corps",
+                "webhookBodyTypeNone": "Aucun",
+                "webhookBodyTypeFormData": "Donnees de formulaire",
+                "webhookBodyTypeRaw": "Brut",
+                "webhookHeaderKey": "Cle",
+                "webhookHeaderValue": "Valeur",
+                "addWebhook": "Ajouter un Webhook"
+            }
+        },
+        "progress": {
+            "file": {
+                "totalUploadProgress": "Progression totale du téléversement",
+                "fileList": "Liste des fichiers",
+                "fileName": "Nom du fichier",
+                "fileSize": "Taille du fichier",
+                "uploadSpeed": "Vitesse d'envoi",
+                "progress": "Progression",
+                "uploadDetails": "Détails du téléversement",
+                "chunk": "Bloc",
+                "completed": "Terminé",
+                "discarded": "Abandonné",
+                "pending": "En attente",
+                "chunkProgress": "Barre de progression des blocs",
+                "chunkHeatmap": "Carte thermique des blocs",
+                "heatmap": "Carte thermique",
+                "progressBar": "Barre de progression",
+                "uploadError": "Erreur de téléversement",
+                "chunkUploadFailed": "Le bloc {1} du fichier {0} a échoué plusieurs fois, le téléversement a été interrompu",
+                "chunkUploadRetry": "Le bloc {1} du fichier {0} n'a pas pu être téléversé, une nouvelle tentative sera effectuée plus tard",
+                "fileUploadFailed": "Le téléversement du fichier {0} a échoué, veuillez réessayer",
+                "uploadFailed": "Échec du téléversement",
+                "hashEngineNotFound": "Aucun moteur de calcul de hash de fichier n'est disponible dans l'environnement actuel",
+                "processing": {
+                    "hash": "Calcul du hash...",
+                    "create": "Initialisation du téléversement...",
+                    "upload": "Téléversement en cours...",
+                    "finish": "Téléversement terminé"
+                },
+                "instantUploadSuccess": "Un fichier avec le même hash existe déjà dans le cloud, téléversement instantané réussi",
+                "uploadFailedRetry": "Le téléversement a échoué, veuillez réessayer plus tard",
+                "uploadSpeedInfo": {
+                    "title": "Comment la vitesse de téléversement est-elle calculée ?",
+                    "desc": {
+                        "base": "La vitesse est estimée à partir de {chunkNum} * {chunkSize} téléversés pendant la seconde en cours, elle peut donc légèrement différer de la vitesse réelle et n'est fournie qu'à titre indicatif",
+                        "chunkNum": "Nombre de blocs du fichier",
+                        "chunkSize": "Taille de chaque bloc du fichier"
+                    }
+                }
+            }
+        },
+        "result": {
+            "file": {
+                "title": "Téléversement réussi",
+                "fileList": "Liste des fichiers",
+                "info": "Informations",
+                "downloadNums": "Nombre de téléchargements",
+                "expireTime": "Date d'expiration",
+                "pickupCode": "Code de retrait",
+                "link": "Lien"
+            },
+            "imageCompress": {
+                "title": "Compression d'image",
+                "totalSize": "Taille totale",
+                "task": "Tâche",
+                "retry": "Nouvelle tentative {0}/{1}",
+                "failed": "Échec"
+            },
+            "imageConvert": {
+                "title": "Conversion d'image",
+                "convert": "Convertir",
+                "task": "Tâche",
+                "retry": "Nouvelle tentative {0}/{1}",
+                "failed": "Échec"
+            },
+            "text": {
+                "title": "Partage réussi",
+                "info": "Informations",
+                "viewNums": "Nombre de vues",
+                "expireTime": "Date d'expiration",
+                "pickupCode": "Code de retrait",
+                "link": "Lien",
+                "content": "Contenu"
+            },
+            "textTranslate": {
+                "title": "Traduction de texte",
+                "sourceText": "Texte source",
+                "translatedText": "Texte traduit",
+                "sourceLanguage": "Langue source",
+                "targetLanguage": "Langue cible",
+                "provider": "Fournisseur",
+                "retranslate": "Traduire à nouveau",
+                "empty": "Saisissez du texte puis cliquez sur retraduire pour voir le résultat",
+                "copy": "Copier la traduction",
+                "copySuccess": "Traduction copiée",
+                "language": {
+                    "auto": "Détection automatique",
+                    "zh-CN": "Chinois",
+                    "en": "Anglais",
+                    "ja": "Japonais",
+                    "ko": "Coréen"
+                }
+            },
+            "qrCode": {
+                "title": "Code QR de partage"
+            }
+        },
+        "shareView": {
+            "linkExpired": "Ce lien a expiré.",
+            "passwall": {
+                "title": "Saisir le mot de passe",
+                "passwordError": "Mot de passe incorrect",
+                "passwordPlaceholder": "Saisissez le mot de passe"
+            },
+            "fileShare": {
+                "title": "Télécharger le fichier",
+                "downloadBtn": "Télécharger",
+                "needPassword": "Mot de passe requis",
+                "expireTime": "Date d'expiration",
+                "remainingDownloads": "Téléchargements restants",
+                "getTokenFailed": "Échec de récupération du jeton",
+                "durationFormat": "D [jours] HH:mm:ss"
+            },
+            "textShare": {
+                "title": "Afficher le texte",
+                "viewBtn": "Afficher",
+                "needPassword": "Mot de passe requis",
+                "expireTime": "Date d'expiration",
+                "remainingViews": "Vues restantes",
+                "durationFormat": "D [jours] HH:mm:ss"
+            }
+        },
+        "about": {
+            "powerBy": "Plateforme open source auto-hébergée de partage temporaire de fichiers propulsée par {0}",
+            "file": "Fichier",
+            "share": "Partager",
+            "download": "Télécharger",
+            "task": "Tâche",
+            "admin": "Administrateur du site",
+            "author": "Auteur",
+            "title": "À propos",
+            "about": "À propos",
+            "systemInfo": "Informations système",
+            "enabledFeatures": "Fonctionnalités de l'instance",
+            "enabledFeaturesEmpty": "Aucune fonctionnalité supplémentaire n'est activée pour cette instance",
+            "systemVersion": "Version du système",
+            "storage": "Stockage",
+            "analysis": "Analyse",
+            "fileSize": "Taille des fichiers",
+            "fileNum": "Nombre de fichiers",
+            "processed": "Traités",
+            "failed": "Échecs"
+        }
+    }
+}

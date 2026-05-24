@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
 const props = defineProps<{
     title?: string
     showBackButton?: boolean
@@ -21,7 +22,7 @@ const router = useRouter()
                     }
                 "
             >
-                <LucideHome />
+                <LucideHome class="size-4" />
             </Button>
         </div>
         <slot />

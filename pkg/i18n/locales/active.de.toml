@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "Benachrichtigung zum Zugriff auf die Freigabe - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "Ihre Freigabe wurde von einem anderen Nutzer abgerufen"
+
+[notify_email_label_region]
+other = "Region"

@@ -2,13 +2,17 @@ package controllers
 
 import (
 	"backend/internal/utils"
+	"context"
+	"encoding/json"
 	"fmt"
 	"pkg/models"
 	u "pkg/utils"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v5"
+	"github.com/samber/lo"
 	"github.com/spf13/cast"
 )
 
@@ -26,14 +30,13 @@ func DownloadShare(c *echo.Context) error {
 	t, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(u.GetEnv("share.download_secret")), nil
 	})
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
+	if err != nil || !t.Valid {
+		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrInvalidRequest))
 	}
-	if !t.Valid {
-		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	shareInfo, err := models.GetRedisShareInfo(claims.ShareId)
+	if err != nil || shareInfo == nil {
+		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
 	}
-	shareInfo, _ := models.GetRedisShareInfo(claims.ShareId)
-
 	if shareInfo.Type == models.ShareTypeFile {
 		fileInfo, _ := models.GetRedisFileInfo(shareInfo.Data)
 		uploadPath, err := u.GetUploadDirPath()
@@ -81,64 +84,75 @@ func VaildateShare(c *echo.Context) error {
 			return utils.HTTPErrorHandler(c, ErrInvalidSharePassword)
 		}
 	}
-	// 如果下载次数为0，则设置为-1 防止空值问题
-	if shareInfo.ViewNum < 1 {
-		return utils.HTTPErrorHandler(c, ErrInsufficientDownloadQuota)
-	}
-	downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
-		ShareId: r.ShareId,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(cast.ToDuration(downloadWindow + "h"))),
-		},
-	})
+	return u.WithLocker(context.Background(), "015:shareInfoMap:"+r.ShareId, 0, func(ctx context.Context) error {
+		shareInfo, err := models.GetRedisShareInfo(r.ShareId)
+		if err != nil || shareInfo == nil {
+			return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
+		}
+		if shareInfo.ViewNum < 1 {
+			return utils.HTTPErrorHandler(c, ErrInsufficientDownloadQuota)
+		}
+		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
+			ShareId: r.ShareId,
+			RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(cast.ToDuration(downloadWindow + "h"))),
+			},
+		})
 
-	// Sign and get the complete encoded token as a string using the secret
-	downloadToken, err := token.SignedString([]byte(u.GetEnv("share.download_secret")))
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
-	if shareInfo.Type == models.ShareTypeFile {
-		fileInfo, err := models.GetRedisFileInfo(shareInfo.Data)
+		// Sign and get the complete encoded token as a string using the secret
+		downloadToken, err := token.SignedString([]byte(u.GetEnv("share.download_secret")))
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		if fileInfo == nil {
-			return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
+		if shareInfo.Type == models.ShareTypeFile {
+			fileInfo, err := models.GetRedisFileInfo(shareInfo.Data)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
+			if fileInfo == nil {
+				return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
+			}
+			if fileInfo.FileType != models.FileTypeUpload {
+				return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
+			}
 		}
-		if fileInfo.FileType != models.FileTypeUpload {
-			return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
+		// download_nums 必须放在创建token的时候减掉，不然多线程下载会导致多次减掉
+		_, err = models.SetRedisShareInfo(r.ShareId, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
+			shareInfo.ViewNum -= 1
+			return shareInfo
+		})
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
 		}
-	}
-	// download_nums 必须放在创建token的时候减掉，不然多线程下载会导致多次减掉
-	latestViewNum := shareInfo.ViewNum - 1
-	// 如果下载次数为0，则设置为-1 防止空值问题
-	if latestViewNum < 1 {
-		latestViewNum = -1
-	}
-	err = models.SetRedisShareInfo(r.ShareId, models.RedisShareInfo{
-		ViewNum: latestViewNum,
-	})
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
 
-	// 统计分享数
-	currentDate := time.Now().Format("2006-01-02")
-	err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
-		stat.DownloadNum += 1
-		return stat
-	})
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
+		// 统计分享数
+		currentDate := time.Now().Format("2006-01-02")
+		_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+			stat.DownloadNum += 1
+			return stat
+		})
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
 
-	if shareInfo.Type == models.ShareTypeFile {
+		if len(shareInfo.NotifyEmails) > 0 || len(shareInfo.NotifyWebhooks) > 0 {
+			payload, err := json.Marshal(map[string]string{
+				"share_id": r.ShareId,
+				"ip":       c.RealIP(),
+			})
+			if err == nil {
+				_, _ = u.GetQueueClient().Enqueue(asynq.NewTask("share:notify", payload))
+			}
+		}
+
+		if shareInfo.Type == models.ShareTypeFile {
+			return utils.HTTPSuccessHandler(c, map[string]any{
+				"token": downloadToken,
+			})
+		}
 		return utils.HTTPSuccessHandler(c, map[string]any{
 			"token": downloadToken,
 		})
-	}
-	return utils.HTTPSuccessHandler(c, map[string]any{
-		"token": downloadToken,
 	})
 }

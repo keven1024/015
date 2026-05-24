@@ -34,13 +34,13 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 		}
 	}
 
-	rdb, rctx := u.GetRedisClient()
+	rdb := u.GetRedisClient()
 	uploadPath, err := u.GetUploadDirPath()
 	if err != nil {
 		return err
 	}
 	filePath := filepath.Join(uploadPath, payload.FileId)
-	if err := rdb.Do(rctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
+	if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
 		return err
 	}
 	if err := os.RemoveAll(filePath); err != nil {

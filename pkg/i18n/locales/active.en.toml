@@ -1,0 +1,8 @@
+[notify_email_subject]
+other = "Share access notification - {{.SiteURL}}"
+
+[notify_email_intro]
+other = "Your share has been accessed by another user"
+
+[notify_email_label_region]
+other = "Region"

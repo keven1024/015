@@ -4,6 +4,8 @@ import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
 import { cx } from 'class-variance-authority'
+import countWords from '@/lib/countWords'
+const { t } = useI18n()
 
 const props = defineProps<{
     modelValue?: string
@@ -15,6 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const editor = ref<Editor | undefined>(undefined)
+
 onMounted(() => {
     editor.value = new Editor({
         content: props.modelValue,
@@ -51,11 +54,17 @@ onUnmounted(() => {
         :editor="editor as any"
         :class="
             cx(
-                'prose prose-sm bg-white/50 rounded-md p-2 [&>*]:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 max-w-full',
+                'prose prose-sm bg-white/50 rounded-md p-2 *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 max-w-full',
                 props.class
             )
         "
     >
     </editor-content>
     <!-- <BubbleMenuView :editor="editor as any" /> -->
+    <div
+        v-if="modelValue?.length && modelValue?.length > 0"
+        class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
+    >
+        {{ `${modelValue?.length ?? 0} ${t('common.length')}  ·  ${countWords(modelValue ?? '')} ${t('common.words')}` }}
+    </div>
 </template>

@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"pkg/geoip"
+	"pkg/i18n"
 	"pkg/utils"
 	"worker/internal/tasks"
 	"worker/middleware"
@@ -21,6 +23,18 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	// redis
+	if err := utils.InitRedis(); err != nil {
+		logger.Fatal("redis init failed", zap.Error(err))
+		panic(err)
+	}
+
+	if err := i18n.Init(); err != nil {
+		log.Fatalf("failed to init i18n: %v", err)
+	}
+	if err := geoip.Init(); err != nil {
+		log.Fatalf("failed to init geoip: %v", err)
+	}
 
 	srv := asynq.NewServer(
 		utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")),
@@ -30,9 +44,11 @@ func main() {
 	mux := asynq.NewServeMux()
 	mux.Use(middleware.LoggerMiddleware)
 	mux.HandleFunc("share:remove", tasks.RemoveShare)
+	mux.HandleFunc("share:notify", tasks.ShareNotify)
 	mux.HandleFunc("file:remove", tasks.RemoveFile)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 	mux.HandleFunc("image:convert", tasks.ConvertImage)
+	mux.HandleFunc("text:translate", tasks.TranslateText)
 
 	if err := srv.Run(mux); err != nil {
 		log.Fatalf("could not run server: %v", err)

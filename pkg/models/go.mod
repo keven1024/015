@@ -3,8 +3,8 @@ module pkg/models
 go 1.25.5
 
 require (
-	dario.cat/mergo v1.0.2
 	github.com/redis/rueidis v1.0.73
+	github.com/spf13/cast v1.10.0
 )
 
 require (
