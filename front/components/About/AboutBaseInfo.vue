@@ -8,6 +8,9 @@ import Progress from '~/components/ui/progress/Progress.vue'
 import renderI18n from '~/lib/renderI18n'
 import { I18nT } from 'vue-i18n'
 import { calcNativeHash } from '~/lib/calcFileHash'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
+import MarkdownRender from '@/components/MarkdownRender.vue'
 
 const { locale } = useI18n()
 const appConfig = useMyAppConfig()
