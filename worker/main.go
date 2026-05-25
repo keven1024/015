@@ -46,9 +46,19 @@ func main() {
 	mux.HandleFunc("share:remove", tasks.RemoveShare)
 	mux.HandleFunc("share:notify", tasks.ShareNotify)
 	mux.HandleFunc("file:remove", tasks.RemoveFile)
+	mux.HandleFunc("file:janitor", tasks.FileJanitor)
 	mux.HandleFunc("image:compress", tasks.CompressImage)
 	mux.HandleFunc("image:convert", tasks.ConvertImage)
 	mux.HandleFunc("text:translate", tasks.TranslateText)
+
+	scheduler := asynq.NewScheduler(utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")), nil)
+	if _, err := scheduler.Register("0 3 * * *", asynq.NewTask("file:janitor", nil)); err != nil {
+		log.Fatalf("could not register scheduler: %v", err)
+	}
+	if err := scheduler.Start(); err != nil {
+		log.Fatalf("could not start scheduler: %v", err)
+	}
+	defer scheduler.Shutdown()
 
 	if err := srv.Run(mux); err != nil {
 		log.Fatalf("could not run server: %v", err)
