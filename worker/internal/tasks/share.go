@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"pkg/geoip"
 	"pkg/models"
+	pkgservices "pkg/services"
 	u "pkg/utils"
 	"worker/internal/services"
 
@@ -35,21 +34,10 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	})
 	if len(shareIDs) == 0 {
 		rdb := u.GetRedisClient()
-		uploadPath, err := u.GetUploadDirPath()
-		if err != nil {
-			return err
-		}
-		filePath := filepath.Join(uploadPath, payload.FileId)
 		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileShareRelational").Field(payload.FileId).Build()).Error(); err != nil {
 			return err
 		}
-		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
-			return err
-		}
-		if err := os.RemoveAll(filePath); err != nil {
-			return err
-		}
-		return nil
+		return pkgservices.SetFileRemoveTask(payload.FileId, 0)
 	}
 	if err := models.SetRedisFileShareRelational(payload.FileId, shareIDs); err != nil {
 		return err
