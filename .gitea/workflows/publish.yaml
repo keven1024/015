@@ -78,7 +78,6 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         needs: [build-app, build-worker]
-        if: ${{ !contains(github.ref_name, '-') }}
         steps:
             - name: Send deployment webhook
               run: |
