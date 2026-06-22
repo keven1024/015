@@ -64,3 +64,10 @@ about:
     name: keven
     url: 'https://fudaoyuan.icu'
     avatar: ''
+
+smtp:
+    host: example.com # SMTP服务器地址
+    port: 465 # SMTP端口号，通常为465(SSL)或587(TLS)
+    protocol: ssl # ssl or tls
+    username: your@example.com # 发送方邮箱
+    password: your-password # 发送方邮箱密码/授权码
