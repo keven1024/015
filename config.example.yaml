@@ -37,6 +37,7 @@ site:
         'en': '015 is an open-source temporary file sharing platform project that supports uploading, downloading, and sharing files and text.'
     icon: '/logo.png'
     bg_url: 'https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302'
+    enable_bg: true
 
 # 关于页面的
 about:
