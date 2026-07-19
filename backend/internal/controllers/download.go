@@ -5,8 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"pkg/models"
+	"io"
+	"os"
+	"path/filepath"
+	filemodel "pkg/models/file"
+	sharemodel "pkg/models/share"
+	statmodel "pkg/models/stat"
 	u "pkg/utils"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -33,7 +39,7 @@ func DownloadShare(c *echo.Context) error {
 	if err != nil || !t.Valid {
 		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrInvalidRequest))
 	}
-	shareInfo, err := models.GetRedisShareInfo(claims.ShareId)
+	shareInfo, err := sharemodel.GetRedisShareInfo(claims.ShareId)
 	if err != nil || shareInfo == nil {
 		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
 	}
@@ -65,7 +71,7 @@ func VaildateShare(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
-	shareInfo, err := models.GetRedisShareInfo(r.ShareId)
+	shareInfo, err := sharemodel.GetRedisShareInfo(r.ShareId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -85,7 +91,7 @@ func VaildateShare(c *echo.Context) error {
 		}
 	}
 	return u.WithLocker(context.Background(), "015:shareInfoMap:"+r.ShareId, 0, func(ctx context.Context) error {
-		shareInfo, err := models.GetRedisShareInfo(r.ShareId)
+		shareInfo, err := sharemodel.GetRedisShareInfo(r.ShareId)
 		if err != nil || shareInfo == nil {
 			return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
 		}
@@ -113,12 +119,12 @@ func VaildateShare(c *echo.Context) error {
 			if fileInfo == nil {
 				return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
 			}
-			if fileInfo.FileType != models.FileTypeUpload {
+				if fileInfo.FileType != filemodel.FileTypeUpload {
 				return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
 			}
 		}
 		// download_nums 必须放在创建token的时候减掉，不然多线程下载会导致多次减掉
-		_, err = models.SetRedisShareInfo(r.ShareId, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
+		_, err = sharemodel.SetRedisShareInfo(r.ShareId, func(shareInfo *sharemodel.RedisShareInfo) *sharemodel.RedisShareInfo {
 			shareInfo.ViewNum -= 1
 			return shareInfo
 		})
@@ -128,7 +134,7 @@ func VaildateShare(c *echo.Context) error {
 
 		// 统计分享数
 		currentDate := time.Now().Format("2006-01-02")
-		_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+		_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
 			stat.DownloadNum += 1
 			return stat
 		})
@@ -146,7 +152,7 @@ func VaildateShare(c *echo.Context) error {
 			}
 		}
 
-		if shareInfo.Type == models.ShareTypeFile {
+		if shareInfo.Type == sharemodel.ShareTypeFile {
 			return utils.HTTPSuccessHandler(c, map[string]any{
 				"token": downloadToken,
 			})
