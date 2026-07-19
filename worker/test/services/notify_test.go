@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"pkg/i18n"
-	"pkg/models"
+	sharemodel "pkg/models/share"
 	"pkg/utils"
 	"worker/internal/services"
 
@@ -41,7 +41,7 @@ func TestSendWebhook_DefaultMethodIsPost(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{URL: ts.URL})
+	err := services.SendWebhook(sharemodel.NotifyWebhook{URL: ts.URL})
 	require.NoError(t, err)
 	assert.Equal(t, "POST", gotMethod)
 }
@@ -54,7 +54,7 @@ func TestSendWebhook_CustomMethod(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{URL: ts.URL, Method: "  put  "})
+	err := services.SendWebhook(sharemodel.NotifyWebhook{URL: ts.URL, Method: "  put  "})
 	require.NoError(t, err)
 	assert.Equal(t, "PUT", gotMethod)
 }
@@ -67,7 +67,7 @@ func TestSendWebhook_CustomHeaders(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{
+	err := services.SendWebhook(sharemodel.NotifyWebhook{
 		URL:     ts.URL,
 		Headers: map[string]string{"X-Custom-Token": "secret123"},
 	})
@@ -83,7 +83,7 @@ func TestSendWebhook_FormDataSetsContentType(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{
+	err := services.SendWebhook(sharemodel.NotifyWebhook{
 		URL:      ts.URL,
 		BodyType: "form-data",
 		Body:     "key=value",
@@ -101,7 +101,7 @@ func TestSendWebhook_BodyNoneSkipsBody(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{
+	err := services.SendWebhook(sharemodel.NotifyWebhook{
 		URL:      ts.URL,
 		BodyType: "none",
 		Body:     "should-not-be-sent",
@@ -116,7 +116,7 @@ func TestSendWebhook_4xxReturnsError(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{URL: ts.URL})
+	err := services.SendWebhook(sharemodel.NotifyWebhook{URL: ts.URL})
 	assert.Error(t, err)
 }
 
@@ -126,12 +126,12 @@ func TestSendWebhook_5xxReturnsError(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	err := services.SendWebhook(models.NotifyWebhook{URL: ts.URL})
+	err := services.SendWebhook(sharemodel.NotifyWebhook{URL: ts.URL})
 	assert.Error(t, err)
 }
 
 func TestSendWebhook_InvalidURLReturnsError(t *testing.T) {
-	err := services.SendWebhook(models.NotifyWebhook{URL: "http://127.0.0.1:1"})
+	err := services.SendWebhook(sharemodel.NotifyWebhook{URL: "http://127.0.0.1:1"})
 	assert.Error(t, err)
 }
 
@@ -154,7 +154,7 @@ func TestSendEmail_HappyPath(t *testing.T) {
 
 	err := services.SendEmail("recipient@example.com", services.EmailTemplateData{
 		Locale:    "en",
-		ShareType: models.ShareTypeText,
+		ShareType: sharemodel.ShareTypeText,
 		FileName:  "report.pdf",
 		IP:        "1.2.3.4",
 	}, mail.WithHELO("localhost"), mail.WithTLSPolicy(mail.NoTLS), mail.WithSMTPAuth(mail.SMTPAuthNoAuth))
