@@ -3,7 +3,11 @@ package controllers
 import (
 	"backend/internal/utils"
 	"encoding/json"
-	"pkg/models"
+	filemodel "pkg/models/file"
+	relationmodel "pkg/models/file_share_relational"
+	pickupcodemodel "pkg/models/pickupcode"
+	sharemodel "pkg/models/share"
+	statmodel "pkg/models/stat"
 	u "pkg/utils"
 	"strings"
 	"time"
@@ -16,24 +20,24 @@ import (
 )
 
 type CreateShareProps struct {
-	Type models.ShareType `json:"type"`
+	Type sharemodel.ShareType `json:"type"`
 	// ShareId string           `json:"id"`
-	Config   ShareConfig `json:"config"`
-	Data     string      `json:"data"`
-	FileName string      `json:"file_name"`
+	Config ShareConfig                `json:"config"`
+	Text   string                     `json:"text"`
+	Files  []sharemodel.ShareFileData `json:"files"`
 }
 
 type ShareConfig struct {
-	ExpireAt       int                    `json:"expire_time"` // 分钟
-	ViewNum        int64                  `json:"download_nums"`
-	HasPassword    bool                   `json:"has_password"`
-	Password       string                 `json:"password"`
-	HasNotify      bool                   `json:"has_notify"`
-	NotifyTypes    []string               `json:"notify_types"`
-	NotifyEmails   []string               `json:"notify_emails"`
-	NotifyWebhooks []models.NotifyWebhook `json:"notify_webhooks"`
-	Locale         string                 `json:"locale"`
-	HasPickupCode  bool                   `json:"has_pickup_code"`
+	ExpireAt       int                        `json:"expire_time"` // 分钟
+	ViewNum        int64                      `json:"download_nums"`
+	HasPassword    bool                       `json:"has_password"`
+	Password       string                     `json:"password"`
+	HasNotify      bool                       `json:"has_notify"`
+	NotifyTypes    []string                   `json:"notify_types"`
+	NotifyEmails   []string                   `json:"notify_emails"`
+	NotifyWebhooks []sharemodel.NotifyWebhook `json:"notify_webhooks"`
+	Locale         string                     `json:"locale"`
+	HasPickupCode  bool                       `json:"has_pickup_code"`
 }
 
 func CreateShareInfo(c *echo.Context) error {
@@ -47,7 +51,7 @@ func CreateShareInfo(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 	ExpireTime := time.Now().Add(time.Duration(r.Config.ExpireAt) * time.Minute)
-	if r.Data == "" || (r.Type != models.ShareTypeFile && r.Type != models.ShareTypeText) || ExpireTime.Before(time.Now()) || r.Config.ViewNum < 1 {
+	if (r.Type != sharemodel.ShareTypeFile && r.Type != sharemodel.ShareTypeText) || ExpireTime.Before(time.Now()) || r.Config.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
@@ -56,16 +60,36 @@ func CreateShareInfo(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	if r.Type == models.ShareTypeFile {
-		fileInfo, err := models.GetRedisFileInfo(r.Data)
-		if err != nil {
-			return utils.HTTPErrorHandler(c, err)
+	if r.Type == sharemodel.ShareTypeFile {
+		if len(r.Files) == 0 {
+			return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 		}
-		if fileInfo == nil {
-			return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
+		var fileInfoErr error
+		if !lo.EveryBy(r.Files, func(file sharemodel.ShareFileData) bool {
+			if file.Id == "" {
+				return false
+			}
+			fileInfo, err := filemodel.GetRedisFileInfo(file.Id)
+			if err != nil {
+				fileInfoErr = err
+				return false
+			}
+			if fileInfo == nil {
+				return false
+			}
+			if fileInfo.FileType != filemodel.FileTypeUpload {
+				return false
+			}
+			return true
+		}) {
+			if fileInfoErr != nil {
+				return utils.HTTPErrorHandler(c, fileInfoErr)
+			}
+			return utils.HTTPErrorHandler(c, ErrInvalidShareFileData)
 		}
-		if fileInfo.FileType != models.FileTypeUpload {
-			return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
+	} else {
+		if r.Text == "" {
+			return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 		}
 	}
 	password := ""
@@ -78,7 +102,7 @@ func CreateShareInfo(c *echo.Context) error {
 	}
 
 	var notifyEmails []string
-	var notifyWebhooks []models.NotifyWebhook
+	var notifyWebhooks []sharemodel.NotifyWebhook
 	if r.Config.HasNotify {
 		if !lo.EveryBy(r.Config.NotifyTypes, func(nt string) bool {
 			return nt == "email" || nt == "webhook"
@@ -93,14 +117,14 @@ func CreateShareInfo(c *echo.Context) error {
 		}
 	}
 
-	_, err = models.SetRedisShareInfo(id, func(shareInfo *models.RedisShareInfo) *models.RedisShareInfo {
-		shareInfo.Data = r.Data
+	_, err = sharemodel.SetRedisShareInfo(id, func(shareInfo *sharemodel.RedisShareInfo) *sharemodel.RedisShareInfo {
+		shareInfo.Text = r.Text
+		shareInfo.Files = r.Files
 		shareInfo.Type = r.Type
 		shareInfo.CreatedAt = time.Now().Unix()
 		shareInfo.Owner = owner
 		shareInfo.ViewNum = r.Config.ViewNum
 		shareInfo.Password = password
-		shareInfo.FileName = r.FileName
 		shareInfo.NotifyEmails = notifyEmails
 		shareInfo.NotifyWebhooks = notifyWebhooks
 		shareInfo.Locale = r.Config.Locale
@@ -114,7 +138,7 @@ func CreateShareInfo(c *echo.Context) error {
 	if r.Config.HasPickupCode {
 		for {
 			pickupCode = utils.GeneratePickupCode()
-			ok, err := models.SetRedisPickupData(pickupCode, id)
+			ok, err := pickupcodemodel.SetRedisPickupData(pickupCode, id)
 			if err != nil {
 				return utils.HTTPErrorHandler(c, err)
 			}
@@ -125,25 +149,30 @@ func CreateShareInfo(c *echo.Context) error {
 		}
 	}
 
-	if r.Type == models.ShareTypeFile {
-		shareIDs, err := models.GetRedisFileShareRelational(r.Data)
-		if err != nil {
-			return utils.HTTPErrorHandler(c, err)
-		}
-		shareIDs = append(shareIDs, id)
-		err = models.SetRedisFileShareRelational(r.Data, shareIDs)
-		if err != nil {
-			return utils.HTTPErrorHandler(c, err)
+	if r.Type == sharemodel.ShareTypeFile {
+		fileIDs := lo.Map(r.Files, func(file sharemodel.ShareFileData, _ int) string {
+			return file.Id
+		})
+		for _, file := range r.Files {
+			shareIDs, err := relationmodel.GetRedisFileShareRelational(file.Id)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
+			shareIDs = lo.Uniq(lo.Concat(shareIDs, []string{id}))
+			err = relationmodel.SetRedisFileShareRelational(file.Id, shareIDs)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
 		}
 		client := u.GetQueueClient()
-		json, err := json.Marshal(map[string]any{"share_id": id, "file_id": r.Data})
+		payload, err := json.Marshal(map[string]any{"share_id": id, "file_ids": fileIDs})
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
 		// 这里延时分享过期时间基础上加下载窗口期后1小时删除，防止用户过期前几分钟才开始下载，下载一半文件不见了
 		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
 		deleteTime := time.Duration(r.Config.ExpireAt)*time.Minute + cast.ToDuration(downloadWindow+"h") + 1*time.Hour
-		_, err = client.Enqueue(asynq.NewTask("share:remove", json), asynq.ProcessIn(deleteTime))
+		_, err = client.Enqueue(asynq.NewTask("share:remove", payload), asynq.ProcessIn(deleteTime))
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
@@ -151,7 +180,7 @@ func CreateShareInfo(c *echo.Context) error {
 
 	// 统计分享数
 	currentDate := time.Now().Format("2006-01-02")
-	_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+	_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
 		stat.ShareNum += 1
 		return stat
 	})
@@ -161,7 +190,7 @@ func CreateShareInfo(c *echo.Context) error {
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"id":            id,
-		"file_name":     r.FileName,
+		"files":         r.Files,
 		"download_nums": r.Config.ViewNum,
 		"expire_at":     ExpireTime.Unix(),
 		"pickup_code":   pickupCode,
@@ -178,47 +207,57 @@ func GetShareInfo(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
-	shareInfo, err := models.GetRedisShareInfo(shareId)
+	shareInfo, err := sharemodel.GetRedisShareInfo(shareId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	if shareInfo == nil || shareInfo.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, ErrShareNotFound)
 	}
-
-	if shareInfo.Type == models.ShareTypeFile {
-		fileInfo, err := models.GetRedisFileInfo(shareInfo.Data)
-		if err != nil {
-			return utils.HTTPErrorHandler(c, err)
-		}
-		if fileInfo == nil {
-			return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
-		}
-		if fileInfo.FileType != models.FileTypeUpload {
-			return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
-		}
-		return utils.HTTPSuccessHandler(c, map[string]any{
-			"id":            shareId,
-			"type":          shareInfo.Type,
-			"name":          shareInfo.FileName,
-			"download_nums": shareInfo.ViewNum,
-			"has_password":  shareInfo.Password != "",
-			"expire_at":     shareInfo.ExpireAt,
-			"owner":         shareInfo.Owner,
-			"size":          fileInfo.FileSize,
-			"mime_type":     fileInfo.MimeType,
-		})
-	}
-
-	return utils.HTTPSuccessHandler(c, map[string]any{
+	owner, _ := echo.ContextGet[string](c, "auth")
+	isOwner := owner != "" && owner == shareInfo.Owner
+	response := map[string]any{
 		"id":            shareId,
 		"type":          shareInfo.Type,
-		"name":          shareInfo.FileName,
 		"download_nums": shareInfo.ViewNum,
 		"has_password":  shareInfo.Password != "",
 		"expire_at":     shareInfo.ExpireAt,
 		"owner":         shareInfo.Owner,
-	})
+		"is_owner":      isOwner,
+	}
+	if isOwner {
+		response["pickup_code"] = shareInfo.PickupCode
+		response["pickup_code_expire_at"] = shareInfo.PickupCodeExpireAt
+		response["notify_emails"] = shareInfo.NotifyEmails
+		response["notify_webhooks"] = shareInfo.NotifyWebhooks
+	}
+
+	if shareInfo.Type == sharemodel.ShareTypeFile {
+		shareFiles := shareInfo.Files
+		files := make([]map[string]any, 0, len(shareFiles))
+		for _, file := range shareFiles {
+			fileInfo, err := filemodel.GetRedisFileInfo(file.Id)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
+			if fileInfo == nil {
+				return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
+			}
+			if fileInfo.FileType != filemodel.FileTypeUpload {
+				return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
+			}
+			files = append(files, map[string]any{
+				"id":        file.Id,
+				"file_name": file.FileName,
+				"size":      fileInfo.FileSize,
+				"mime_type": fileInfo.MimeType,
+			})
+		}
+		response["files"] = files
+		return utils.HTTPSuccessHandler(c, response)
+	}
+
+	return utils.HTTPSuccessHandler(c, response)
 }
 
 func GetShareByPickupCode(c *echo.Context) error {
@@ -226,7 +265,7 @@ func GetShareByPickupCode(c *echo.Context) error {
 	if pickupCode == "" {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
-	shareId, err := models.GetRedisPickupData(strings.ToUpper(pickupCode))
+	shareId, err := pickupcodemodel.GetRedisPickupData(strings.ToUpper(pickupCode))
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

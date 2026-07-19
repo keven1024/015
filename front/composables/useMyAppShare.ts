@@ -99,7 +99,7 @@ const createTextShare = async (data: { text: string; config: any }) => {
     const { text, config } = data || {}
     return await createShare({
         type: 'text',
-        data: text,
+        text,
         config,
     })
 }

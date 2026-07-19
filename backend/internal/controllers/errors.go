@@ -22,6 +22,7 @@ var (
 	// 分享相关
 	ErrShareFileNotFound     = errors.New("ShareFileNotFound")     // 分享文件不存在
 	ErrInvalidShareFileState = errors.New("InvalidShareFileState") // 分享文件状态错误
+	ErrInvalidShareFileData  = errors.New("InvalidShareFileData")  // 分享文件数据错误
 	ErrShareNotFound         = errors.New("ShareNotFound")         // 分享不存在
 
 	// 下载相关
