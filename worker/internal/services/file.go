@@ -3,7 +3,7 @@ package services
 import (
 	"os"
 	"path/filepath"
-	"pkg/models"
+	filemodel "pkg/models/file"
 	"pkg/services"
 	u "pkg/utils"
 	"time"
@@ -11,7 +11,7 @@ import (
 
 type GenStandardFileReturn struct {
 	FileId string
-	models.FileInfo
+	filemodel.FileInfo
 }
 
 // 生成标准格式的file
@@ -46,13 +46,13 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	if err := os.Rename(filePath, newPath); err != nil {
 		return GenStandardFileReturn{}, err
 	}
-	redisFileInfo, err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
-		fileInfo.FileInfo = models.FileInfo{
+	redisFileInfo, err := filemodel.SetRedisFileInfo(fileId, func(fileInfo *filemodel.RedisFileInfo) *filemodel.RedisFileInfo {
+		fileInfo.FileInfo = filemodel.FileInfo{
 			FileSize: fileSize,
 			FileHash: fileHash,
 			MimeType: mimeType,
 		}
-		fileInfo.FileType = models.FileTypeUpload
+		fileInfo.FileType = filemodel.FileTypeUpload
 		return fileInfo
 	})
 	if err != nil {
@@ -64,7 +64,7 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 	}
 	return GenStandardFileReturn{
 		FileId: fileId,
-		FileInfo: models.FileInfo{
+		FileInfo: filemodel.FileInfo{
 			FileSize: fileSize,
 			FileHash: fileHash,
 			MimeType: mimeType,

@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"pkg/i18n"
 	pkgmail "pkg/mail"
-	"pkg/models"
+	sharemodel "pkg/models/share"
 	u "pkg/utils"
 	"strings"
 
@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func SendWebhook(webhook models.NotifyWebhook) error {
+func SendWebhook(webhook sharemodel.NotifyWebhook) error {
 	method := strings.ToUpper(strings.TrimSpace(webhook.Method))
 	if method == "" {
 		method = "POST"
@@ -48,7 +48,7 @@ type EmailTemplateData struct {
 	IP        string
 	Region    string
 	FileName  string
-	ShareType models.ShareType
+	ShareType sharemodel.ShareType
 }
 
 func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
@@ -81,7 +81,7 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 	htmlBody, err := pkgmail.RenderMailTemplate("pull-notify", map[string]string{
 		"EMAIL-TITLE":        subject,
 		"EMAIL-INTRO":        i18n.T(emailTemplateData.Locale, "notify_email_intro"),
-		"EMAIL-FILEICON":     lo.Ternary(emailTemplateData.ShareType == models.ShareTypeText, "spiral_notepad", "file_folder"),
+		"EMAIL-FILEICON":     lo.Ternary(emailTemplateData.ShareType == sharemodel.ShareTypeText, "spiral_notepad", "file_folder"),
 		"EMAIL-FILENAME":     emailTemplateData.FileName,
 		"EMAIL-IP":           emailTemplateData.IP,
 		"EMAIL-REGION":       emailTemplateData.Region,

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"pkg/models"
+	taskmodel "pkg/models/task"
 	"worker/internal/services"
 
 	"github.com/hibiken/asynq"
@@ -26,7 +26,7 @@ func TranslateText(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 
-	return models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+	return taskmodel.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
 		"result": result,
 	})

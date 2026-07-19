@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"pkg/models"
+	filemodel "pkg/models/file"
+	relationmodel "pkg/models/file_share_relational"
 	pkgservices "pkg/services"
 	u "pkg/utils"
 	"strings"
@@ -19,7 +20,7 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	fileInfo, err := models.GetRedisFileInfo(payload.FileId)
+	fileInfo, err := filemodel.GetRedisFileInfo(payload.FileId)
 	if err != nil {
 		return err
 	}
@@ -27,8 +28,8 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 		return nil
 	}
 	// 如果文件是上传文件，则需要检查是否还有分享，考虑到比如文件转换这些一次性任务产生的文件需要销毁
-	if fileInfo.FileType == models.FileTypeUpload {
-		shareIDs, err := models.GetRedisFileShareRelational(payload.FileId)
+	if fileInfo.FileType == filemodel.FileTypeUpload {
+		shareIDs, err := relationmodel.GetRedisFileShareRelational(payload.FileId)
 		if err != nil {
 			return err
 		}
@@ -44,7 +45,7 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 	}
 	filePath := filepath.Join(uploadPath, payload.FileId)
 	// 如果是临时文件删除文件夹
-	if fileInfo.FileType == models.FileTypeInit {
+	if fileInfo.FileType == filemodel.FileTypeInit {
 		filePath += "_tmp"
 	}
 	if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
@@ -67,7 +68,7 @@ func FileJanitor(_ context.Context, _ *asynq.Task) error {
 		return err
 	}
 
-	allFileInfo, err := models.GetRedisFileInfoAll()
+	allFileInfo, err := filemodel.GetRedisFileInfoAll()
 	if err != nil {
 		return err
 	}
@@ -86,13 +87,13 @@ func FileJanitor(_ context.Context, _ *asynq.Task) error {
 	// Case 2 & 3: 遍歷 fileInfoMap
 	now := time.Now().Unix()
 	for fileId, rawInfo := range allFileInfo {
-		var info models.RedisFileInfo
-		if err := json.Unmarshal([]byte(rawInfo), &info); err != nil {
+		info, err := filemodel.JsonFileInfoToDomain(rawInfo)
+		if err != nil {
 			continue
 		}
 
 		// Case 2: init 狀態且已過期
-		if info.FileType == models.FileTypeInit && info.CreatedAt+info.Expire < now {
+		if info.FileType == filemodel.FileTypeInit && info.CreatedAt+info.Expire < now {
 			if err := pkgservices.SetFileRemoveTask(fileId, 0); err != nil {
 				return err
 			}
@@ -100,8 +101,8 @@ func FileJanitor(_ context.Context, _ *asynq.Task) error {
 		}
 
 		// Case 3: 已完成上傳但無 share 關係
-		if info.FileType == models.FileTypeUpload {
-			shareIDs, err := models.GetRedisFileShareRelational(fileId)
+		if info.FileType == filemodel.FileTypeUpload {
+			shareIDs, err := relationmodel.GetRedisFileShareRelational(fileId)
 			if err != nil {
 				return err
 			}

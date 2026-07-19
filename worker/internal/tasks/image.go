@@ -8,7 +8,8 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
-	"pkg/models"
+	filemodel "pkg/models/file"
+	taskmodel "pkg/models/task"
 	"pkg/utils"
 	"worker/internal/services"
 
@@ -20,8 +21,8 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	originalFileInfo, _ := models.GetRedisFileInfo(payload.FileId)
-	if originalFileInfo == nil || originalFileInfo.FileType != models.FileTypeUpload {
+	originalFileInfo, _ := filemodel.GetRedisFileInfo(payload.FileId)
+	if originalFileInfo == nil || originalFileInfo.FileType != filemodel.FileTypeUpload {
 		return ErrNotFoundFile
 	}
 	uploadPath, err := utils.GetUploadDirPath()
@@ -42,7 +43,7 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 
-	if err := models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+	if err := taskmodel.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
 		"result": []any{
 			map[string]any{
@@ -68,8 +69,8 @@ func ConvertImage(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	originalFileInfo, _ := models.GetRedisFileInfo(payload.FileId)
-	if originalFileInfo == nil || originalFileInfo.FileType != models.FileTypeUpload {
+	originalFileInfo, _ := filemodel.GetRedisFileInfo(payload.FileId)
+	if originalFileInfo == nil || originalFileInfo.FileType != filemodel.FileTypeUpload {
 		return ErrNotFoundFile
 	}
 	uploadPath, err := utils.GetUploadDirPath()
@@ -95,7 +96,7 @@ func ConvertImage(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 
-	if err := models.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
+	if err := taskmodel.SetRedisTaskInfo(task.ResultWriter().TaskID(), map[string]any{
 		"status": "success",
 		"result": []any{
 			map[string]any{
