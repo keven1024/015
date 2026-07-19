@@ -3,7 +3,7 @@ package controllers
 import (
 	"backend/internal/controllers/task"
 	"backend/internal/utils"
-	"pkg/models"
+	taskmodel "pkg/models/task"
 	u "pkg/utils"
 
 	"github.com/hibiken/asynq"
@@ -47,7 +47,7 @@ func GetTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
-	taskInfo, err := models.GetRedisTaskInfo(taskId)
+	taskInfo, err := taskmodel.GetRedisTaskInfo(taskId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

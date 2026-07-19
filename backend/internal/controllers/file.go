@@ -3,11 +3,11 @@ package controllers
 import (
 	"backend/internal/services"
 	"backend/internal/utils"
-	"encoding/json"
 	"math"
 	"mime/multipart"
 	"os"
-	"pkg/models"
+	filemodel "pkg/models/file"
+	statmodel "pkg/models/stat"
 	s "pkg/services"
 	u "pkg/utils"
 	"time"
@@ -17,7 +17,7 @@ import (
 
 func CreateUploadTask(c *echo.Context) error {
 	// cc := c.(*middleware.CustomContext)
-	r := new(models.FileInfo)
+	r := new(filemodel.FileInfo)
 	if err := c.Bind(r); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -26,7 +26,7 @@ func CreateUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 	fileId := u.GetFileId(r.FileHash, r.FileSize)
-	fileInfo, err := models.GetRedisFileInfo(fileId)
+	fileInfo, err := filemodel.GetRedisFileInfo(fileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -55,14 +55,13 @@ func CreateUploadTask(c *echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	fileInfoMap, err := models.GetRedisFileInfoAll()
+	fileInfoMap, err := filemodel.GetRedisFileInfoAll()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	totalSize := int64(0)
 	for _, value := range fileInfoMap {
-		var fileInfo models.RedisFileInfo
-		err := json.Unmarshal([]byte(value), &fileInfo)
+		fileInfo, err := filemodel.JsonFileInfoToDomain(value)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
@@ -77,9 +76,9 @@ func CreateUploadTask(c *echo.Context) error {
 	for r.FileSize/ChunkSize > 1000 {
 		ChunkSize *= 2
 	}
-	redisFileInfo, err := models.SetRedisFileInfo(fileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
-		fileInfo.FileType = models.FileTypeInit
-		fileInfo.FileInfo = models.FileInfo{
+	redisFileInfo, err := filemodel.SetRedisFileInfo(fileId, func(fileInfo *filemodel.RedisFileInfo) *filemodel.RedisFileInfo {
+		fileInfo.FileType = filemodel.FileTypeInit
+		fileInfo.FileInfo = filemodel.FileInfo{
 			FileSize:  r.FileSize,
 			MimeType:  r.MimeType,
 			FileHash:  r.FileHash,
@@ -122,7 +121,7 @@ func UploadFileSlice(c *echo.Context) error {
 	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
-	fileInfo, err := models.GetRedisFileInfo(r.FileId)
+	fileInfo, err := filemodel.GetRedisFileInfo(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -132,7 +131,7 @@ func UploadFileSlice(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrUploadTaskExpired)
 	}
 
-	if fileInfo.FileType != models.FileTypeInit {
+	if fileInfo.FileType != filemodel.FileTypeInit {
 		return utils.HTTPErrorHandler(c, ErrInvalidUploadTaskState)
 	}
 	if r.FileIndex > ((fileInfo.FileSize / fileInfo.ChunkSize) + 1) {
@@ -178,12 +177,12 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
-	fileInfo, err := models.GetRedisFileInfo(r.FileId)
+	fileInfo, err := filemodel.GetRedisFileInfo(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	if fileInfo.FileType != models.FileTypeInit {
+	if fileInfo.FileType != filemodel.FileTypeInit {
 		return utils.HTTPErrorHandler(c, ErrInvalidUploadTaskState)
 	}
 
@@ -229,8 +228,8 @@ func FinishUploadTask(c *echo.Context) error {
 	}
 
 	// 更新文件信息
-	fileInfo, err = models.SetRedisFileInfo(r.FileId, func(fileInfo *models.RedisFileInfo) *models.RedisFileInfo {
-		fileInfo.FileType = models.FileTypeUpload
+	fileInfo, err = filemodel.SetRedisFileInfo(r.FileId, func(fileInfo *filemodel.RedisFileInfo) *filemodel.RedisFileInfo {
+		fileInfo.FileType = filemodel.FileTypeUpload
 		return fileInfo
 	})
 	if err != nil {
@@ -238,7 +237,7 @@ func FinishUploadTask(c *echo.Context) error {
 	}
 	// 统计
 	currentDate := time.Now().Format("2006-01-02")
-	_, err = models.SetRedisStat(currentDate, func(stat *models.StatData) *models.StatData {
+	_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
 		stat.FileSize += fileInfo.FileSize
 		stat.FileNum += 1
 		return stat
@@ -251,7 +250,7 @@ func FinishUploadTask(c *echo.Context) error {
 		"size":      fileInfo.FileSize,
 		"mime_type": fileInfo.MimeType,
 		"hash":      fileInfo.FileHash,
-		"type":      models.FileTypeUpload,
+		"type":      filemodel.FileTypeUpload,
 		"id":        r.FileId,
 	})
 }

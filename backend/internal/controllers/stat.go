@@ -2,8 +2,7 @@ package controllers
 
 import (
 	"backend/internal/utils"
-	"encoding/json"
-	"pkg/models"
+	statmodel "pkg/models/stat"
 	u "pkg/utils"
 
 	"github.com/labstack/echo/v5"
@@ -28,15 +27,14 @@ type QueueChartData struct {
 }
 
 func GetStat(c *echo.Context) error {
-	statInfoMap, err := models.GetRedisStatAll()
+	statInfoMap, err := statmodel.GetRedisStatAll()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	statChartData := make(map[string]StatChartData)
 	for key, value := range statInfoMap {
-		var statData models.StatData
-		err := json.Unmarshal([]byte(value), &statData)
+		statData, err := statmodel.JsonStatDataToDomain(value)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}

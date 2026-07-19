@@ -2,8 +2,7 @@ package controllers
 
 import (
 	"backend/internal/utils"
-	"encoding/json"
-	"pkg/models"
+	filemodel "pkg/models/file"
 	u "pkg/utils"
 
 	"github.com/labstack/echo/v5"
@@ -16,14 +15,13 @@ func GetAbout(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	fileInfoMap, err := models.GetRedisFileInfoAll()
+	fileInfoMap, err := filemodel.GetRedisFileInfoAll()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	currentFileSize := lo.Reduce(lo.Values(fileInfoMap), func(agg int64, item string, _ int) int64 {
-		var fileInfo models.RedisFileInfo
-		err := json.Unmarshal([]byte(item), &fileInfo)
+		fileInfo, err := filemodel.JsonFileInfoToDomain(item)
 		if err != nil {
 			return agg
 		}
