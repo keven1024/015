@@ -1,7 +1,5 @@
 package share
 
-type ShareInfoData string
-
 type RedisShareInfo struct {
 	// Id          string    `json:"id"`
 	CreatedAt          int64           `json:"created_at"`
