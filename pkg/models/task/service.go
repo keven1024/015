@@ -1,12 +1,10 @@
-package models
+package task
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"time"
-
 	"pkg/utils"
+	"time"
 
 	"github.com/redis/rueidis"
 )
@@ -14,30 +12,25 @@ import (
 func GetRedisTaskInfo(taskId string) (*map[string]any, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	taskInfoUnmarshalData, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Build()).ToString()
+	taskInfoData, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	var taskInfoData map[string]any
-
-	if err := json.Unmarshal([]byte(taskInfoUnmarshalData), &taskInfoData); err != nil {
-		return nil, err
-	}
-	return &taskInfoData, nil
+	return JsonTaskInfoToDomain(taskInfoData)
 }
 
 func SetRedisTaskInfo(taskId string, taskInfo map[string]any) error {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	jsonData, err := json.Marshal(taskInfo)
+	jsonData, err := DomainTaskInfoToJson(taskInfo)
 	if err != nil {
 		return err
 	}
 	return rdb.Do(
 		ctx,
-		rdb.B().Set().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Value(string(jsonData)).Ex(time.Hour).Build(),
+		rdb.B().Set().Key(fmt.Sprintf("015:taskInfoMap:%s", taskId)).Value(jsonData).Ex(time.Hour).Build(),
 	).Error()
 }

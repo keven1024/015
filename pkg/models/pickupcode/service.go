@@ -1,11 +1,10 @@
-package models
+package pickupcode
 
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"pkg/utils"
+	"time"
 
 	"github.com/redis/rueidis"
 )
@@ -13,14 +12,14 @@ import (
 func GetRedisPickupData(pickupCode string) (string, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	ShareId, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Build()).ToString()
+	shareId, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return "", nil
 	}
 	if err != nil {
 		return "", err
 	}
-	return ShareId, nil
+	return shareId, nil
 }
 
 func SetRedisPickupData(pickupCode string, shareId string) (bool, error) {
