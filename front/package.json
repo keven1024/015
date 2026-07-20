@@ -33,7 +33,7 @@
         "@unovis/vue": "^1.6.5",
         "@vee-validate/nuxt": "^4.15.1",
         "@vee-validate/rules": "^4.15.1",
-        "axios": "^1.16.1",
+        "axios": "^1.18.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.21",
