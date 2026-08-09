@@ -2,8 +2,11 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func RunCommand(bin string, args ...string) ([]byte, error) {
@@ -12,7 +15,13 @@ func RunCommand(bin string, args ...string) ([]byte, error) {
 	cmd := exec.CommandContext(ctx, bin, args...)
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, err
+		zap.L().Error("command failed",
+			zap.String("bin", bin),
+			zap.Strings("args", args),
+			zap.ByteString("output", bytes),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("command failed: %w", err)
 	}
 	return bytes, nil
 }
