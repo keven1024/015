@@ -31,17 +31,8 @@ const { data } = useQuery({
             }),
             config: config as any,
         })
-        return data?.map((item) => item?.data)
+        return res?.data
     },
-})
-const selectedFile = ref<string | undefined>()
-const selectedFileShare = computed(() => {
-    return data?.value?.find((item) => item?.id === selectedFile.value)
-})
-watchEffect(() => {
-    if (data?.value && data?.value?.length === 1 && !!data?.value?.[0]?.id) {
-        selectedFile.value = data.value[0].id
-    }
 })
 
 const appConfig = useMyAppConfig()
@@ -51,9 +42,8 @@ const getShareUrl = (id: string) => {
 
 const { share, isSupported: isShareSupported } = useShare()
 
-const handleShare = async (id: string, fileName?: string) => {
+const handleShare = async (id: string) => {
     await share({
-        title: fileName || 'File Share',
         url: getShareUrl(id),
     })
 }
@@ -72,7 +62,7 @@ const handleShowQrCode = (id: string) => {
 <template>
     <BaseCard class="flex flex-col gap-3" :title="t('page.result.file.title')" :showBackButton="true">
         <div class="flex flex-col gap-3 items-center">
-            <div v-if="data?.length === 1" class="flex flex-col h-30 items-center">
+            <div v-if="props?.data?.files?.length === 1" class="flex flex-col h-30 items-center">
                 <FilePreviewView :value="props?.data?.files?.[0]?.file as File" />
             </div>
             <div v-else class="flex flex-col gap-2 w-full p-5 bg-white/20 backdrop-blur-xl rounded-md">

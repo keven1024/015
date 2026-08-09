@@ -91,98 +91,106 @@ func MergeFileSlices(fileId string, uploadPath string) (string, error) {
 
 func GenerateCompressFiles(shareId string, shareFileData []sharemodel.ShareFileData, uploadPath string, target string) (string, error) {
 	prefixPath := filepath.Join(uploadPath, fmt.Sprintf("%s%d", shareId, time.Now().Unix()))
-	var compressPath string
 	switch target {
 	case "zip":
-		compressPath = fmt.Sprintf("%s.zip", prefixPath)
-		out, err := os.Create(compressPath)
-		if err != nil {
-			return "", err
-		}
-		defer out.Close()
-		zw := zip.NewWriter(out)
-		defer zw.Close()
-		for _, file := range shareFileData {
-			f, err := os.Open(filepath.Join(uploadPath, file.Id))
-			if err != nil {
-				return "", err
-			}
-
-			info, err := f.Stat()
-			if err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-
-			header, err := zip.FileInfoHeader(info)
-			if err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-			// zip 内部的文件名
-			header.Name = filepath.Base(file.FileName)
-			// 使用 Deflate 压缩
-			header.Method = zip.Deflate
-
-			w, err := zw.CreateHeader(header)
-			if err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-
-			_, err = io.Copy(w, f)
-			if closeErr := f.Close(); closeErr != nil {
-				return "", closeErr
-			}
-			if err != nil {
-				return "", err
-			}
-		}
+		return createZipFile(prefixPath, shareFileData, uploadPath)
 	case "tar.gz":
-		compressPath = fmt.Sprintf("%s.tar.gz", prefixPath)
-		out, err := os.Create(compressPath)
-		if err != nil {
-			return "", err
-		}
-		defer out.Close()
-		gzw := gzip.NewWriter(out)
-		defer gzw.Close()
-
-		tw := tar.NewWriter(gzw)
-		defer tw.Close()
-
-		for _, file := range shareFileData {
-			f, err := os.Open(filepath.Join(uploadPath, file.Id))
-			if err != nil {
-				return "", err
-			}
-
-			info, err := f.Stat()
-			if err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-
-			header, err := tar.FileInfoHeader(info, "")
-			if err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-			header.Name = file.FileName
-			if err := tw.WriteHeader(header); err != nil {
-				f.Close() //nolint:errcheck
-				return "", err
-			}
-			_, err = io.Copy(tw, f)
-			if closeErr := f.Close(); closeErr != nil {
-				return "", closeErr
-			}
-			if err != nil {
-				return "", err
-			}
-		}
+		return createTarGzFile(prefixPath, shareFileData, uploadPath)
 	default:
 		return "", fmt.Errorf("unsupported compress type: %s", target)
+	}
+}
+
+func createZipFile(prefixPath string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
+	compressPath := fmt.Sprintf("%s.zip", prefixPath)
+	out, err := os.Create(compressPath)
+	if err != nil {
+		return "", err
+	}
+	defer out.Close()
+	zw := zip.NewWriter(out)
+	defer zw.Close()
+	for _, file := range shareFileData {
+		f, err := os.Open(filepath.Join(uploadPath, file.Id))
+		if err != nil {
+			return "", err
+		}
+
+		info, err := f.Stat()
+		if err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+		// zip 内部的文件名
+		header.Name = file.FileName
+		// 使用 Deflate 压缩
+		header.Method = zip.Deflate
+
+		w, err := zw.CreateHeader(header)
+		if err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+
+		_, err = io.Copy(w, f)
+		if closeErr := f.Close(); closeErr != nil {
+			return "", closeErr
+		}
+		if err != nil {
+			return "", err
+		}
+	}
+	return compressPath, nil
+}
+
+func createTarGzFile(prefixPath string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
+	compressPath := fmt.Sprintf("%s.tar.gz", prefixPath)
+	out, err := os.Create(compressPath)
+	if err != nil {
+		return "", err
+	}
+	defer out.Close()
+	gzw := gzip.NewWriter(out)
+	defer gzw.Close()
+
+	tw := tar.NewWriter(gzw)
+	defer tw.Close()
+
+	for _, file := range shareFileData {
+		f, err := os.Open(filepath.Join(uploadPath, file.Id))
+		if err != nil {
+			return "", err
+		}
+
+		info, err := f.Stat()
+		if err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+
+		header, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+		header.Name = file.FileName
+		if err := tw.WriteHeader(header); err != nil {
+			f.Close() //nolint:errcheck
+			return "", err
+		}
+		_, err = io.Copy(tw, f)
+		if closeErr := f.Close(); closeErr != nil {
+			return "", closeErr
+		}
+		if err != nil {
+			return "", err
+		}
 	}
 	return compressPath, nil
 }

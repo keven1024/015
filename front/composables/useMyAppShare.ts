@@ -1,5 +1,3 @@
-import { times } from 'lodash-es'
-import { toast } from 'vue-sonner'
 let shareIdTokenMap: WeakMap<{ share_id: string }, string>
 
 const getShareToken = async (
@@ -60,7 +58,7 @@ const createShare = async (data: any) => {
             id?: string
             download_nums?: number
             expire_at?: number
-            file_name?: string
+            files?: { id?: string; file_name: string }[]
             pickup_code?: string
         }
     }>(`/api/share`, {
@@ -70,7 +68,7 @@ const createShare = async (data: any) => {
 }
 
 const createFileShare = async (data: {
-    files: { id: string; name: string }[]
+    files: { id: string; file_name: string }[]
     config: {
         download_nums: number
         expire_time: number
@@ -82,17 +80,7 @@ const createFileShare = async (data: {
     }
 }) => {
     const { files, config } = data || {}
-    return await Promise.all(
-        times(files.length, async (i) => {
-            const { id, name } = files[i] || {}
-            return await createShare({
-                type: 'file',
-                data: id,
-                config,
-                file_name: name,
-            })
-        })
-    )
+    return await createShare({ type: 'file', files, config })
 }
 
 const createTextShare = async (data: { text: string; config: any }) => {
