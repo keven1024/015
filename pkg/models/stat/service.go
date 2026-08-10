@@ -10,7 +10,7 @@ import (
 func GetRedisStat(key string) (*StatData, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	statData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:stat").Field(key).Build()).ToString()
+	statData, err := rdb.Do(ctx, rdb.B().Hget().Key(modelName).Field(key).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
@@ -22,7 +22,7 @@ func GetRedisStat(key string) (*StatData, error) {
 
 func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData, error) {
 	var updatedStat *StatData
-	err := utils.WithLocker(context.Background(), "015:stat:"+key, 0, func(ctx context.Context) error {
+	err := utils.WithLocker(context.Background(), modelName+":"+key, 0, func(ctx context.Context) error {
 		rdb := utils.GetRedisClient()
 		oldStat, err := GetRedisStat(key)
 		if err != nil {
@@ -36,7 +36,7 @@ func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData
 		if err != nil {
 			return err
 		}
-		if err := rdb.Do(ctx, rdb.B().Hset().Key("015:stat").FieldValue().FieldValue(key, jsonData).Build()).Error(); err != nil {
+		if err := rdb.Do(ctx, rdb.B().Hset().Key(modelName).FieldValue().FieldValue(key, jsonData).Build()).Error(); err != nil {
 			return err
 		}
 		updatedStat = stat
@@ -51,5 +51,5 @@ func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData
 func GetRedisStatAll() (map[string]string, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:stat").Build()).AsStrMap()
+	return rdb.Do(ctx, rdb.B().Hgetall().Key(modelName).Build()).AsStrMap()
 }

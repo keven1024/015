@@ -1,5 +1,7 @@
 package file
 
+const modelName = "015:fileInfoMap"
+
 type FileInfo struct {
 	FileSize  int64  `json:"size"`
 	MimeType  string `json:"mime_type"`

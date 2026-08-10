@@ -12,7 +12,7 @@ import (
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	fileInfoData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:fileInfoMap").Field(fileId).Build()).ToString()
+	fileInfoData, err := rdb.Do(ctx, rdb.B().Hget().Key(modelName).Field(fileId).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
@@ -41,7 +41,7 @@ func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *Redi
 	if err != nil {
 		return nil, err
 	}
-	if err := rdb.Do(ctx, rdb.B().Hset().Key("015:fileInfoMap").FieldValue().FieldValue(fileId, jsonData).Build()).Error(); err != nil {
+	if err := rdb.Do(ctx, rdb.B().Hset().Key(modelName).FieldValue().FieldValue(fileId, jsonData).Build()).Error(); err != nil {
 		return nil, err
 	}
 	return fileInfo, nil
@@ -50,5 +50,5 @@ func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *Redi
 func GetRedisFileInfoAll() (map[string]string, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	return rdb.Do(ctx, rdb.B().Hgetall().Key("015:fileInfoMap").Build()).AsStrMap()
+	return rdb.Do(ctx, rdb.B().Hgetall().Key(modelName).Build()).AsStrMap()
 }

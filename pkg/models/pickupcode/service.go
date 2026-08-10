@@ -12,7 +12,7 @@ import (
 func GetRedisPickupData(pickupCode string) (string, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	shareId, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Build()).ToString()
+	shareId, err := rdb.Do(ctx, rdb.B().Get().Key(fmt.Sprintf("%s:%s", modelName, pickupCode)).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return "", nil
 	}
@@ -27,6 +27,6 @@ func SetRedisPickupData(pickupCode string, shareId string) (bool, error) {
 	ctx := context.Background()
 	return rdb.Do(
 		ctx,
-		rdb.B().Set().Key(fmt.Sprintf("015:pickupCode:%s", pickupCode)).Value(shareId).Nx().Ex(24*time.Hour).Build(),
+		rdb.B().Set().Key(fmt.Sprintf("%s:%s", modelName, pickupCode)).Value(shareId).Nx().Ex(24*time.Hour).Build(),
 	).AsBool()
 }

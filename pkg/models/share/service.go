@@ -12,7 +12,7 @@ import (
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	key := fmt.Sprintf("015:shareInfoMap:%s", shareId)
+	key := fmt.Sprintf("%s:%s", modelName, shareId)
 	shareInfoData, err := rdb.Do(ctx, rdb.B().Get().Key(key).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
@@ -50,7 +50,7 @@ func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *
 	if err := rdb.Do(
 		ctx,
 		rdb.B().Set().
-			Key(fmt.Sprintf("015:shareInfoMap:%s", shareId)).
+			Key(fmt.Sprintf("%s:%s", modelName, shareId)).
 			Value(jsonData).
 			Ex(time.Until(time.Unix(shareInfo.ExpireAt, 0))).
 			Build(),

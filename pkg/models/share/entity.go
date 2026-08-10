@@ -1,5 +1,7 @@
 package share
 
+const modelName = "015:shareInfoMap"
+
 type RedisShareInfo struct {
 	// Id          string    `json:"id"`
 	CreatedAt          int64           `json:"created_at"`

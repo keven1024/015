@@ -10,7 +10,7 @@ import (
 func GetRedisFileShareRelational(fileId string) ([]string, error) {
 	rdb := utils.GetRedisClient()
 	ctx := context.Background()
-	shareIDsData, err := rdb.Do(ctx, rdb.B().Hget().Key("015:fileShareRelational").Field(fileId).Build()).ToString()
+	shareIDsData, err := rdb.Do(ctx, rdb.B().Hget().Key(modelName).Field(fileId).Build()).ToString()
 	if rueidis.IsRedisNil(err) {
 		return nil, nil
 	}
@@ -27,5 +27,5 @@ func SetRedisFileShareRelational(fileId string, shareIDs []string) error {
 	if err != nil {
 		return err
 	}
-	return rdb.Do(ctx, rdb.B().Hset().Key("015:fileShareRelational").FieldValue().FieldValue(fileId, jsonData).Build()).Error()
+	return rdb.Do(ctx, rdb.B().Hset().Key(modelName).FieldValue().FieldValue(fileId, jsonData).Build()).Error()
 }

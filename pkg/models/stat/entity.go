@@ -1,5 +1,7 @@
 package stat
 
+const modelName = "015:stat"
+
 // StatData 统计数据结构
 type StatData struct {
 	FileSize    int64 `json:"file_size"`    // 文件大小
