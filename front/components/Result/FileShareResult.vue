@@ -10,7 +10,6 @@ import dayjs from 'dayjs'
 import showDrawer from '@/lib/showDrawer'
 import QrCoreDrawer from '@/components/Drawer/QrCoreDrawer.vue'
 import { h } from 'vue'
-import { cx } from 'class-variance-authority'
 import type { handleFileComponentProps } from './types'
 
 const props = defineProps<handleFileComponentProps>()
@@ -24,10 +23,10 @@ const { data } = useQuery({
     staleTime: Infinity,
     queryFn: async () => {
         const { files, config } = props?.data || {}
-        const data = await createFileShare({
+        const res = await createFileShare({
             files: files?.map((item) => {
                 const { id, file } = item || {}
-                return { id, name: file.name }
+                return { id, file_name: file.name }
             }),
             config: config as any,
         })
@@ -68,70 +67,37 @@ const handleShowQrCode = (id: string) => {
             <div v-else class="flex flex-col gap-2 w-full p-5 bg-white/20 backdrop-blur-xl rounded-md">
                 <div class="text-sm font-semibold">{{ t('page.result.file.fileList') }}</div>
                 <div
-                    v-for="file in data"
-                    :class="
-                        cx(
-                            'flex flex-row justify-between items-center gap-1 rounded-md p-2 border border-black/10 w-full cursor-pointer',
-                            selectedFile === file?.id && 'bg-primary text-white'
-                        )
-                    "
-                    @click="selectedFile = file?.id"
+                    v-for="file in props?.data?.files"
+                    :key="file?.id"
+                    class="flex flex-row justify-between items-center gap-1 rounded-md p-2 border border-black/10 w-full"
                 >
                     <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
-                        <FileIcon
-                            :file="props?.data?.files?.[data?.findIndex((i) => i?.id === file?.id) as number]?.file as File"
-                            size="sm"
-                            :class="cx('shrink-0', selectedFile === file?.id && 'bg-white/50!')"
-                        />
-                        <div class="text-sm flex-1 truncate">{{ file?.file_name }}</div>
-                    </div>
-                    <div class="flex flex-row items-center gap-2 shrink-0">
-                        <Button
-                            v-if="isShareSupported"
-                            variant="outline"
-                            :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
-                            size="icon"
-                            @click.stop="handleShare(file?.id as string, file?.file_name)"
-                        >
-                            <LucideShare class="size-1/2" />
-                        </Button>
-                        <CopyButton
-                            :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
-                            :value="getShareUrl(file?.id as string)"
-                            @click.stop
-                        />
-                        <Button
-                            variant="outline"
-                            :class="cx('bg-white/70', selectedFile === file?.id && '!bg-white/30 border-none hover:text-white/80')"
-                            size="icon"
-                            @click.stop="handleShowQrCode(file?.id as string)"
-                        >
-                            <LucideQrCode class="size-1/2" />
-                        </Button>
+                        <FileIcon :file="file?.file as File" size="sm" class="shrink-0" />
+                        <div class="text-sm flex-1 truncate">{{ file?.file?.name }}</div>
                     </div>
                 </div>
             </div>
-            <div v-if="!!selectedFileShare" class="flex flex-col md:flex-row gap-5 rounded-md p-5 bg-white/20 backdrop-blur-xl w-full">
+            <div v-if="!!data" class="flex flex-col md:flex-row gap-5 rounded-md p-5 bg-white/20 backdrop-blur-xl w-full">
                 <div class="flex flex-col gap-2 flex-1">
                     <div class="text-sm font-semibold">{{ t('page.result.file.info') }}</div>
                     <div class="grid grid-cols-2 gap-2">
                         <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1">
                             <div class="text-xs font-semibold">{{ t('page.result.file.downloadNums') }}</div>
-                            <div class="text-3xl font-light">{{ selectedFileShare?.download_nums }}</div>
+                            <div class="text-3xl font-light">{{ data?.download_nums }}</div>
                         </div>
                         <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1">
                             <div class="text-xs font-semibold">{{ t('page.result.file.expireTime') }}</div>
                             <div class="text-md font-light">
-                                {{ dayjs((selectedFileShare?.expire_at || 0) * 1000).format('YYYY-MM-DD HH:mm:ss') }}
+                                {{ dayjs((data?.expire_at || 0) * 1000).format('YYYY-MM-DD HH:mm:ss') }}
                             </div>
                         </div>
-                        <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1" v-if="selectedFileShare?.pickup_code">
+                        <div class="rounded-xl flex flex-col bg-black/10 px-3 py-2 gap-1" v-if="data?.pickup_code">
                             <div class="flex flex-row justify-between w-full items-center">
                                 <div class="text-xs font-semibold">{{ t('page.result.file.pickupCode') }}</div>
-                                <CopyButton class="bg-white/70 p-0 size-6" :value="selectedFileShare?.pickup_code as string" />
+                                <CopyButton class="bg-white/70 p-0 size-6" :value="data?.pickup_code as string" />
                             </div>
                             <div class="flex flex-row gap-2">
-                                <div v-for="s in selectedFileShare?.pickup_code" class="text-2xl font-light">
+                                <div v-for="s in data?.pickup_code" class="text-2xl font-light">
                                     {{ s }}
                                 </div>
                             </div>
@@ -141,24 +107,13 @@ const handleShowQrCode = (id: string) => {
                 <div class="flex flex-col gap-5 flex-1">
                     <div class="text-sm font-semibold">{{ t('page.result.file.link') }}</div>
                     <div class="flex flex-row gap-2">
-                        <Input :model-value="getShareUrl(selectedFileShare?.id as string)" class="bg-white/70" readonly />
-                        <Button
-                            v-if="isShareSupported"
-                            variant="outline"
-                            class="bg-white/70"
-                            size="icon"
-                            @click="
-                                handleShare(
-                                    selectedFileShare?.id as string,
-                                    props?.data?.files?.[data?.findIndex((item) => item?.id === selectedFileShare?.id) as number]?.file?.name
-                                )
-                            "
-                        >
+                        <Input :model-value="getShareUrl(data?.id as string)" class="bg-white/70" readonly />
+                        <Button v-if="isShareSupported" variant="outline" class="bg-white/70" size="icon" @click="handleShare(data?.id as string)">
                             <LucideShare class="size-1/2" />
                         </Button>
-                        <CopyButton class="bg-white/70" :value="getShareUrl(selectedFileShare?.id as string)" />
+                        <CopyButton class="bg-white/70" :value="getShareUrl(data?.id as string)" />
 
-                        <Button variant="outline" class="bg-white/70" size="icon" @click="handleShowQrCode(selectedFileShare?.id as string)">
+                        <Button variant="outline" class="bg-white/70" size="icon" @click="handleShowQrCode(data?.id as string)">
                             <LucideQrCode class="size-1/2" />
                         </Button>
                     </div>

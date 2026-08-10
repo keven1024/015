@@ -39,10 +39,10 @@ const handlePreview = async () => {
         const r = await $fetch<{
             code: number
             data: {
-                data: string
+                text: string
             }
         }>(`/api/download?token=${token}`)
-        previewText.value = r?.data?.data
+        previewText.value = r?.data?.text
     } catch (error: any) {
         toast.error(error?.data?.message || error?.message || error)
     }
