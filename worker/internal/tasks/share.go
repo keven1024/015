@@ -16,8 +16,8 @@ import (
 )
 
 type ShareRemoveTaskPayload struct {
-	ShareId string `json:"share_id"`
-	FileId  string `json:"file_id"`
+	ShareId string   `json:"share_id"`
+	FileIds []string `json:"file_ids"`
 }
 
 func RemoveShare(ctx context.Context, task *asynq.Task) error {
@@ -25,18 +25,24 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	shareIDs, err := relationmodel.SetRedisFileShareRelational(payload.FileId, func(shareIDs []string) []string {
-		return lo.Filter(shareIDs, func(x string, _ int) bool {
-			return x != payload.ShareId
+	var errs []error
+	for _, fileId := range payload.FileIds {
+		shareIDs, err := relationmodel.SetRedisFileShareRelational(fileId, func(shareIDs []string) []string {
+			return lo.Filter(shareIDs, func(x string, _ int) bool {
+				return x != payload.ShareId
+			})
 		})
-	})
-	if err != nil {
-		return err
+		if err != nil {
+			errs = append(errs, fmt.Errorf("remove share relation for file %s: %w", fileId, err))
+			continue
+		}
+		if len(shareIDs) == 0 {
+			if err := pkgservices.SetFileRemoveTask(fileId, 0); err != nil {
+				errs = append(errs, fmt.Errorf("enqueue remove task for file %s: %w", fileId, err))
+			}
+		}
 	}
-	if len(shareIDs) == 0 {
-		return pkgservices.SetFileRemoveTask(payload.FileId, 0)
-	}
-	return nil
+	return errors.Join(errs...)
 }
 
 func ShareNotify(ctx context.Context, task *asynq.Task) error {
