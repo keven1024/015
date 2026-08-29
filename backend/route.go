@@ -19,6 +19,7 @@ var routes = []Route{
 
 	{Method: []string{"GET"}, Path: "/share/:id", Handler: controllers.GetShareInfo},
 	{Method: []string{"POST"}, Path: "/share", Handler: controllers.CreateShareInfo},
+	{Method: []string{"DELETE"}, Path: "/share/:id", Handler: controllers.DeleteShareInfo},
 
 	{Method: []string{"GET"}, Path: "/download", Handler: controllers.DownloadShare},
 	{Method: []string{"POST"}, Path: "/download", Handler: controllers.VaildateShare},

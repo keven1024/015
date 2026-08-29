@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"backend/internal/utils"
+	"context"
 	"encoding/json"
 	"errors"
 	filemodel "pkg/models/file"
@@ -9,7 +10,6 @@ import (
 	pickupcodemodel "pkg/models/pickupcode"
 	sharemodel "pkg/models/share"
 	statmodel "pkg/models/stat"
-	s "pkg/services"
 	u "pkg/utils"
 	"strings"
 	"time"
@@ -291,5 +291,68 @@ func GetShareByPickupCode(c *echo.Context) error {
 	}
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"share_id": shareId,
+	})
+}
+
+func DeleteShareInfo(c *echo.Context) error {
+	shareId := c.Param("id")
+	if shareId == "" {
+		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	}
+
+	owner, _ := echo.ContextGet[string](c, "auth")
+	if owner == "" {
+		return utils.HTTPErrorHandler(c, ErrPermissionDenied)
+	}
+
+	err := u.WithLocker(context.Background(), "015:shareInfoMap:"+shareId, 0, func(ctx context.Context) error {
+		shareInfo, err := sharemodel.GetRedisShareInfo(shareId)
+		if err != nil {
+			return err
+		}
+		if shareInfo == nil {
+			return ErrShareNotFound
+		}
+		if shareInfo.Owner != owner {
+			return ErrPermissionDenied
+		}
+
+		fileIDs := lo.Map(shareInfo.Files, func(file sharemodel.ShareFileData, _ int) string {
+			return file.Id
+		})
+		payload, err := json.Marshal(map[string]any{"share_id": shareId, "file_ids": fileIDs})
+		if err != nil {
+			return err
+		}
+
+		_, err = sharemodel.SetRedisShareInfo(shareId, func(shareInfo *sharemodel.RedisShareInfo) *sharemodel.RedisShareInfo {
+			shareInfo.ExpireAt = time.Now().Unix()
+			return shareInfo
+		})
+		if err != nil {
+			return err
+		}
+
+		taskID := "share:remove:" + shareId
+		inspector := u.GetQueueInspector()
+		if err := inspector.DeleteTask("default", taskID); err != nil && !errors.Is(err, asynq.ErrTaskNotFound) {
+			return err
+		}
+
+		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
+		deleteTime := cast.ToDuration(downloadWindow+"h") + time.Hour
+		_, err = u.GetQueueClient().Enqueue(
+			asynq.NewTask("share:remove", payload),
+			asynq.ProcessIn(deleteTime),
+			asynq.TaskID(taskID),
+		)
+		return err
+	})
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+
+	return utils.HTTPSuccessHandler(c, map[string]any{
+		"id": shareId,
 	})
 }
