@@ -11,6 +11,14 @@
             "mode": "auto",
             "program": "${workspaceFolder}/backend",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Worker",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/worker",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
