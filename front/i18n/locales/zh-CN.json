@@ -236,6 +236,9 @@
             }
         },
         "shareView": {
+            "title": "分享",
+            "needPassword": "需要密码",
+            "expireTime": "过期时间",
             "linkExpired": "此链接已过期。",
             "passwall": {
                 "title": "输入密码",
@@ -243,19 +246,13 @@
                 "passwordPlaceholder": "请输入密码"
             },
             "fileShare": {
-                "title": "下载文件",
-                "downloadBtn": "下载",
-                "needPassword": "需要密码",
-                "expireTime": "过期时间",
+                "packageDownload": "打包下载",
                 "remainingDownloads": "剩余下载次数",
                 "getTokenFailed": "获取token失败",
                 "durationFormat": "D天 HH:mm:ss"
             },
             "textShare": {
-                "title": "查看文本",
                 "viewBtn": "浏览",
-                "needPassword": "需要密码",
-                "expireTime": "过期时间",
                 "remainingViews": "剩余浏览次数",
                 "durationFormat": "D天 HH:mm:ss"
             }

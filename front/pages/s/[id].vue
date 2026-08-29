@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import { LucideAlertCircle } from '@lucide/vue'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
 import FileShareView from '@/components/Share/FileShareView.vue'
 import TextShareView from '@/components/Share/TextShareView.vue'
 import { useQuery } from '@tanstack/vue-query'
+
+type ShareData = {
+    id?: string
+    expire_at?: number
+    type?: 'file' | 'text'
+    has_password?: boolean
+    download_nums?: number
+}
+
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
 const id = computed(() => route.params.id)
 
-const { data, isLoading, error } = useQuery({
+const { data, isLoading } = useQuery({
     queryKey: ['share', id.value],
     queryFn: async () => {
-        const data = await $fetch<{
-            code: number
-            data: {
-                id?: string
-                expire_at?: number
-                type?: string
-            }
-        }>(`/api/share/${id.value}`)
+        const data = await $fetch<{ code: number; data: ShareData }>(`/api/share/${id.value}`)
         return data?.data
     },
     retry: false,
@@ -36,6 +35,24 @@ const componentMap = {
     file: FileShareView,
     text: TextShareView,
 }
+
+const shareInfo = computed(() => {
+    const type = data.value?.type
+    if (!type) {
+        return []
+    }
+
+    const key = `page.shareView.${type}Share`
+    return [
+        { label: t(`${key}.needPassword`), type: 'bool' as const, value: data.value?.has_password ?? false },
+        { label: t(`${key}.expireTime`), type: 'countdown' as const, value: data.value?.expire_at ?? 0 },
+        {
+            label: t(`${key}.${type === 'file' ? 'remainingDownloads' : 'remainingViews'}`),
+            type: 'string' as const,
+            value: data.value?.download_nums ?? 0,
+        },
+    ]
+})
 </script>
 
 <template>
@@ -58,21 +75,12 @@ const componentMap = {
             <Skeleton class="h-10 w-full rounded-md" />
         </div>
         <template v-else>
-            <div v-if="isExpired || !data" class="flex flex-col gap-5 items-center">
-                <LucideAlertCircle :size="48" class="text-orange-500 rounded-full bg-orange-500/30 p-2" />
-                <div class="text-xl">{{ t('page.shareView.linkExpired') }}</div>
-                <Button
-                    @click="
-                        () => {
-                            router.push('/')
-                        }
-                    "
-                    >{{ t('btn.backToHome') }}</Button
-                >
-            </div>
-            <template v-else>
+            <ShareError v-if="isExpired || !data" :title="t('page.shareView.linkExpired')" />
+            <div v-else class="flex flex-col items-center gap-3">
+                <h1 class="text-xl">{{ t('page.shareView.title') }}</h1>
+                <ShareInfoCards :items="shareInfo" />
                 <component :is="componentMap[data?.type as keyof typeof componentMap] || 'div'" :data="data" />
-            </template>
+            </div>
         </template>
     </BaseCard>
 </template>

@@ -34,9 +34,14 @@ const getShareToken = async (
     return token
 }
 
-const downloadFile = (token: string) => {
+const downloadFile = (token: string, fileIds?: string[], target?: 'zip' | 'tar.gz') => {
     const a = document.createElement('a')
-    a.href = `/api/download?token=${token}`
+    const searchParams = new URLSearchParams({ token })
+    fileIds?.forEach((fileId) => searchParams.append('file_ids', fileId))
+    if (target) {
+        searchParams.set('target', target)
+    }
+    a.href = `/api/download?${searchParams.toString()}`
     a.download = ''
     document.body.appendChild(a)
     a.click()
