@@ -9,5 +9,5 @@ require (
 
 require (
 	github.com/oschwald/maxminddb-golang/v2 v2.1.1 // indirect
-	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 )
