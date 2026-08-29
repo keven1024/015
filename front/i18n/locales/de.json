@@ -37,6 +37,7 @@
         "backToHome": "Zurück zur Startseite"
     },
     "common": {
+        "systemShare": "Über das System teilen",
         "add": "Hinzufügen",
         "copySuccess": "Erfolgreich kopiert",
         "length": "Länge",
@@ -235,7 +236,24 @@
                 "title": "QR-Code zum Teilen"
             }
         },
+        "shareManage": {
+            "title": "Freigabe verwalten",
+            "basicInfo": "Grundinformationen",
+            "downloads": "Verbleibende Downloads",
+            "views": "Verbleibende Aufrufe",
+            "expiresAt": "Ablaufzeit",
+            "pickupCode": "Abholcode",
+            "notifyEnabled": "Benachrichtigungen aktiviert",
+            "shareUrl": "Freigabe-URL",
+            "openShare": "Freigabe öffnen",
+            "files": "Dateien",
+            "textContent": "Textinhalt",
+            "loadFailed": "Die Freigabe ist abgelaufen oder Sie haben keine Verwaltungsberechtigung"
+        },
         "shareView": {
+            "title": "Teilen",
+            "needPassword": "Passwort erforderlich",
+            "expireTime": "Ablaufzeit",
             "linkExpired": "Dieser Link ist abgelaufen.",
             "passwall": {
                 "title": "Passwort eingeben",
@@ -245,8 +263,7 @@
             "fileShare": {
                 "title": "Datei herunterladen",
                 "downloadBtn": "Herunterladen",
-                "needPassword": "Passwort erforderlich",
-                "expireTime": "Ablaufzeit",
+                "packageDownload": "Archiv herunterladen",
                 "remainingDownloads": "Verbleibende Downloads",
                 "getTokenFailed": "Token konnte nicht abgerufen werden",
                 "durationFormat": "D [Tage] HH:mm:ss"
@@ -254,8 +271,6 @@
             "textShare": {
                 "title": "Text anzeigen",
                 "viewBtn": "Anzeigen",
-                "needPassword": "Passwort erforderlich",
-                "expireTime": "Ablaufzeit",
                 "remainingViews": "Verbleibende Aufrufe",
                 "durationFormat": "D [Tage] HH:mm:ss"
             }

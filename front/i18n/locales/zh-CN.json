@@ -37,6 +37,7 @@
         "backToHome": "返回首页"
     },
     "common": {
+        "systemShare": "系统分享",
         "add": "添加",
         "copySuccess": "复制成功",
         "length": "长度",
@@ -234,6 +235,20 @@
             "qrCode": {
                 "title": "分享二维码"
             }
+        },
+        "shareManage": {
+            "title": "分享管理",
+            "basicInfo": "基本信息",
+            "downloads": "剩余下载次数",
+            "views": "剩余浏览次数",
+            "expiresAt": "过期时间",
+            "pickupCode": "提取码",
+            "notifyEnabled": "启用通知",
+            "shareUrl": "分享链接",
+            "openShare": "打开分享页",
+            "files": "文件列表",
+            "textContent": "文本内容",
+            "loadFailed": "分享已过期或没有管理权限"
         },
         "shareView": {
             "title": "分享",

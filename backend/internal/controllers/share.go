@@ -136,6 +136,7 @@ func CreateShareInfo(c *echo.Context) error {
 	}
 	var pickupCode string
 	if r.Config.HasPickupCode {
+		pickupCodeExpireAt := time.Now().Add(24 * time.Hour).Unix()
 		for {
 			pickupCode = utils.GeneratePickupCode()
 			ok, err := pickupcodemodel.SetRedisPickupData(pickupCode, id)
@@ -146,6 +147,14 @@ func CreateShareInfo(c *echo.Context) error {
 				continue
 			}
 			break
+		}
+		_, err = sharemodel.SetRedisShareInfo(id, func(shareInfo *sharemodel.RedisShareInfo) *sharemodel.RedisShareInfo {
+			shareInfo.PickupCode = pickupCode
+			shareInfo.PickupCodeExpireAt = pickupCodeExpireAt
+			return shareInfo
+		})
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
 		}
 	}
 
@@ -221,6 +230,7 @@ func GetShareInfo(c *echo.Context) error {
 		"type":          shareInfo.Type,
 		"download_nums": shareInfo.ViewNum,
 		"has_password":  shareInfo.Password != "",
+		"has_notify":    len(shareInfo.NotifyEmails) > 0 || len(shareInfo.NotifyWebhooks) > 0,
 		"expire_at":     shareInfo.ExpireAt,
 		"owner":         shareInfo.Owner,
 		"is_owner":      isOwner,
@@ -255,6 +265,9 @@ func GetShareInfo(c *echo.Context) error {
 		}
 		response["files"] = files
 		return utils.HTTPSuccessHandler(c, response)
+	}
+	if isOwner {
+		response["text"] = shareInfo.Text
 	}
 
 	return utils.HTTPSuccessHandler(c, response)

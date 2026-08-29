@@ -37,6 +37,7 @@
         "backToHome": "ホームに戻る"
     },
     "common": {
+        "systemShare": "システムで共有",
         "add": "追加",
         "copySuccess": "コピーしました",
         "length": "長さ",
@@ -235,7 +236,24 @@
                 "title": "共有QRコード"
             }
         },
+        "shareManage": {
+            "title": "共有の管理",
+            "basicInfo": "基本情報",
+            "downloads": "残りダウンロード数",
+            "views": "残り閲覧数",
+            "expiresAt": "有効期限",
+            "pickupCode": "受取コード",
+            "notifyEnabled": "通知を有効化",
+            "shareUrl": "共有URL",
+            "openShare": "共有ページを開く",
+            "files": "ファイル",
+            "textContent": "テキスト内容",
+            "loadFailed": "共有の有効期限が切れているか、管理権限がありません"
+        },
         "shareView": {
+            "title": "共有",
+            "needPassword": "パスワードが必要です",
+            "expireTime": "有効期限",
             "linkExpired": "このリンクは期限切れです。",
             "passwall": {
                 "title": "パスワードを入力",
@@ -245,8 +263,7 @@
             "fileShare": {
                 "title": "ファイルをダウンロード",
                 "downloadBtn": "ダウンロード",
-                "needPassword": "パスワードが必要です",
-                "expireTime": "有効期限",
+                "packageDownload": "アーカイブをダウンロード",
                 "remainingDownloads": "残りダウンロード回数",
                 "getTokenFailed": "トークンの取得に失敗しました",
                 "durationFormat": "D日 HH:mm:ss"
@@ -254,8 +271,6 @@
             "textShare": {
                 "title": "テキストを表示",
                 "viewBtn": "表示",
-                "needPassword": "パスワードが必要です",
-                "expireTime": "有効期限",
                 "remainingViews": "残り閲覧回数",
                 "durationFormat": "D日 HH:mm:ss"
             }

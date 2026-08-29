@@ -37,6 +37,7 @@
         "backToHome": "Back to Home"
     },
     "common": {
+        "systemShare": "Share via system",
         "add": "Add",
         "copySuccess": "Copy Success",
         "length": "length",
@@ -235,7 +236,24 @@
                 "title": "Share QR code"
             }
         },
+        "shareManage": {
+            "title": "Share management",
+            "basicInfo": "Basic information",
+            "downloads": "Downloads remaining",
+            "views": "Views remaining",
+            "expiresAt": "Expires at",
+            "pickupCode": "Pickup code",
+            "notifyEnabled": "Notifications enabled",
+            "shareUrl": "Share URL",
+            "openShare": "Open share",
+            "files": "Files",
+            "textContent": "Text content",
+            "loadFailed": "The share has expired or you do not have management permission"
+        },
         "shareView": {
+            "title": "Share",
+            "needPassword": "Password required",
+            "expireTime": "Expire time",
             "linkExpired": "This link has expired.",
             "passwall": {
                 "title": "Enter password",
@@ -245,8 +263,7 @@
             "fileShare": {
                 "title": "Download file",
                 "downloadBtn": "Download",
-                "needPassword": "Password required",
-                "expireTime": "Expire time",
+                "packageDownload": "Download archive",
                 "remainingDownloads": "Remaining downloads",
                 "getTokenFailed": "Failed to get token",
                 "durationFormat": "D [days] HH:mm:ss"
@@ -254,8 +271,6 @@
             "textShare": {
                 "title": "View text",
                 "viewBtn": "View",
-                "needPassword": "Password required",
-                "expireTime": "Expire time",
                 "remainingViews": "Remaining views",
                 "durationFormat": "D [days] HH:mm:ss"
             }

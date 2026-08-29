@@ -37,6 +37,7 @@
         "backToHome": "Retour à l'accueil"
     },
     "common": {
+        "systemShare": "Partager via le système",
         "add": "Ajouter",
         "copySuccess": "Copié avec succès",
         "length": "longueur",
@@ -235,7 +236,24 @@
                 "title": "Code QR de partage"
             }
         },
+        "shareManage": {
+            "title": "Gestion du partage",
+            "basicInfo": "Informations générales",
+            "downloads": "Téléchargements restants",
+            "views": "Consultations restantes",
+            "expiresAt": "Date d’expiration",
+            "pickupCode": "Code de retrait",
+            "notifyEnabled": "Notifications activées",
+            "shareUrl": "URL de partage",
+            "openShare": "Ouvrir le partage",
+            "files": "Fichiers",
+            "textContent": "Contenu texte",
+            "loadFailed": "Le partage a expiré ou vous n’avez pas l’autorisation de le gérer"
+        },
         "shareView": {
+            "title": "Partager",
+            "needPassword": "Mot de passe requis",
+            "expireTime": "Date d'expiration",
             "linkExpired": "Ce lien a expiré.",
             "passwall": {
                 "title": "Saisir le mot de passe",
@@ -245,8 +263,7 @@
             "fileShare": {
                 "title": "Télécharger le fichier",
                 "downloadBtn": "Télécharger",
-                "needPassword": "Mot de passe requis",
-                "expireTime": "Date d'expiration",
+                "packageDownload": "Télécharger l’archive",
                 "remainingDownloads": "Téléchargements restants",
                 "getTokenFailed": "Échec de récupération du jeton",
                 "durationFormat": "D [jours] HH:mm:ss"
@@ -254,8 +271,6 @@
             "textShare": {
                 "title": "Afficher le texte",
                 "viewBtn": "Afficher",
-                "needPassword": "Mot de passe requis",
-                "expireTime": "Date d'expiration",
                 "remainingViews": "Vues restantes",
                 "durationFormat": "D [jours] HH:mm:ss"
             }

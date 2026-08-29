@@ -37,6 +37,7 @@
         "backToHome": "返回首頁"
     },
     "common": {
+        "systemShare": "系統分享",
         "add": "新增",
         "copySuccess": "複製成功",
         "length": "長度",
@@ -235,7 +236,24 @@
                 "title": "分享 QR Code"
             }
         },
+        "shareManage": {
+            "title": "分享管理",
+            "basicInfo": "基本資訊",
+            "downloads": "剩餘下載次數",
+            "views": "剩餘瀏覽次數",
+            "expiresAt": "到期時間",
+            "pickupCode": "提取碼",
+            "notifyEnabled": "啟用通知",
+            "shareUrl": "分享連結",
+            "openShare": "開啟分享頁",
+            "files": "檔案列表",
+            "textContent": "文字內容",
+            "loadFailed": "分享已過期或沒有管理權限"
+        },
         "shareView": {
+            "title": "分享",
+            "needPassword": "需要密碼",
+            "expireTime": "過期時間",
             "linkExpired": "此連結已過期。",
             "passwall": {
                 "title": "輸入密碼",
@@ -245,8 +263,7 @@
             "fileShare": {
                 "title": "下載檔案",
                 "downloadBtn": "下載",
-                "needPassword": "需要密碼",
-                "expireTime": "過期時間",
+                "packageDownload": "封裝下載",
                 "remainingDownloads": "剩餘下載次數",
                 "getTokenFailed": "取得 token 失敗",
                 "durationFormat": "D天 HH:mm:ss"
@@ -254,8 +271,6 @@
             "textShare": {
                 "title": "查看文字",
                 "viewBtn": "瀏覽",
-                "needPassword": "需要密碼",
-                "expireTime": "過期時間",
                 "remainingViews": "剩餘瀏覽次數",
                 "durationFormat": "D天 HH:mm:ss"
             }
