@@ -6,7 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"pkg/geoip"
-	"pkg/models"
+	relationmodel "pkg/models/file_share_relational"
+	sharemodel "pkg/models/share"
 	pkgservices "pkg/services"
 	u "pkg/utils"
 	"worker/internal/services"
@@ -25,7 +26,7 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	shareIDs, err := models.GetRedisFileShareRelational(payload.FileId)
+	shareIDs, err := relationmodel.GetRedisFileShareRelational(payload.FileId)
 	if err != nil {
 		return err
 	}
@@ -39,7 +40,7 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 		}
 		return pkgservices.SetFileRemoveTask(payload.FileId, 0)
 	}
-	if err := models.SetRedisFileShareRelational(payload.FileId, shareIDs); err != nil {
+	if err := relationmodel.SetRedisFileShareRelational(payload.FileId, shareIDs); err != nil {
 		return err
 	}
 	return nil
@@ -50,7 +51,7 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	shareInfo, err := models.GetRedisShareInfo(payload.ShareId)
+	shareInfo, err := sharemodel.GetRedisShareInfo(payload.ShareId)
 	if err != nil || shareInfo == nil {
 		return err
 	}
