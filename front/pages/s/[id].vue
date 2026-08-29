@@ -44,8 +44,8 @@ const shareInfo = computed(() => {
 
     const key = `page.shareView.${type}Share`
     return [
-        { label: t(`${key}.needPassword`), type: 'bool' as const, value: data.value?.has_password ?? false },
-        { label: t(`${key}.expireTime`), type: 'countdown' as const, value: data.value?.expire_at ?? 0 },
+        { label: t('page.shareView.needPassword'), type: 'bool' as const, value: data.value?.has_password ?? false },
+        { label: t('page.shareView.expireTime'), type: 'countdown' as const, value: data.value?.expire_at ?? 0 },
         {
             label: t(`${key}.${type === 'file' ? 'remainingDownloads' : 'remainingViews'}`),
             type: 'string' as const,

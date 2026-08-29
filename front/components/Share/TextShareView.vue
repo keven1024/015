@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AsyncButton from '@/components/ui/button/AsyncButton.vue'
-import { cx } from 'class-variance-authority'
 import { toast } from 'vue-sonner'
 import MarkdownRender from '@/components/MarkdownRender.vue'
 import showDrawer from '~/lib/showDrawer'
@@ -13,17 +12,6 @@ const props = defineProps<{
 
 const { getShareToken } = useMyAppShare()
 
-const textShareInfo = computed(() => {
-    return [
-        { label: t('page.shareView.textShare.needPassword'), type: 'bool' as const, value: props?.data?.has_password ?? false },
-        {
-            label: t('page.shareView.textShare.expireTime'),
-            type: 'countdown' as const,
-            value: props?.data?.expire_at ?? 0,
-        },
-        { label: t('page.shareView.textShare.remainingViews'), type: 'string' as const, value: props?.data?.download_nums ?? 0 },
-    ]
-})
 const previewText = ref<string | null>(null)
 
 const handlePreview = async () => {
@@ -49,18 +37,16 @@ const handlePreview = async () => {
 }
 </script>
 <template>
-    <div :class="cx('flex flex-col max-h-full', !!previewText ? 'gap-3' : 'gap-16 items-center')">
-        <div :class="cx('flex flex-row w-full', !!previewText ? 'justify-between' : 'justify-center')">
-            <h1 class="text-xl">{{ t('page.shareView.textShare.title') }}</h1>
-            <CopyButton v-if="!!previewText" :value="previewText as string" />
-        </div>
+    <div class="flex max-h-full w-full flex-col gap-3">
         <template v-if="!previewText">
-            <ShareInfoCards :items="textShareInfo" />
             <div class="w-full">
                 <AsyncButton @click="handlePreview" class="w-full">{{ t('page.shareView.textShare.viewBtn') }}</AsyncButton>
             </div>
         </template>
         <template v-else>
+            <div class="flex justify-end">
+                <CopyButton :value="previewText" />
+            </div>
             <MarkdownRender :markdown="previewText" class="rounded-md bg-white/70 p-3 w-full max-w-full min-h-80 overflow-y-auto" />
         </template>
     </div>
