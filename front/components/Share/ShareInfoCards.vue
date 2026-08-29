@@ -85,14 +85,14 @@ watch(
 </script>
 
 <template>
-    <div class="flex w-full flex-col gap-2 md:flex-row">
+    <div class="grid w-full grid-cols-1 gap-2 md:grid-cols-3">
         <div
             v-for="item in finalItems"
             :key="item.label"
-            class="flex min-h-11 flex-1 items-center justify-between gap-1 rounded-xl bg-black/5 hover:bg-black/10 px-3 py-2 md:flex-col md:items-start md:justify-between"
+            class="flex min-h-11 items-center justify-between gap-1 rounded-xl bg-black/5 px-3 py-2 hover:bg-black/10 md:flex-col md:items-start md:justify-between"
         >
             <div class="text-xs font-semibold">{{ item.label }}</div>
-            <div class="flex flex-row justify-between w-full">
+            <div class="flex flex-row md:justify-between md:w-full items-center gap-2">
                 <div v-if="item.type === 'bool'" class="flex items-center flex-1">
                     <span class="grid size-7 place-items-center rounded-full bg-white/50">
                         <component
