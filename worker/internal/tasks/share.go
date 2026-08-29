@@ -9,7 +9,6 @@ import (
 	relationmodel "pkg/models/file_share_relational"
 	sharemodel "pkg/models/share"
 	pkgservices "pkg/services"
-	u "pkg/utils"
 	"worker/internal/services"
 
 	"github.com/hibiken/asynq"
@@ -26,22 +25,16 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	shareIDs, err := relationmodel.GetRedisFileShareRelational(payload.FileId)
+	shareIDs, err := relationmodel.SetRedisFileShareRelational(payload.FileId, func(shareIDs []string) []string {
+		return lo.Filter(shareIDs, func(x string, _ int) bool {
+			return x != payload.ShareId
+		})
+	})
 	if err != nil {
 		return err
 	}
-	shareIDs = lo.Filter(shareIDs, func(x string, _ int) bool {
-		return x != payload.ShareId
-	})
 	if len(shareIDs) == 0 {
-		rdb := u.GetRedisClient()
-		if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileShareRelational").Field(payload.FileId).Build()).Error(); err != nil {
-			return err
-		}
 		return pkgservices.SetFileRemoveTask(payload.FileId, 0)
-	}
-	if err := relationmodel.SetRedisFileShareRelational(payload.FileId, shareIDs); err != nil {
-		return err
 	}
 	return nil
 }
@@ -72,10 +65,15 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		region = info.Emoji + " " + info.Country.Country.Names.English
 	}
 
+	displayName := lo.Substring(shareInfo.Text, 0, 7) + "..."
+	if shareInfo.Type == sharemodel.ShareTypeFile && len(shareInfo.Files) > 0 {
+		displayName = shareInfo.Files[0].FileName
+	}
+
 	for _, email := range shareInfo.NotifyEmails {
 		if err := services.SendEmail(email, services.EmailTemplateData{
 			Locale:    shareInfo.Locale,
-			FileName:  lo.Ternary(shareInfo.Type == models.ShareTypeFile, shareInfo.FileName, lo.Substring(shareInfo.Data, 0, 7)+"..."),
+			FileName:  displayName,
 			IP:        payload.IP,
 			Region:    region,
 			ShareType: shareInfo.Type,

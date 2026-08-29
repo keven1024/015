@@ -163,12 +163,9 @@ func CreateShareInfo(c *echo.Context) error {
 			return file.Id
 		})
 		for _, file := range r.Files {
-			shareIDs, err := relationmodel.GetRedisFileShareRelational(file.Id)
-			if err != nil {
-				return utils.HTTPErrorHandler(c, err)
-			}
-			shareIDs = lo.Uniq(lo.Concat(shareIDs, []string{id}))
-			err = relationmodel.SetRedisFileShareRelational(file.Id, shareIDs)
+			_, err := relationmodel.SetRedisFileShareRelational(file.Id, func(shareIDs []string) []string {
+				return lo.Uniq(lo.Concat(shareIDs, []string{id}))
+			})
 			if err != nil {
 				return utils.HTTPErrorHandler(c, err)
 			}

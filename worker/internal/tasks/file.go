@@ -38,7 +38,6 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 		}
 	}
 
-	rdb := u.GetRedisClient()
 	uploadPath, err := u.GetUploadDirPath()
 	if err != nil {
 		return err
@@ -48,7 +47,7 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 	if fileInfo.FileType == filemodel.FileTypeInit {
 		filePath += "_tmp"
 	}
-	if err := rdb.Do(ctx, rdb.B().Hdel().Key("015:fileInfoMap").Field(payload.FileId).Build()).Error(); err != nil {
+	if err := filemodel.DelRedisFileInfo(payload.FileId); err != nil {
 		return err
 	}
 	if err := os.RemoveAll(filePath); err != nil {
