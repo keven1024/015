@@ -3,19 +3,20 @@ package share
 const modelName = "015:shareInfoMap"
 
 type RedisShareInfo struct {
-	// Id          string    `json:"id"`
 	CreatedAt          int64           `json:"created_at"`
 	UpdatedAt          int64           `json:"updated_at"`
 	Owner              string          `json:"owner"`
 	Type               ShareType       `json:"type"`
 	Text               string          `json:"text"`
 	Files              []ShareFileData `json:"files"`
+	Data               string          `json:"data"` // 废弃
 	ExpireAt           int64           `json:"expire_time"`
 	ViewNum            int64           `json:"download_nums"`
 	Password           string          `json:"password"`
 	NotifyEmails       []string        `json:"notify_emails"`
 	NotifyWebhooks     []NotifyWebhook `json:"notify_webhooks"`
 	Locale             string          `json:"locale"`
+	FileName           string          `json:"file_name"` // 废弃
 	PickupCode         string          `json:"pickup_code"`
 	PickupCodeExpireAt int64           `json:"pickup_code_expire_at"`
 }
