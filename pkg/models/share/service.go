@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/redis/rueidis"
+	"github.com/spf13/cast"
 )
 
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
@@ -20,12 +21,10 @@ func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	ttl, _ := rdb.Do(ctx, rdb.B().Ttl().Key(key).Build()).AsInt64()
 	shareInfo, err := JsonShareInfoToDomain(shareInfoData)
 	if err != nil {
 		return nil, err
 	}
-	shareInfo.ExpireAt = time.Now().Add(time.Duration(ttl) * time.Second).Unix()
 	return shareInfo, nil
 }
 
@@ -52,10 +51,19 @@ func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *
 		rdb.B().Set().
 			Key(fmt.Sprintf("%s:%s", modelName, shareId)).
 			Value(jsonData).
-			Ex(time.Until(time.Unix(shareInfo.ExpireAt, 0))).
+			// 分享过期后仍保留下载窗口期，供已签发的 token 下载。
+			Ex(time.Until(time.Unix(shareInfo.ExpireAt, 0).Add(
+				cast.ToDuration(utils.GetEnvWithDefault("share.download_window", "12")+"h"),
+			))).
 			Build(),
 	).Error(); err != nil {
 		return nil, err
 	}
 	return shareInfo, nil
+}
+
+func DeleteRedisShareInfo(shareId string) error {
+	rdb := utils.GetRedisClient()
+	ctx := context.Background()
+	return rdb.Do(ctx, rdb.B().Del().Key(fmt.Sprintf("%s:%s", modelName, shareId)).Build()).Error()
 }

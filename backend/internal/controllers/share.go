@@ -220,7 +220,7 @@ func GetShareInfo(c *echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	if shareInfo == nil || shareInfo.ViewNum < 1 {
+	if shareInfo == nil || shareInfo.ExpireAt <= time.Now().Unix() || shareInfo.ViewNum < 1 {
 		return utils.HTTPErrorHandler(c, ErrShareNotFound)
 	}
 	owner, _ := echo.ContextGet[string](c, "auth")

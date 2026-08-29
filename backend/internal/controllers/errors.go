@@ -5,6 +5,7 @@ import "errors"
 var (
 	// 通用错误（参数校验失败）
 	ErrInvalidRequest = errors.New("InvalidRequest") // 调用接口参数错误
+	ErrPermissionDenied = errors.New("PermissionDenied") // 没有权限
 
 	// 任务相关
 	ErrTaskNotFound = errors.New("TaskNotFound") // 任务不存在

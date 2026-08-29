@@ -114,7 +114,7 @@ func VaildateShare(c *echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
-	if shareInfo == nil {
+	if shareInfo == nil || shareInfo.ExpireAt <= time.Now().Unix() {
 		return utils.HTTPErrorHandler(c, ErrShareNotFound)
 	}
 	if shareInfo.Password != "" {
@@ -133,6 +133,9 @@ func VaildateShare(c *echo.Context) error {
 		shareInfo, err := sharemodel.GetRedisShareInfo(r.ShareId)
 		if err != nil || shareInfo == nil {
 			return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
+		}
+		if shareInfo.ExpireAt <= time.Now().Unix() {
+			return utils.HTTPErrorHandler(c, ErrShareNotFound)
 		}
 		if shareInfo.ViewNum < 1 {
 			return utils.HTTPErrorHandler(c, ErrInsufficientDownloadQuota)
