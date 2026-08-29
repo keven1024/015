@@ -3,11 +3,13 @@ package controllers
 import (
 	"backend/internal/utils"
 	"encoding/json"
+	"errors"
 	filemodel "pkg/models/file"
 	relationmodel "pkg/models/file_share_relational"
 	pickupcodemodel "pkg/models/pickupcode"
 	sharemodel "pkg/models/share"
 	statmodel "pkg/models/stat"
+	s "pkg/services"
 	u "pkg/utils"
 	"strings"
 	"time"
@@ -169,6 +171,10 @@ func CreateShareInfo(c *echo.Context) error {
 			if err != nil {
 				return utils.HTTPErrorHandler(c, err)
 			}
+			err = u.GetQueueInspector().DeleteTask("default", "file:remove:"+file.Id)
+			if err != nil && !errors.Is(err, asynq.ErrTaskNotFound) {
+				return utils.HTTPErrorHandler(c, err)
+			}
 		}
 		client := u.GetQueueClient()
 		payload, err := json.Marshal(map[string]any{"share_id": id, "file_ids": fileIDs})
@@ -178,7 +184,8 @@ func CreateShareInfo(c *echo.Context) error {
 		// 这里延时分享过期时间基础上加下载窗口期后1小时删除，防止用户过期前几分钟才开始下载，下载一半文件不见了
 		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
 		deleteTime := time.Duration(r.Config.ExpireAt)*time.Minute + cast.ToDuration(downloadWindow+"h") + 1*time.Hour
-		_, err = client.Enqueue(asynq.NewTask("share:remove", payload), asynq.ProcessIn(deleteTime))
+		taskID := "share:remove:" + id
+		_, err = client.Enqueue(asynq.NewTask("share:remove", payload), asynq.ProcessIn(deleteTime), asynq.TaskID(taskID))
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
