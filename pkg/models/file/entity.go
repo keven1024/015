@@ -2,6 +2,10 @@ package file
 
 const modelName = "015:fileInfoMap"
 
+func redisLockKey(fileId string) string {
+	return modelName + ":" + fileId
+}
+
 type FileInfo struct {
 	FileSize  int64  `json:"size"`
 	MimeType  string `json:"mime_type"`
