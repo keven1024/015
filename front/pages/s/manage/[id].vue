@@ -13,7 +13,7 @@ import { LucideExternalLink, LucideQrCode, LucideShare } from '@lucide/vue'
 import FileShareManage from '@/components/Share/Manage/FileShareManage.vue'
 import TextShareManage from '@/components/Share/Manage/TextShareManage.vue'
 
-type ShareFile = { id?: string; file_name: string; size?: number; mime_type?: string }
+type ShareFile = { id: string; file_name: string; size?: number; mime_type?: string }
 type ShareInfoItem = {
     label: string
     type: 'countdown' | 'string' | 'bool'

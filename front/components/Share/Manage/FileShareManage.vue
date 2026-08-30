@@ -1,6 +1,6 @@
 <script setup lang="ts">
 type ShareFile = {
-    id?: string
+    id: string
     file_name: string
     size?: number
     mime_type?: string
