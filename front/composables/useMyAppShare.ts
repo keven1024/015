@@ -34,7 +34,9 @@ const getShareToken = async (
     return token
 }
 
-const downloadFile = (token: string, fileIds?: string[], target?: 'zip' | 'tar.gz') => {
+export type DownloadArchiveTarget = 'zip' | 'tar.gz' | 'tar.zst' | 'tar.s2' | 'tar.snappy'
+
+const baseDownloadFile = (token: string, fileIds: string[], target?: DownloadArchiveTarget) => {
     const a = document.createElement('a')
     const searchParams = new URLSearchParams({ token })
     fileIds?.forEach((fileId) => searchParams.append('file_ids', fileId))
@@ -48,12 +50,20 @@ const downloadFile = (token: string, fileIds?: string[], target?: 'zip' | 'tar.g
     document.body.removeChild(a)
 }
 
-const downloadFileByShareId = async (share_id: string) => {
+const downloadFile = (token: string, fileId: string) => {
+    return baseDownloadFile(token, [fileId])
+}
+
+const downloadArchive = (token: string, fileIds: string[], target: DownloadArchiveTarget = 'zip') => {
+    return baseDownloadFile(token, fileIds, target)
+}
+
+const downloadFileByShareId = async (share_id: string, fileId: string) => {
     const token = await getShareToken(share_id)
     if (!token) {
         throw new Error('获取token失败')
     }
-    return downloadFile(token)
+    return downloadFile(token, fileId)
 }
 
 const createShare = async (data: any) => {
@@ -100,6 +110,7 @@ const createTextShare = async (data: { text: string; config: any }) => {
 const useMyAppShare = () => {
     return {
         downloadFile,
+        downloadArchive,
         downloadFileByShareId,
         createShare,
         createFileShare,

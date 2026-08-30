@@ -261,6 +261,7 @@
                 "passwordPlaceholder": "パスワードを入力"
             },
             "fileShare": {
+                "fileList": "ファイル一覧",
                 "title": "ファイルをダウンロード",
                 "downloadBtn": "ダウンロード",
                 "packageDownload": "アーカイブをダウンロード",

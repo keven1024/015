@@ -192,7 +192,7 @@ watch(
                                 return
                             }
                             try {
-                                await downloadFileByShareId(id)
+                                await downloadFileByShareId(id, new_file.id)
                             } catch (error: any) {
                                 toast.error(error?.data?.message || error?.message || error)
                             }

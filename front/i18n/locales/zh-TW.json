@@ -261,6 +261,7 @@
                 "passwordPlaceholder": "請輸入密碼"
             },
             "fileShare": {
+                "fileList": "檔案清單",
                 "title": "下載檔案",
                 "downloadBtn": "下載",
                 "packageDownload": "封裝下載",

@@ -261,6 +261,7 @@
                 "passwordPlaceholder": "Saisissez le mot de passe"
             },
             "fileShare": {
+                "fileList": "Liste des fichiers",
                 "title": "Télécharger le fichier",
                 "downloadBtn": "Télécharger",
                 "packageDownload": "Télécharger l’archive",

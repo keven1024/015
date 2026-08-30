@@ -14,7 +14,7 @@ const props = defineProps<{
 }>()
 
 const queryClient = useQueryClient()
-const { downloadFile, getShareToken } = useMyAppShare()
+const { downloadFile, downloadArchive, getShareToken } = useMyAppShare()
 const token = ref<string>()
 const selectedFiles = ref<any[]>([])
 const files = computed<any[]>(() => props?.data?.files || [])
@@ -35,7 +35,13 @@ const handleDownload = async (target?: DownloadArchiveTarget, fileIds?: string[]
                 throw new Error(t('page.shareView.fileShare.getTokenFailed'))
             }
         }
-        downloadFile(token.value, fileIds, target)
+        if (target) {
+            downloadArchive(token.value, fileIds || [], target)
+        } else {
+            const fileId = fileIds?.[0]
+            if (!fileId) throw new Error(t('page.shareView.fileShare.getTokenFailed'))
+            downloadFile(token.value, fileId)
+        }
     } catch (error: any) {
         toast.error(error?.data?.message || error?.message || error)
     } finally {

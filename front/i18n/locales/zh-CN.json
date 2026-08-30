@@ -261,6 +261,7 @@
                 "passwordPlaceholder": "请输入密码"
             },
             "fileShare": {
+                "fileList": "文件列表",
                 "packageDownload": "打包下载",
                 "remainingDownloads": "剩余下载次数",
                 "getTokenFailed": "获取token失败",
