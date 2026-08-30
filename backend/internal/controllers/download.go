@@ -81,7 +81,7 @@ func DownloadShare(c *echo.Context) error {
 			return c.Attachment(shareFiles[0].Id, shareFiles[0].FileName)
 		}
 		target := c.FormValue("target")
-		if !lo.Contains([]string{"zip", "tar.gz"}, target) {
+		if !lo.Contains([]string{"zip", "tar.gz", "tar.zst", "tar.s2", "tar.snappy"}, target) {
 			target = "zip"
 		}
 		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, uploadPath, target)

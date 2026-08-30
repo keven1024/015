@@ -12,7 +12,10 @@ import (
 	"time"
 
 	"github.com/klauspost/compress/gzip"
+	"github.com/klauspost/compress/s2"
+	"github.com/klauspost/compress/snappy"
 	"github.com/klauspost/compress/zip"
+	"github.com/klauspost/compress/zstd"
 )
 
 func CreateFileSlice(fileId string, uploadPath string, fileSlice io.Reader, fileIndex int64) (string, error) {
@@ -95,7 +98,21 @@ func GenerateCompressFiles(shareId string, shareFileData []sharemodel.ShareFileD
 	case "zip":
 		return createZipFile(compressFileName, shareFileData, uploadPath)
 	case "tar.gz":
-		return createTarGzFile(compressFileName, shareFileData, uploadPath)
+		return createTarCompressedFile(compressFileName, "tar.gz", shareFileData, uploadPath, func(w io.Writer) (io.WriteCloser, error) {
+			return gzip.NewWriter(w), nil
+		})
+	case "tar.zst":
+		return createTarCompressedFile(compressFileName, "tar.zst", shareFileData, uploadPath, func(w io.Writer) (io.WriteCloser, error) {
+			return zstd.NewWriter(w)
+		})
+	case "tar.s2":
+		return createTarCompressedFile(compressFileName, "tar.s2", shareFileData, uploadPath, func(w io.Writer) (io.WriteCloser, error) {
+			return s2.NewWriter(w), nil
+		})
+	case "tar.snappy":
+		return createTarCompressedFile(compressFileName, "tar.snappy", shareFileData, uploadPath, func(w io.Writer) (io.WriteCloser, error) {
+			return snappy.NewBufferedWriter(w), nil
+		})
 	default:
 		return "", fmt.Errorf("unsupported compress type: %s", target)
 	}
@@ -149,17 +166,28 @@ func createZipFile(compressFileName string, shareFileData []sharemodel.ShareFile
 	return compressFullName, nil
 }
 
-func createTarGzFile(compressFileName string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
-	compressFullName := fmt.Sprintf("%s.tar.gz", compressFileName)
+type compressWriterFactory func(io.Writer) (io.WriteCloser, error)
+
+func createTarCompressedFile(
+	compressFileName string,
+	extension string,
+	shareFileData []sharemodel.ShareFileData,
+	uploadPath string,
+	newCompressWriter compressWriterFactory,
+) (string, error) {
+	compressFullName := fmt.Sprintf("%s.%s", compressFileName, extension)
 	out, err := os.Create(filepath.Join(uploadPath, compressFullName))
 	if err != nil {
 		return "", err
 	}
 	defer out.Close()
-	gzw := gzip.NewWriter(out)
-	defer gzw.Close()
+	compressWriter, err := newCompressWriter(out)
+	if err != nil {
+		return "", err
+	}
+	defer compressWriter.Close()
 
-	tw := tar.NewWriter(gzw)
+	tw := tar.NewWriter(compressWriter)
 	defer tw.Close()
 
 	for _, file := range shareFileData {
