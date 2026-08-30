@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<!--
+  占位文件：保证 pkg/mail/out/ 目录非空，使 //go:embed out/*.html 在没有运行
+  `pnpm --dir pkg/mail export` 的情况下也能编译/lint（如 CI、新克隆的仓库）。
+  真实模板由 export 生成（如 pull-notify.html），export 清理时不会删除本文件。
+-->
+<html><body>placeholder for go:embed</body></html>
