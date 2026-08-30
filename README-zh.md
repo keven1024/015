@@ -4,7 +4,7 @@
 
 015 (/ˈzɪərəʊ wʌn faɪv/, "zero-one-five") 是一个支持selfhosted的临时文件分享平台。专注于提供一次性，临时的文件和文本上传，处理，分享服务。项目名称来源于DARLING in the FRANXX的 [莓](https://darling-in-the-franxx.fandom.com/wiki/Ichigo)
 
-一个基于 Vue 3 + Nuxt 3 + Go 构建的现代文件分享网站，支持文件上传、文本分享、图片压缩、并发处理、秒传功能等，具备完整的分享管理和访问控制体系。
+一个基于 Vue 3 + Nuxt 4 + Go 构建的现代文件分享网站，支持文件上传、文本分享、图片压缩、并发处理、秒传功能等，具备完整的分享管理和访问控制体系。
 
 ![015 Platform Overview](/.github/image/0.png)
 
@@ -16,28 +16,28 @@
 
 ### 核心功能
 
-🖼️ **高性能文件上传** - 支持大文件切片上传，前端计算文件哈希实现秒传  
-📱 **响应式设计** - 基于 Tailwind V4 + Reka UI 的现代化 UI，适配各种设备  
-⚡ **并发处理** - 使用 Web Worker 进行前端Hash计算，后端队列系统处理任务  
-🌐 **多语言支持** - 完整的中英文国际化支持  
-🔗 **分享管理** - 灵活的分享链接生成和管理系统
+- 🖼️ **高性能文件上传** - 支持大文件切片上传，前端计算文件哈希实现秒传
+- 📱 **响应式设计** - 基于 Tailwind V4 + Reka UI 的现代化 UI，适配各种设备
+- ⚡ **并发处理** - 使用 Web Worker 进行前端 Hash 计算，后端队列系统处理任务
+- 🌐 **多语言支持** - 支持简体中文、繁体中文、英语、日语、韩语、法语和德语
+- 🔗 **分享管理** - 灵活的分享链接生成和管理系统
 
 ### 文件处理
 
-🔄 **智能秒传** - 基于文件哈希+文件大小的前端秒传检测，避免重复上传  
-📷 **图片压缩** - 自动图片压缩功能，支持多种格式  
-🖼️ **文件预览** - 支持图片、视频、音频、文档等多种文件类型预览  
-📊 **上传统计** - 实时显示上传进度和文件信息  
-🌈 **断点续传** - 支持上传中断后的续传功能
+- 🔄 **智能秒传** - 基于文件哈希和文件大小的前端秒传检测，避免重复上传
+- 📷 **图片压缩** - 支持对上传图片进行异步压缩处理
+- 🖼️ **文件预览** - 支持图片和视频内容预览，并展示其他文件的类型与基本信息
+- 📊 **上传统计** - 实时显示上传进度和文件信息
+- 🌈 **断点续传** - 支持上传中断后的续传功能
 
 ### 高级功能
 
-🎛️ **分享控制** - 支持密码保护、下载次数限制、过期时间设置  
-🔍 **取件码系统** - 支持取件码分享，简化分享难度  
-⚡ **队列处理** - 基于 Redis + Asynq 的异步任务处理系统  
-🗂️ **文件管理** - 完整的文件生命周期管理  
-📷 **图片处理** - 图片压缩、格式转换等处理功能  
-🏷️ **下载控制** - 基于 JWT 的下载令牌管理系统
+- 🎛️ **分享控制** - 支持密码保护、下载次数限制、过期时间设置
+- 🔍 **取件码系统** - 支持取件码分享，简化分享难度
+- ⚡ **队列处理** - 基于 Redis + Asynq 的异步任务处理系统
+- 🗂️ **文件管理** - 完整的文件生命周期管理
+- 📷 **图片处理** - 图片压缩、格式转换等处理功能
+- 🏷️ **下载控制** - 基于 JWT 的下载令牌管理系统
 
 ## 📸 截图预览
 
@@ -76,22 +76,22 @@ docker compose up -d
 ### 前端技术栈
 
 - **Vue 3** - 渐进式 JavaScript 框架
-- **Nuxt 3** - Vue.js 全栈框架
+- **Nuxt 4** - Vue.js 全栈框架
 - **TypeScript** - 完整的类型安全
 - **Tailwind CSS** - 原子化 CSS 框架
 - **Reka UI** - 现代化组件库
 - **Pinia** - 状态管理
 - **TanStack Query** - 数据获取和缓存
-- **Vue Router** - 路由管理
-- **i18next** - 国际化支持
+- **Nuxt 文件路由** - 页面与路由管理
+- **Nuxt I18n / Vue I18n** - 国际化支持
 
 ### 后端技术栈
 
-- **Go 1.23** - 高性能服务器端语言
+- **Go 1.25.5** - 高性能服务器端语言
 - **Echo** - 高性能 HTTP 框架
 - **Redis** - 缓存和会话存储
 - **Asynq** - 异步任务队列
-- **JWT** - 身份验证
+- **JWT** - 下载访问令牌
 - **Zap** - 结构化日志
 
 ### 构建系统
@@ -112,26 +112,35 @@ docker compose up -d
 
 ```
 015/
-├── front/                 # 前端应用 (Vue 3 + Nuxt 3)
-│   ├── components/       # Vue 组件
-│   ├── pages/            # 页面路由
-│   ├── composables/      # 组合式函数
-│   ├── i18n/             # 国际化文件
-│   ├── assets/           # 静态资源
-│   ├── plugins/          # Nuxt 插件
-│   └── server/           # 服务端路由
-├── backend/             # 后端服务 (Go + Echo)
-│   ├── internal/       # 内部包
-│   │   ├── controllers/ # 控制器
-│   │   ├── services/   # 业务逻辑
-│   │   └── utils/      # 工具函数
-│   └── middleware/     # 中间件
-├── worker/             # 异步任务处理 (Go + Asynq)
-│   ├── internal/       # 内部包
-│   │   ├── tasks/      # 任务处理器
-│   │   └── utils/      # 工具函数
-│   └── middleware/     # 中间件
-└── pkg/               # 公共包
+├── front/                    # 前端应用 (Vue 3 + Nuxt 4)
+│   ├── components/           # Vue 组件与 UI 组件
+│   ├── pages/                # 文件路由页面
+│   ├── composables/          # 组合式函数
+│   ├── i18n/                 # 前端国际化资源
+│   ├── assets/               # 样式等静态资源
+│   ├── plugins/              # Nuxt 插件
+│   └── server/               # Nuxt 服务端配置接口
+├── backend/                  # API 服务 (Go + Echo)
+│   ├── internal/
+│   │   ├── controllers/      # HTTP 控制器
+│   │   ├── services/         # 业务逻辑
+│   │   └── utils/            # 后端工具
+│   └── middleware/           # HTTP 中间件
+├── worker/                   # 异步任务处理 (Go + Asynq)
+│   ├── internal/
+│   │   ├── services/         # 文件、图片、通知与文本服务
+│   │   ├── tasks/            # 队列任务处理器
+│   │   └── utils/            # Worker 工具
+│   └── middleware/           # Worker 中间件
+├── pkg/                      # Go Workspace 公共模块
+│   ├── geoip/                # IP 地理位置
+│   ├── i18n/                 # 后端国际化
+│   ├── mail/                 # 邮件模板与发送模块
+│   ├── models/               # Redis 数据模型
+│   ├── services/             # 公共服务
+│   └── utils/                # 公共工具
+├── go.work                   # Go Workspace 配置
+└── pnpm-workspace.yaml       # pnpm Workspace 配置
 ```
 
 ## 🔧 开发指南
@@ -195,6 +204,6 @@ cd worker && go build -o worker .
 ## 🔗 相关链接
 
 - [Vue 3 文档](https://vuejs.org/)
-- [Nuxt 3 文档](https://nuxt.com/)
+- [Nuxt 4 文档](https://nuxt.com/)
 - [Echo 框架文档](https://echo.labstack.com/)
 - [Asynq 文档](https://github.com/hibiken/asynq)

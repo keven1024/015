@@ -4,7 +4,7 @@
 
 015 (/ˈzɪərəʊ wʌn faɪv/, "zero-one-five") is a self-hosted temporary file sharing platform. Focused on providing one-time, temporary file and text upload, processing, and sharing services. The project name originates from [Ichigo](https://darling-in-the-franxx.fandom.com/wiki/Ichigo) from DARLING in the FRANXX.
 
-A modern file sharing website built with Vue 3 + Nuxt 3 + Go, supporting file upload, text sharing, image compression, concurrent processing, instant transfer functionality, and more, featuring a complete sharing management and access control system.
+A modern file sharing website built with Vue 3 + Nuxt 4 + Go, supporting file upload, text sharing, image compression, concurrent processing, instant transfer functionality, and more, featuring a complete sharing management and access control system.
 
 ![015 Platform Overview](/.github/image/0.png)
 
@@ -16,28 +16,28 @@ English | [中文](README-zh.md)
 
 ### Core Functionality
 
-🖼️ **High-Performance File Upload** - Supports large file chunked uploads with frontend file hash calculation for instant transfer  
-📱 **Responsive Design** - Modern UI based on Tailwind V4 + Reka UI, adapts to various devices  
-⚡ **Concurrent Processing** - Uses Web Worker for frontend hash calculation, backend queue system for task processing  
-🌐 **Multi-language Support** - Complete Chinese and English internationalization support  
-🔗 **Share Management** - Flexible sharing link generation and management system
+- 🖼️ **High-Performance File Upload** - Supports large file chunked uploads with frontend file hash calculation for instant transfer
+- 📱 **Responsive Design** - Modern UI based on Tailwind V4 + Reka UI, adapts to various devices
+- ⚡ **Concurrent Processing** - Uses a Web Worker for frontend hash calculation and a backend queue for task processing
+- 🌐 **Multi-language Support** - Supports Simplified Chinese, Traditional Chinese, English, Japanese, Korean, French, and German
+- 🔗 **Share Management** - Flexible share link generation and management system
 
 ### File Processing
 
-🔄 **Smart Instant Transfer** - Frontend instant transfer detection based on file hash + file size, avoiding duplicate uploads  
-📷 **Image Compression** - Automatic image compression functionality supporting multiple formats  
-🖼️ **File Preview** - Supports preview of images, videos, audio, documents, and various file types  
-📊 **Upload Statistics** - Real-time display of upload progress and file information  
-🌈 **Resume Upload** - Supports resuming uploads after interruption
+- 🔄 **Smart Instant Transfer** - Detects existing uploads from the file hash and size to avoid uploading duplicate data
+- 📷 **Image Compression** - Supports asynchronous compression of uploaded images
+- 🖼️ **File Preview** - Previews image and video content and displays type and basic information for other files
+- 📊 **Upload Statistics** - Displays upload progress and file information in real time
+- 🌈 **Resumable Uploads** - Resumes uploads from chunks already stored by the server
 
 ### Advanced Features
 
-🎛️ **Share Control** - Supports password protection, download count limits, and expiration time settings  
-🔍 **Pickup Code System** - Supports pickup code sharing, simplifying sharing difficulty  
-⚡ **Queue Processing** - Asynchronous task processing system based on Redis + Asynq  
-🗂️ **File Management** - Complete file lifecycle management  
-📷 **Image Processing** - Image compression, format conversion, and other processing features  
-🏷️ **Download Control** - Download token management system based on JWT
+- 🎛️ **Share Control** - Supports password protection, download count limits, and expiration settings
+- 🔍 **Pickup Code System** - Provides short pickup codes for easier sharing
+- ⚡ **Queue Processing** - Asynchronous task processing based on Redis and Asynq
+- 🗂️ **File Management** - Complete file lifecycle management
+- 📷 **Image Processing** - Image compression and format conversion
+- 🏷️ **Download Control** - JWT-based download token management
 
 ## 📸 Screenshots
 
@@ -75,22 +75,22 @@ docker compose up -d
 ### Frontend Tech Stack
 
 - **Vue 3** - Progressive JavaScript framework
-- **Nuxt 3** - Vue.js full-stack framework
+- **Nuxt 4** - Vue.js full-stack framework
 - **TypeScript** - Complete type safety
 - **Tailwind CSS** - Atomic CSS framework
 - **Reka UI** - Modern component library
 - **Pinia** - State management
 - **TanStack Query** - Data fetching and caching
-- **Vue Router** - Routing management
-- **i18next** - Internationalization support
+- **Nuxt File-based Routing** - Page and route management
+- **Nuxt I18n / Vue I18n** - Internationalization support
 
 ### Backend Tech Stack
 
-- **Go 1.23** - High-performance server-side language
+- **Go 1.25.5** - High-performance server-side language
 - **Echo** - High-performance HTTP framework
 - **Redis** - Caching and session storage
 - **Asynq** - Asynchronous task queue
-- **JWT** - Authentication
+- **JWT** - Download access tokens
 - **Zap** - Structured logging
 
 ### Build System
@@ -111,26 +111,35 @@ docker compose up -d
 
 ```
 015/
-├── front/                 # Frontend application (Vue 3 + Nuxt 3)
-│   ├── components/       # Vue components
-│   ├── pages/            # Page routes
-│   ├── composables/      # Composable functions
-│   ├── i18n/             # Internationalization files
-│   ├── assets/           # Static assets
-│   ├── plugins/          # Nuxt plugins
-│   └── server/           # Server-side routes
-├── backend/             # Backend service (Go + Echo)
-│   ├── internal/       # Internal packages
-│   │   ├── controllers/ # Controllers
-│   │   ├── services/   # Business logic
-│   │   └── utils/      # Utility functions
-│   └── middleware/     # Middleware
-├── worker/             # Asynchronous task processing (Go + Asynq)
-│   ├── internal/       # Internal packages
-│   │   ├── tasks/      # Task processors
-│   │   └── utils/      # Utility functions
-│   └── middleware/     # Middleware
-└── pkg/               # Shared packages
+├── front/                    # Frontend application (Vue 3 + Nuxt 4)
+│   ├── components/           # Vue and UI components
+│   ├── pages/                # File-based page routes
+│   ├── composables/          # Composable functions
+│   ├── i18n/                 # Frontend localization resources
+│   ├── assets/               # Styles and static assets
+│   ├── plugins/              # Nuxt plugins
+│   └── server/               # Nuxt server configuration endpoint
+├── backend/                  # API service (Go + Echo)
+│   ├── internal/
+│   │   ├── controllers/      # HTTP controllers
+│   │   ├── services/         # Business logic
+│   │   └── utils/            # Backend utilities
+│   └── middleware/           # HTTP middleware
+├── worker/                   # Asynchronous task processing (Go + Asynq)
+│   ├── internal/
+│   │   ├── services/         # File, image, notification, and text services
+│   │   ├── tasks/            # Queue task handlers
+│   │   └── utils/            # Worker utilities
+│   └── middleware/           # Worker middleware
+├── pkg/                      # Shared Go Workspace modules
+│   ├── geoip/                # IP geolocation
+│   ├── i18n/                 # Backend localization
+│   ├── mail/                 # Email templates and delivery
+│   ├── models/               # Redis data models
+│   ├── services/             # Shared services
+│   └── utils/                # Shared utilities
+├── go.work                   # Go Workspace configuration
+└── pnpm-workspace.yaml       # pnpm Workspace configuration
 ```
 
 ## 🔧 Development Guide
@@ -194,6 +203,6 @@ This project is licensed under AGPLV3.
 ## 🔗 Related Links
 
 - [Vue 3 Documentation](https://vuejs.org/)
-- [Nuxt 3 Documentation](https://nuxt.com/)
+- [Nuxt 4 Documentation](https://nuxt.com/)
 - [Echo Framework Documentation](https://echo.labstack.com/)
 - [Asynq Documentation](https://github.com/hibiken/asynq)
