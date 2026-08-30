@@ -124,9 +124,9 @@ func createZipFile(compressFileName string, shareFileData []sharemodel.ShareFile
 	if err != nil {
 		return "", err
 	}
-	defer out.Close()
+	defer out.Close() //nolint:errcheck
 	zw := zip.NewWriter(out)
-	defer zw.Close()
+	defer zw.Close() //nolint:errcheck
 	for _, file := range shareFileData {
 		f, err := os.Open(filepath.Join(uploadPath, file.Id))
 		if err != nil {
@@ -180,15 +180,15 @@ func createTarCompressedFile(
 	if err != nil {
 		return "", err
 	}
-	defer out.Close()
+	defer out.Close() //nolint:errcheck
 	compressWriter, err := newCompressWriter(out)
 	if err != nil {
 		return "", err
 	}
-	defer compressWriter.Close()
+	defer compressWriter.Close() //nolint:errcheck
 
 	tw := tar.NewWriter(compressWriter)
-	defer tw.Close()
+	defer tw.Close() //nolint:errcheck
 
 	for _, file := range shareFileData {
 		f, err := os.Open(filepath.Join(uploadPath, file.Id))
