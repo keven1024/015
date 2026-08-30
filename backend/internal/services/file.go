@@ -90,20 +90,20 @@ func MergeFileSlices(fileId string, uploadPath string) (string, error) {
 }
 
 func GenerateCompressFiles(shareId string, shareFileData []sharemodel.ShareFileData, uploadPath string, target string) (string, error) {
-	prefixPath := filepath.Join(uploadPath, fmt.Sprintf("%s%d", shareId, time.Now().Unix()))
+	compressFileName := fmt.Sprintf("%s%d", shareId, time.Now().Unix())
 	switch target {
 	case "zip":
-		return createZipFile(prefixPath, shareFileData, uploadPath)
+		return createZipFile(compressFileName, shareFileData, uploadPath)
 	case "tar.gz":
-		return createTarGzFile(prefixPath, shareFileData, uploadPath)
+		return createTarGzFile(compressFileName, shareFileData, uploadPath)
 	default:
 		return "", fmt.Errorf("unsupported compress type: %s", target)
 	}
 }
 
-func createZipFile(prefixPath string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
-	compressPath := fmt.Sprintf("%s.zip", prefixPath)
-	out, err := os.Create(compressPath)
+func createZipFile(compressFileName string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
+	compressFullName := fmt.Sprintf("%s.zip", compressFileName)
+	out, err := os.Create(filepath.Join(uploadPath, compressFullName))
 	if err != nil {
 		return "", err
 	}
@@ -146,12 +146,12 @@ func createZipFile(prefixPath string, shareFileData []sharemodel.ShareFileData, 
 			return "", err
 		}
 	}
-	return compressPath, nil
+	return compressFullName, nil
 }
 
-func createTarGzFile(prefixPath string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
-	compressPath := fmt.Sprintf("%s.tar.gz", prefixPath)
-	out, err := os.Create(compressPath)
+func createTarGzFile(compressFileName string, shareFileData []sharemodel.ShareFileData, uploadPath string) (string, error) {
+	compressFullName := fmt.Sprintf("%s.tar.gz", compressFileName)
+	out, err := os.Create(filepath.Join(uploadPath, compressFullName))
 	if err != nil {
 		return "", err
 	}
@@ -192,5 +192,5 @@ func createTarGzFile(prefixPath string, shareFileData []sharemodel.ShareFileData
 			return "", err
 		}
 	}
-	return compressPath, nil
+	return compressFullName, nil
 }

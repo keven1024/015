@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"pkg/utils"
 
 	"github.com/labstack/echo/v5"
@@ -29,6 +30,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Filesystem = os.DirFS(utils.GetEnv("upload.path"))
 	for _, middleware := range middlewares {
 		e.Use(middleware())
 	}

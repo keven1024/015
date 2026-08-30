@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	filemodel "pkg/models/file"
 	sharemodel "pkg/models/share"
 	statmodel "pkg/models/stat"
@@ -77,18 +78,18 @@ func DownloadShare(c *echo.Context) error {
 			shareFiles[index].Id = u.GetFileId(fileInfo.FileHash, fileInfo.FileSize)
 		}
 		if len(shareFiles) == 1 {
-			return c.Attachment(fmt.Sprintf("%s/%s", uploadPath, shareFiles[0].Id), shareFiles[0].FileName)
+			return c.Attachment(shareFiles[0].Id, shareFiles[0].FileName)
 		}
 		target := c.FormValue("target")
 		if !lo.Contains([]string{"zip", "tar.gz"}, target) {
 			target = "zip"
 		}
-		compressPath, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, uploadPath, target)
+		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, uploadPath, target)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		defer os.Remove(compressPath) //nolint:errcheck
-		return c.Attachment(compressPath, fmt.Sprintf("%s.%s", claims.ShareId, target))
+		defer os.Remove(filepath.Join(uploadPath, compressFullName)) //nolint:errcheck
+		return c.Attachment(compressFullName, fmt.Sprintf("%s.%s", claims.ShareId, target))
 	}
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"text": shareInfo.Text,
