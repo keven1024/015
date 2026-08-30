@@ -16,7 +16,7 @@ const props = defineProps<{
         <div
             v-for="file in props.files"
             :key="file.id || file.file_name"
-            class="group flex min-w-0 items-center gap-2.5 rounded-lg bg-black/5 px-2.5 py-2 transition-colors hover:bg-black/10 dark:bg-white/[0.06] dark:hover:bg-white/[0.1]"
+            class="group flex min-w-0 items-center gap-2.5 rounded-lg bg-black/5 px-2.5 py-2 transition-colors hover:bg-black/10 dark:bg-white/6 dark:hover:bg-white/10"
         >
             <FileIcon :file="{ name: file.file_name, type: file.mime_type || '', size: file.size || 0 }" size="sm" class="shrink-0" />
             <div class="min-w-0 flex-1">
