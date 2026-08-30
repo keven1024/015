@@ -102,16 +102,22 @@ const shareInfo = computed(() => {
 
 <template>
     <BaseCard class="flex flex-col gap-3 my-5" :title="t('page.shareManage.title')" :showBackButton="true">
-        <div v-if="isLoading" class="space-y-8">
-            <div class="space-y-3">
-                <Skeleton class="h-4 w-24 rounded-md" />
-                <Skeleton class="h-8 w-56 rounded-md" />
+        <div v-if="isLoading" class="flex flex-col gap-3" aria-busy="true" aria-live="polite">
+            <Skeleton class="h-5 w-20 rounded-md" />
+            <div class="grid w-full grid-cols-1 gap-2 md:grid-cols-3">
+                <Skeleton v-for="i in 4" :key="`info-${i}`" class="h-11 rounded-xl md:h-20" />
             </div>
-            <div class="grid gap-3 sm:grid-cols-2">
-                <Skeleton v-for="i in 2" :key="i" class="h-28 rounded-xl" />
+
+            <Skeleton class="mt-1 h-5 w-20 rounded-md" />
+            <div class="flex gap-2">
+                <Skeleton class="h-9 min-w-0 flex-1 rounded-md" />
+                <Skeleton v-for="i in 4" :key="`action-${i}`" class="size-9 shrink-0 rounded-md" />
             </div>
-            <Skeleton class="h-20 rounded-xl" />
-            <Skeleton class="h-64 rounded-xl" />
+
+            <Skeleton class="mt-1 h-5 w-16 rounded-md" />
+            <div class="grid gap-2">
+                <Skeleton v-for="i in 3" :key="`content-${i}`" class="h-14 rounded-lg" />
+            </div>
         </div>
 
         <ShareError v-else-if="error || !data" :title="t('page.shareManage.loadFailed')" />
