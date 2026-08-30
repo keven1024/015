@@ -57,22 +57,12 @@ const shareInfo = computed(() => {
 
 <template>
     <BaseCard class="my-5 overflow-hidden">
-        <div v-if="isLoading" class="flex flex-col items-center gap-5">
-            <Skeleton class="h-6 w-32 rounded-md" />
-            <Skeleton class="size-16 rounded-xl" />
-            <Skeleton class="h-5 w-28 rounded-md" />
-            <div class="flex w-full flex-col gap-2 md:flex-row">
-                <div
-                    v-for="i in 3"
-                    :key="i"
-                    class="flex min-h-11 flex-1 items-center justify-between gap-1 rounded-xl bg-black/5 px-3 py-2 md:flex-col md:items-start md:justify-between"
-                >
-                    <Skeleton class="h-3 w-16 rounded-md bg-black/10" />
-                    <Skeleton v-if="i === 1" class="size-7 rounded-full bg-white/50" />
-                    <Skeleton v-else class="h-6 w-16 rounded-md bg-black/10" />
-                </div>
+        <div v-if="isLoading" class="flex flex-col items-center gap-3" aria-busy="true" aria-live="polite">
+            <Skeleton class="h-7 w-32 rounded-md" />
+            <div class="grid w-full grid-cols-1 gap-2 md:grid-cols-3">
+                <Skeleton v-for="i in 3" :key="`info-${i}`" class="h-11 rounded-xl md:h-20" />
             </div>
-            <Skeleton class="h-10 w-full rounded-md" />
+            <Skeleton class="h-9 w-full rounded-md" />
         </div>
         <template v-else>
             <ShareError v-if="isExpired || !data" :title="t('page.shareView.linkExpired')" />
