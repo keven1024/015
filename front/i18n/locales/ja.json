@@ -248,7 +248,13 @@
             "openShare": "共有ページを開く",
             "files": "ファイル",
             "textContent": "テキスト内容",
-            "loadFailed": "共有の有効期限が切れているか、管理権限がありません"
+            "loadFailed": "共有の有効期限が切れているか、管理権限がありません",
+            "deleteShare": "共有を削除",
+            "deleteConfirmTitle": "この共有を削除しますか？",
+            "deleteConfirmDescription": "共有リンクは直ちに無効になります。この操作は元に戻せません。",
+            "cancelDelete": "キャンセル",
+            "confirmDelete": "削除",
+            "deleteFailed": "共有を削除できませんでした"
         },
         "shareView": {
             "title": "共有",

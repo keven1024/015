@@ -248,7 +248,13 @@
             "openShare": "打开分享页",
             "files": "文件列表",
             "textContent": "文本内容",
-            "loadFailed": "分享已过期或没有管理权限"
+            "loadFailed": "分享已过期或没有管理权限",
+            "deleteShare": "删除分享",
+            "deleteConfirmTitle": "确认删除这个分享？",
+            "deleteConfirmDescription": "删除后分享链接将立即失效，此操作无法撤销。",
+            "cancelDelete": "取消",
+            "confirmDelete": "确认删除",
+            "deleteFailed": "删除分享失败"
         },
         "shareView": {
             "title": "分享",

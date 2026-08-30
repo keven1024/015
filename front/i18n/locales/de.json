@@ -248,7 +248,13 @@
             "openShare": "Freigabe öffnen",
             "files": "Dateien",
             "textContent": "Textinhalt",
-            "loadFailed": "Die Freigabe ist abgelaufen oder Sie haben keine Verwaltungsberechtigung"
+            "loadFailed": "Die Freigabe ist abgelaufen oder Sie haben keine Verwaltungsberechtigung",
+            "deleteShare": "Freigabe löschen",
+            "deleteConfirmTitle": "Diese Freigabe löschen?",
+            "deleteConfirmDescription": "Der Freigabelink wird sofort ungültig. Diese Aktion kann nicht rückgängig gemacht werden.",
+            "cancelDelete": "Abbrechen",
+            "confirmDelete": "Löschen",
+            "deleteFailed": "Die Freigabe konnte nicht gelöscht werden"
         },
         "shareView": {
             "title": "Teilen",

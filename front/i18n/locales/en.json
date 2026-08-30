@@ -248,7 +248,13 @@
             "openShare": "Open share",
             "files": "Files",
             "textContent": "Text content",
-            "loadFailed": "The share has expired or you do not have management permission"
+            "loadFailed": "The share has expired or you do not have management permission",
+            "deleteShare": "Delete share",
+            "deleteConfirmTitle": "Delete this share?",
+            "deleteConfirmDescription": "The share link will stop working immediately. This action cannot be undone.",
+            "cancelDelete": "Cancel",
+            "confirmDelete": "Delete",
+            "deleteFailed": "Failed to delete the share"
         },
         "shareView": {
             "title": "Share",

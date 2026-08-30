@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useQuery } from '@tanstack/vue-query'
 import { useShare } from '@vueuse/core'
+import { toast } from 'vue-sonner'
 import useMyAppConfig from '@/composables/useMyAppConfig'
 import CopyButton from '~/components/CopyButton.vue'
+import ConfirmActionDrawer from '@/components/Drawer/ConfirmActionDrawer.vue'
 import QrCoreDrawer from '@/components/Drawer/QrCoreDrawer.vue'
 import showDrawer from '@/lib/showDrawer'
-import { LucideExternalLink, LucideQrCode, LucideShare } from '@lucide/vue'
+import { LucideExternalLink, LucideQrCode, LucideShare, LucideTrash2 } from '@lucide/vue'
 import FileShareManage from '@/components/Share/Manage/FileShareManage.vue'
 import TextShareManage from '@/components/Share/Manage/TextShareManage.vue'
 
@@ -33,6 +35,7 @@ type ShareData = {
 }
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const appConfig = useMyAppConfig()
 const id = computed(() => String(route.params.id || ''))
@@ -57,6 +60,26 @@ const handleSystemShare = () => share({ title: t('page.shareView.title'), url: s
 const handleShowQrCode = () => {
     showDrawer({
         render: ({ ...rest }) => h(QrCoreDrawer, { ...rest, data: shareUrl.value }),
+    })
+}
+const handleDelete = async (hide: () => Promise<void>) => {
+    try {
+        await $fetch(`/api/share/${id.value}`, { method: 'DELETE' })
+        await hide()
+        await router.push('/')
+    } catch (error: any) {
+        toast.error(error?.data?.message || error?.message || t('page.shareManage.deleteFailed'))
+    }
+}
+const handleShowDelete = () => {
+    showDrawer({
+        render: ({ hide }) =>
+            h(ConfirmActionDrawer, {
+                title: t('page.shareManage.deleteConfirmTitle'),
+                desc: t('page.shareManage.deleteConfirmDescription'),
+                btnLabel: t('page.shareManage.confirmDelete'),
+                onClick: () => handleDelete(hide),
+            }),
     })
 }
 
@@ -160,6 +183,16 @@ const shareInfo = computed(() => {
                     @click="handleShowQrCode"
                 >
                     <LucideQrCode class="size-4" />
+                </Button>
+                <Button
+                    variant="destructive"
+                    size="icon"
+                    class="shrink-0"
+                    :aria-label="t('page.shareManage.deleteShare')"
+                    :title="t('page.shareManage.deleteShare')"
+                    @click="handleShowDelete"
+                >
+                    <LucideTrash2 class="size-4" />
                 </Button>
             </div>
             <component :is="manageComponentMap[data.type as keyof typeof manageComponentMap] || 'div'" :data="data" />

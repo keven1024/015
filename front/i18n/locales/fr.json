@@ -248,7 +248,13 @@
             "openShare": "Ouvrir le partage",
             "files": "Fichiers",
             "textContent": "Contenu texte",
-            "loadFailed": "Le partage a expiré ou vous n’avez pas l’autorisation de le gérer"
+            "loadFailed": "Le partage a expiré ou vous n’avez pas l’autorisation de le gérer",
+            "deleteShare": "Supprimer le partage",
+            "deleteConfirmTitle": "Supprimer ce partage ?",
+            "deleteConfirmDescription": "Le lien de partage cessera immédiatement de fonctionner. Cette action est irréversible.",
+            "cancelDelete": "Annuler",
+            "confirmDelete": "Supprimer",
+            "deleteFailed": "Échec de la suppression du partage"
         },
         "shareView": {
             "title": "Partager",
