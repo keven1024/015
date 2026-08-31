@@ -1,5 +1,10 @@
 # syntax=docker/dockerfile:1
 
+FROM node:22-alpine AS mail-builder
+WORKDIR /app
+COPY . .
+RUN corepack enable pnpm && pnpm i && pnpm --dir pkg/mail export:ci
+
 FROM golang:1.25.5 AS builder
 
 # Set destination for COPY
@@ -8,6 +13,8 @@ COPY go.work go.work.sum ./
 COPY backend/ ./backend/
 COPY worker/ ./worker/
 COPY pkg/ ./pkg/
+# Inject built email templates so Go can embed them
+COPY --from=mail-builder /app/pkg/mail/out/ ./pkg/mail/out/
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && \
     go mod download
 # Build

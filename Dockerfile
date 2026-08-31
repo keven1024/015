@@ -7,7 +7,7 @@ RUN apk add --no-cache gcompat
 ENV CI=true
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY . .
-RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build && pnpm --dir pkg/mail export
+RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build
 
 FROM golang:1.26.3 AS backend-builder
 WORKDIR /app
@@ -16,8 +16,6 @@ COPY go.work go.work.sum ./
 COPY backend/ ./backend/
 COPY worker/ ./worker/
 COPY pkg/ ./pkg/
-# Inject built email templates so Go can embed them
-COPY --from=front-builder /app/pkg/mail/out/ ./pkg/mail/out/
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && \
     go mod download
 # Build from workspace root so pkg/utils, pkg/models, pkg/services resolve

@@ -5,7 +5,8 @@
     "scripts": {
         "build": "email build",
         "dev": "email dev",
-        "export": "email export && git restore out/.placeholder.html"
+        "export": "email export && git restore out/.placeholder.html",
+        "export:ci": "email export"
     },
     "dependencies": {
         "react": "19.2.4",
