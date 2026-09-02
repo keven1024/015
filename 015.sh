@@ -1,4 +1,4 @@
 #!/bin/sh
-/backend &
+/bin/backend &
 node /app/server/index.mjs &
 exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
