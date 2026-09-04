@@ -46,6 +46,29 @@
         "emptyOptions": "搜尋結果為空"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "偵測到 Markdown",
+                "parsePaste": "是否解析並貼上 Markdown 內容？",
+                "confirm": "是"
+            },
+            "tiptap": {
+                "text": "文字",
+                "heading1": "標題 1",
+                "heading2": "標題 2",
+                "heading3": "標題 3",
+                "heading4": "標題 4",
+                "bulletList": "項目符號清單",
+                "orderedList": "有序清單",
+                "code": "程式碼",
+                "quote": "引用",
+                "plainText": "純文字",
+                "convertTo": "轉換成",
+                "language": "語言",
+                "insertBelow": "向下插入",
+                "delete": "刪除"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "上傳檔案",

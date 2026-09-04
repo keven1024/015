@@ -46,6 +46,29 @@
         "emptyOptions": "No results found"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "Markdown detected",
+                "parsePaste": "Parse and paste the Markdown content?",
+                "confirm": "Yes"
+            },
+            "tiptap": {
+                "text": "Text",
+                "heading1": "Heading 1",
+                "heading2": "Heading 2",
+                "heading3": "Heading 3",
+                "heading4": "Heading 4",
+                "bulletList": "Bullet List",
+                "orderedList": "Ordered List",
+                "code": "Code",
+                "quote": "Quote",
+                "plainText": "Plain Text",
+                "convertTo": "Convert to",
+                "language": "Language",
+                "insertBelow": "Insert Below",
+                "delete": "Delete"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "Upload File",

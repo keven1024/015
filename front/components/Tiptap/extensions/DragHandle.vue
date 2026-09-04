@@ -35,6 +35,8 @@ const { editor } = defineProps<{
     editor: Editor
 }>()
 
+const { t } = useI18n()
+
 const activeNode = ref<{ type: string; from: number; to: number; attrs: { language?: string | null } }>()
 
 type BlockMenuItem = {
@@ -129,20 +131,20 @@ type AddMenuItem =
     | { type: 'separator' }
     | { type: 'item'; label: string; icon?: Component; class?: string; handle: () => void }
 
-const blockMenu: BlockMenuItem[] = [
-    { label: '文本', type: 'paragraph', icon: LucideText },
-    { label: '标题 1', type: 'heading', level: 1, icon: LucideHeading1 },
-    { label: '标题 2', type: 'heading', level: 2, icon: LucideHeading2 },
-    { label: '标题 3', type: 'heading', level: 3, icon: LucideHeading3 },
-    { label: '标题 4', type: 'heading', level: 4, icon: LucideHeading4 },
-    { label: '项目符号列表', type: 'bulletList', icon: LucideList },
-    { label: '有序列表', type: 'orderedList', icon: LucideListOrdered },
-    { label: '代码', type: 'codeBlock', icon: LucideCodeXml },
-    { label: '引用', type: 'blockquote', icon: LucideQuote },
-]
-const activeNodeMenu = computed(() => blockMenu.find((item) => item.type === activeNode.value?.type))
-const codeLanguages: CodeLanguage[] = [
-    { label: '纯文本', language: null },
+const blockMenu = computed<BlockMenuItem[]>(() => [
+    { label: t('page.editor.tiptap.text'), type: 'paragraph', icon: LucideText },
+    { label: t('page.editor.tiptap.heading1'), type: 'heading', level: 1, icon: LucideHeading1 },
+    { label: t('page.editor.tiptap.heading2'), type: 'heading', level: 2, icon: LucideHeading2 },
+    { label: t('page.editor.tiptap.heading3'), type: 'heading', level: 3, icon: LucideHeading3 },
+    { label: t('page.editor.tiptap.heading4'), type: 'heading', level: 4, icon: LucideHeading4 },
+    { label: t('page.editor.tiptap.bulletList'), type: 'bulletList', icon: LucideList },
+    { label: t('page.editor.tiptap.orderedList'), type: 'orderedList', icon: LucideListOrdered },
+    { label: t('page.editor.tiptap.code'), type: 'codeBlock', icon: LucideCodeXml },
+    { label: t('page.editor.tiptap.quote'), type: 'blockquote', icon: LucideQuote },
+])
+const activeNodeMenu = computed(() => blockMenu.value.find((item) => item.type === activeNode.value?.type))
+const codeLanguages = computed<CodeLanguage[]>(() => [
+    { label: t('page.editor.tiptap.plainText'), language: null },
     { label: 'JavaScript', language: 'javascript' },
     { label: 'TypeScript', language: 'typescript' },
     { label: 'JSX', language: 'jsx' },
@@ -158,7 +160,7 @@ const codeLanguages: CodeLanguage[] = [
     { label: 'Go', language: 'go' },
     { label: 'Rust', language: 'rust' },
     { label: 'YAML', language: 'yaml' },
-]
+])
 const setCodeLanguage = (language: string | null) => {
     const { from, type } = activeNode.value || {}
     if (!isNumber(from) || type !== 'codeBlock') return
@@ -170,26 +172,31 @@ const setCodeLanguage = (language: string | null) => {
         .run()
 }
 const addMenu = computed<AddMenuItem[]>(() => [
-    { type: 'sub', label: '转换成', icon: LucideRefreshCcw, children: blockMenu.map((item) => ({ ...item, handle: () => handleBlock(item) })) },
+    {
+        type: 'sub',
+        label: t('page.editor.tiptap.convertTo'),
+        icon: LucideRefreshCcw,
+        children: blockMenu.value.map((item) => ({ ...item, handle: () => handleBlock(item) })),
+    },
     ...(activeNode.value?.type === 'codeBlock'
         ? [
               {
                   type: 'sub' as const,
-                  label: '语言',
-                  children: codeLanguages.map((item) => ({ ...item, handle: () => setCodeLanguage(item.language) })),
+                  label: t('page.editor.tiptap.language'),
+                  children: codeLanguages.value.map((item) => ({ ...item, handle: () => setCodeLanguage(item.language) })),
               },
           ]
         : []),
     {
         type: 'sub',
-        label: '向下插入',
+        label: t('page.editor.tiptap.insertBelow'),
         icon: LucideArrowDownToLine,
-        children: blockMenu.map((item) => ({ ...item, handle: () => handleBlock(item, true) })),
+        children: blockMenu.value.map((item) => ({ ...item, handle: () => handleBlock(item, true) })),
     },
     { type: 'separator' },
     {
         type: 'item',
-        label: '删除',
+        label: t('page.editor.tiptap.delete'),
         icon: LucideTrash2,
         class: 'text-destructive focus:text-destructive',
         handle: () => {

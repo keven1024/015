@@ -46,6 +46,29 @@
         "emptyOptions": "Aucun résultat"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "Markdown détecté",
+                "parsePaste": "Analyser et coller le contenu Markdown ?",
+                "confirm": "Oui"
+            },
+            "tiptap": {
+                "text": "Texte",
+                "heading1": "Titre 1",
+                "heading2": "Titre 2",
+                "heading3": "Titre 3",
+                "heading4": "Titre 4",
+                "bulletList": "Liste à puces",
+                "orderedList": "Liste numérotée",
+                "code": "Code",
+                "quote": "Citation",
+                "plainText": "Texte brut",
+                "convertTo": "Convertir en",
+                "language": "Langue",
+                "insertBelow": "Insérer en dessous",
+                "delete": "Supprimer"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "Téléverser un fichier",
