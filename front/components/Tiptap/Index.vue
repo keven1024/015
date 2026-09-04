@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import 'katex/dist/katex.min.css'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
-import { Markdown } from 'tiptap-markdown'
+import { Markdown } from '@tiptap/markdown'
 import Placeholder from '@tiptap/extension-placeholder'
+import Mathematics from '@tiptap/extension-mathematics'
 import { cx } from 'class-variance-authority'
 import countWords from '@/lib/countWords'
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
 import Button from '@/components/ui/button/Button.vue'
+import { NodeRange } from '@tiptap/extension-node-range'
+import TiptapDragHandle from './extensions/DragHandle.vue'
 
 const { t } = useI18n()
 
@@ -19,7 +23,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void
 }>()
 
-const editor = ref<Editor | undefined>(undefined)
+const editor = shallowRef<Editor>()
 
 const clearContent = () => {
     editor.value?.commands.clearContent()
@@ -30,18 +34,34 @@ onMounted(() => {
     editor.value = new Editor({
         content: props.modelValue,
         extensions: [
-            StarterKit.configure({ codeBlock: false }),
+            StarterKit.configure({
+                codeBlock: false,
+                dropcursor: {
+                    color: 'var(--color-blue-300)',
+                    width: 2,
+                },
+            }),
             CodeBlockShiki.configure({
                 defaultTheme: 'tokyo-night',
             }),
             Markdown.configure({
-                transformPastedText: true,
-                transformCopiedText: true,
+                markedOptions: {
+                    gfm: true, // GitHub Flavored Markdown
+                },
+            }),
+            Mathematics.configure({
+                katexOptions: {
+                    throwOnError: false,
+                },
             }),
             Placeholder.configure({
                 placeholder: props.placeholder ?? '',
             }),
             // CommandsPlugin,
+            NodeRange.configure({
+                // macOS 按 Cmd、Windows/Linux 按 Ctrl 后跨 block 框选
+                key: 'Mod',
+            }),
         ],
         editorProps: {
             attributes: {
@@ -51,15 +71,15 @@ onMounted(() => {
             },
         },
         onUpdate: () => {
-            emit('update:modelValue', (editor.value as any)?.storage?.markdown?.getMarkdown() ?? '')
+            emit('update:modelValue', (editor.value as any)?.getMarkdown())
         },
     })
 })
 watch(
     () => props.modelValue,
     (value) => {
-        if (value !== (editor.value as any)?.storage?.markdown?.getMarkdown()) {
-            editor.value?.commands.setContent(value ?? '')
+        if (value !== (editor.value as any)?.getMarkdown()) {
+            editor.value?.commands.setContent(value ?? '', { contentType: 'markdown' })
         }
     }
 )
@@ -88,7 +108,7 @@ onUnmounted(() => {
         >
             <LucideX class="size-4" />
         </Button>
-        <!-- <BubbleMenuView :editor="editor as any" /> -->
+        <TiptapDragHandle v-if="editor" :editor="editor" />
         <div
             v-if="modelValue?.length && modelValue?.length > 0"
             class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
