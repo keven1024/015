@@ -4,6 +4,11 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant prose-inline-code {
+  &.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)) {
+    @slot;
+  }
+}
 
 @theme inline {
   --color-background: var(--background);

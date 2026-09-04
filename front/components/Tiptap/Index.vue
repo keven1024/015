@@ -11,6 +11,7 @@ import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
 import Button from '@/components/ui/button/Button.vue'
 import { NodeRange } from '@tiptap/extension-node-range'
 import TiptapDragHandle from './extensions/DragHandle.vue'
+import { TableKit } from '@tiptap/extension-table'
 
 const { t } = useI18n()
 
@@ -40,6 +41,7 @@ onMounted(() => {
     editor.value = new Editor({
         content: props.modelValue,
         extensions: [
+            TableKit,
             StarterKit.configure({
                 codeBlock: false,
                 dropcursor: {
@@ -97,7 +99,11 @@ onUnmounted(() => {
     <div :class="['relative bg-white/50 rounded-md overflow-hidden [&_.tiptap]:h-full', props.class]">
         <editor-content
             :editor="editor as any"
-            class="prose prose-sm *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 max-w-full w-full [&_.is-node-active]:bg-blue-100"
+            :class="[
+                'prose prose-sm *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50',
+                'selection:bg-primary/20 max-w-full w-full [&_.is-node-active]:bg-blue-100',
+                'prose-inline-code:rounded-sm prose-inline-code:bg-orange-500/10 prose-inline-code:text-rose-700 prose-inline-code:px-1 prose-inline-code:py-0.5 prose-inline-code:text-xs prose-inline-code:before:content-none prose-inline-code:after:content-none',
+            ]"
         >
         </editor-content>
         <TiptapDragHandle v-if="editor" :editor="editor" />
