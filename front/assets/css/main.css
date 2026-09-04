@@ -4,11 +4,6 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
-@custom-variant prose-inline-code {
-  &.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)) {
-    @slot;
-  }
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -166,6 +161,25 @@
 .ProseMirror-selectednoderange {
   @apply rounded bg-blue-500/20;
 }
+
+@custom-variant prose-inline-code {
+  &.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)) {
+    @slot;
+  }
+}
+
+@custom-variant prose-task {
+  &.prose :where(ul[data-type="taskList"]):not(:where([class~="not-prose"] *)) {
+    @slot;
+  }
+}
+
+@custom-variant prose-task-item {
+  &.prose :where(ul[data-type="taskList"] > li):not(:where([class~="not-prose"] *)) {
+    @slot;
+  }
+}
+
 
 @layer base {
   :root {

@@ -24,6 +24,7 @@
         "@tiptap/extension-drag-handle-vue-3": "^3.31.0",
         "@tiptap/extension-heading": "^3.31.2",
         "@tiptap/extension-italic": "^3.31.2",
+        "@tiptap/extension-list": "^3.31.2",
         "@tiptap/extension-mathematics": "^3.31.0",
         "@tiptap/extension-node-range": "^3.31.0",
         "@tiptap/extension-paragraph": "^3.31.2",

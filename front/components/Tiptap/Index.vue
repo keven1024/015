@@ -13,6 +13,7 @@ import { NodeRange } from '@tiptap/extension-node-range'
 import TiptapDragHandle from './extensions/DragHandle.vue'
 import { TableKit } from '@tiptap/extension-table'
 import { createPasteHandler } from './extensions/PasteHandler'
+import { ListKit } from '@tiptap/extension-list'
 
 const { t } = useI18n()
 
@@ -43,6 +44,7 @@ onMounted(() => {
         content: props.modelValue,
         extensions: [
             TableKit,
+            ListKit,
             StarterKit.configure({
                 codeBlock: false,
                 dropcursor: {
@@ -104,6 +106,7 @@ onUnmounted(() => {
             :class="[
                 'prose prose-sm *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50',
                 'selection:bg-primary/20 max-w-full w-full [&_.is-node-active]:bg-blue-100',
+                'prose-task:list-none prose-task-item:flex prose-task-item:items-center prose-task-item:gap-2 prose-task-item:before:content-none ',
                 'prose-inline-code:rounded-sm prose-inline-code:bg-orange-500/10 prose-inline-code:text-rose-700 prose-inline-code:px-1 prose-inline-code:py-0.5 prose-inline-code:text-xs prose-inline-code:before:content-none prose-inline-code:after:content-none',
             ]"
         >
