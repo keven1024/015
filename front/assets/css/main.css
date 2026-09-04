@@ -155,6 +155,17 @@
   height: 0;
   pointer-events: none;
 }
+.ProseMirror {
+  @apply px-12 py-2;
+}
+
+.prose .ProseMirror ul {
+  @apply list-disc
+}
+
+.ProseMirror-selectednoderange {
+  @apply rounded bg-blue-500/20;
+}
 
 @layer base {
   :root {

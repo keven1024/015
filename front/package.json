@@ -29,6 +29,7 @@
         "@tiptap/extension-paragraph": "^3.31.2",
         "@tiptap/extension-placeholder": "^3.31.2",
         "@tiptap/extension-strike": "^3.31.2",
+        "@tiptap/extension-table": "^3.31.2",
         "@tiptap/extension-text": "^3.31.2",
         "@tiptap/markdown": "^3.31.0",
         "@tiptap/pm": "^3.31.2",

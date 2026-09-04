@@ -12,6 +12,7 @@ import Button from '@/components/ui/button/Button.vue'
 import { NodeRange } from '@tiptap/extension-node-range'
 import TiptapDragHandle from './extensions/DragHandle.vue'
 import { TableKit } from '@tiptap/extension-table'
+import { PasteHandler } from './extensions/PasteHandler'
 
 const { t } = useI18n()
 
@@ -70,6 +71,7 @@ onMounted(() => {
                 // macOS 按 Cmd、Windows/Linux 按 Ctrl 后跨 block 框选
                 key: 'Mod',
             }),
+            PasteHandler,
         ],
         editorProps: {
             attributes: {
