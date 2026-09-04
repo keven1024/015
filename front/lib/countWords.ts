@@ -1,9 +1,12 @@
-function countWords(text: string): number {
+function countWords(text: string): { length: number; characters: number } {
     const trimmed = text?.trim()
-    if (!trimmed) return 0
-    const cjk = trimmed.match(/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g)?.length ?? 0
-    const latin = trimmed.replace(/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g, ' ').match(/\S+/g)?.length ?? 0
-    return cjk + latin
+    if (!trimmed) return { length: 0, characters: 0 }
+    const cjk_emoji = /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]|[\uD800-\uDBFF][\uDC00-\uDFFF]/g
+    const latin = trimmed.replace(cjk_emoji, ' ').match(/\S+/g)?.length ?? 0
+    return {
+        length: text?.length ?? 0,
+        characters: (trimmed.match(cjk_emoji)?.length ?? 0) + latin,
+    }
 }
 
 export default countWords

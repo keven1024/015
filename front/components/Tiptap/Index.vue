@@ -24,6 +24,12 @@ const emit = defineEmits<{
 }>()
 
 const editor = shallowRef<Editor>()
+const plainText = computed(() => {
+    if (!props.modelValue) return ''
+    return editor.value?.getText() ?? ''
+})
+
+const wordCount = computed(() => countWords(plainText.value))
 
 const clearContent = () => {
     editor.value?.commands.clearContent()
@@ -88,35 +94,35 @@ onUnmounted(() => {
 })
 </script>
 <template>
-    <div :class="['relative bg-white/50 rounded-md p-2 pr-10 overflow-hidden [&_.tiptap]:h-full', props.class]">
+    <div :class="['relative bg-white/50 rounded-md overflow-hidden [&_.tiptap]:h-full', props.class]">
         <editor-content
             :editor="editor as any"
-            class="prose prose-sm *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 max-w-full w-full"
+            class="prose prose-sm *:outline-none prose-p:my-1 prose-headings:my-2 prose-pre:mb-0 prose-blockquote:border-black/50 selection:bg-primary/20 max-w-full w-full [&_.is-node-active]:bg-blue-100"
         >
         </editor-content>
-        <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            :class="
-                cx(
-                    'absolute right-2 top-2 hover:bg-black/10 transition-all duration-300',
-                    modelValue?.length && modelValue.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                )
-            "
-            @click="clearContent"
-        >
-            <LucideX class="size-4" />
-        </Button>
         <TiptapDragHandle v-if="editor" :editor="editor" />
-        <div
-            v-if="modelValue?.length && modelValue?.length > 0"
-            class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
-        >
-            {{
-                `${modelValue?.length ?? 0} ${t('common.length')} · ${countWords(modelValue ?? '')}
+    </div>
+    <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        :class="
+            cx(
+                'absolute right-2 top-2 hover:bg-black/10 transition-all duration-300',
+                modelValue?.length && modelValue.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            )
+        "
+        @click="clearContent"
+    >
+        <LucideX class="size-4" />
+    </Button>
+    <div
+        v-if="plainText.length > 0"
+        class="absolute bottom-2 right-3 flex justify-end px-2 py-1 text-xs text-gray-400 select-none bg-white rounded-md"
+    >
+        {{
+            `${wordCount.length} ${t('common.length')} · ${wordCount.characters}
             ${t('common.words')}`
-            }}
-        </div>
+        }}
     </div>
 </template>

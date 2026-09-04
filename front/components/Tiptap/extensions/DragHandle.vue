@@ -35,13 +35,18 @@ const { editor } = defineProps<{
     editor: Editor
 }>()
 
-const activeNode = ref<{ type: string; from: number; to: number }>()
+const activeNode = ref<{ type: string; from: number; to: number; attrs: { language?: string | null } }>()
 
 type BlockMenuItem = {
     label: string
     type: 'paragraph' | 'heading' | 'bulletList' | 'orderedList' | 'codeBlock' | 'blockquote' | 'blockMath'
     level?: 1 | 2 | 3 | 4
     icon: Component
+}
+
+type CodeLanguage = {
+    label: string
+    language: string | null
 }
 
 const handleBlock = ({ type, level }: BlockMenuItem, insert = false) => {
@@ -120,9 +125,9 @@ const handleBlock = ({ type, level }: BlockMenuItem, insert = false) => {
 }
 
 type AddMenuItem =
-    | { type: 'sub'; label: string; icon: Component; children: (BlockMenuItem & { handle: () => void })[] }
+    | { type: 'sub'; label: string; icon?: Component; children: { label: string; icon?: Component; handle: () => void }[] }
     | { type: 'separator' }
-    | { type: 'item'; label: string; icon: Component; class?: string; handle: () => void }
+    | { type: 'item'; label: string; icon?: Component; class?: string; handle: () => void }
 
 const blockMenu: BlockMenuItem[] = [
     { label: '文本', type: 'paragraph', icon: LucideText },
@@ -136,8 +141,45 @@ const blockMenu: BlockMenuItem[] = [
     { label: '引用', type: 'blockquote', icon: LucideQuote },
 ]
 const activeNodeMenu = computed(() => blockMenu.find((item) => item.type === activeNode.value?.type))
-const addMenu: AddMenuItem[] = [
+const codeLanguages: CodeLanguage[] = [
+    { label: '纯文本', language: null },
+    { label: 'JavaScript', language: 'javascript' },
+    { label: 'TypeScript', language: 'typescript' },
+    { label: 'JSX', language: 'jsx' },
+    { label: 'TSX', language: 'tsx' },
+    { label: 'Vue', language: 'vue' },
+    { label: 'HTML', language: 'html' },
+    { label: 'CSS', language: 'css' },
+    { label: 'JSON', language: 'json' },
+    { label: 'Bash', language: 'bash' },
+    { label: 'SQL', language: 'sql' },
+    { label: 'Python', language: 'python' },
+    { label: 'Java', language: 'java' },
+    { label: 'Go', language: 'go' },
+    { label: 'Rust', language: 'rust' },
+    { label: 'YAML', language: 'yaml' },
+]
+const setCodeLanguage = (language: string | null) => {
+    const { from, type } = activeNode.value || {}
+    if (!isNumber(from) || type !== 'codeBlock') return
+    editor
+        .chain()
+        .focus()
+        .setTextSelection(from + 1)
+        .updateAttributes('codeBlock', { language })
+        .run()
+}
+const addMenu = computed<AddMenuItem[]>(() => [
     { type: 'sub', label: '转换成', icon: LucideRefreshCcw, children: blockMenu.map((item) => ({ ...item, handle: () => handleBlock(item) })) },
+    ...(activeNode.value?.type === 'codeBlock'
+        ? [
+              {
+                  type: 'sub' as const,
+                  label: '语言',
+                  children: codeLanguages.map((item) => ({ ...item, handle: () => setCodeLanguage(item.language) })),
+              },
+          ]
+        : []),
     {
         type: 'sub',
         label: '向下插入',
@@ -160,9 +202,15 @@ const addMenu: AddMenuItem[] = [
             editor.chain().focus().deleteSelection().run()
         },
     },
-]
-const setActiveNode = ({ node, pos }: { node: { nodeSize: number; type: { name: string } } | null; pos: number }) => {
-    activeNode.value = node ? { type: node.type.name, from: pos, to: pos + node.nodeSize } : undefined
+])
+const setActiveNode = ({
+    node,
+    pos,
+}: {
+    node: { attrs: { language?: string | null }; nodeSize: number; type: { name: string } } | null
+    pos: number
+}) => {
+    activeNode.value = node ? { type: node.type.name, from: pos, to: pos + node.nodeSize, attrs: node.attrs } : undefined
 }
 </script>
 
@@ -188,19 +236,19 @@ const setActiveNode = ({ node, pos }: { node: { nodeSize: number; type: { name: 
                     <template v-for="(menu, index) in addMenu" :key="index">
                         <DropdownMenuSub v-if="menu.type === 'sub'">
                             <DropdownMenuSubTrigger class="gap-2">
-                                <component :is="menu.icon" class="size-4" />
+                                <component :is="menu.icon" v-if="menu.icon" class="size-4" />
                                 {{ menu.label }}
                             </DropdownMenuSubTrigger>
                             <DropdownMenuSubContent>
                                 <DropdownMenuItem v-for="item in menu.children" :key="item.label" @select="item.handle">
-                                    <component :is="item.icon" class="size-4" />
+                                    <component :is="item.icon" v-if="item.icon" class="size-4" />
                                     {{ item.label }}
                                 </DropdownMenuItem>
                             </DropdownMenuSubContent>
                         </DropdownMenuSub>
                         <DropdownMenuSeparator v-else-if="menu.type === 'separator'" />
                         <DropdownMenuItem v-else :class="menu.class" @select="menu.handle">
-                            <component :is="menu.icon" class="size-4" />
+                            <component :is="menu.icon" v-if="menu.icon" class="size-4" />
                             {{ menu.label }}
                         </DropdownMenuItem>
                     </template>
