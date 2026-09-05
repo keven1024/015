@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 RUN corepack enable pnpm && pnpm i && pnpm --dir pkg/mail export:ci
 
-FROM golang:1.25.5 AS builder
+FROM golang:1.26.3 AS builder
 
 # Set destination for COPY
 WORKDIR /app
