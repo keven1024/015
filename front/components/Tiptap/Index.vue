@@ -14,6 +14,7 @@ import TiptapDragHandle from './extensions/DragHandle.vue'
 import { TableKit } from '@tiptap/extension-table'
 import { createPasteHandler } from './extensions/PasteHandler'
 import { ListKit } from '@tiptap/extension-list'
+import Image from '@tiptap/extension-image'
 
 const { t } = useI18n()
 
@@ -72,6 +73,15 @@ onMounted(() => {
             NodeRange.configure({
                 // macOS 按 Cmd、Windows/Linux 按 Ctrl 后跨 block 框选
                 key: 'Mod',
+            }),
+            Image.configure({
+                resize: {
+                    enabled: true,
+                    // directions: ['top', 'bottom', 'left', 'right'], // can be any direction or diagonal combination
+                    // minWidth: 50,
+                    // minHeight: 50,
+                    alwaysPreserveAspectRatio: true,
+                },
             }),
             createPasteHandler(t),
         ],
