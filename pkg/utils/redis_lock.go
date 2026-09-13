@@ -59,6 +59,7 @@ func baseLocker(ctx context.Context, key string, expired time.Duration) (context
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, expired)
 	lockCtx, lockCancel, err := locker.WithContext(timeoutCtx, key)
 	if err != nil {
+		timeoutCancel()
 		return nil, nil, err
 	}
 	return lockCtx, func() {
