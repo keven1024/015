@@ -19,6 +19,7 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	utils.LoadConfig()
 	// redis
 	if err := utils.InitRedis(); err != nil {
 		logger.Fatal("redis init failed", zap.Error(err))

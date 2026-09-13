@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
@@ -30,6 +31,9 @@ func createViperInstance(props EnvOption) *viper.Viper {
 		instance.AddConfigPath(path)
 	}
 	instance.AutomaticEnv()
+	instance.OnConfigChange(func(_ fsnotify.Event) {
+		LoadConfig()
+	})
 	instance.WatchConfig()
 	if err := instance.ReadInConfig(); err != nil {
 		panic(err)
