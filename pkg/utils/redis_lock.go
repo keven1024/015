@@ -31,7 +31,7 @@ type RedisLockOption struct {
 
 func GetRedisLocker() rueidislock.Locker {
 	onceLocker.Do(func() {
-		opt, err := rueidis.ParseURL(GetEnv("redis.url"))
+		opt, err := rueidis.ParseURL(GetConfig().Redis.URL)
 		if err != nil {
 			panic(err)
 		}

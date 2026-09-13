@@ -1,15 +1,14 @@
 package services
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"strings"
 	"testing"
 
 	"pkg/i18n"
+	"pkg/models"
 	sharemodel "pkg/models/share"
 	"pkg/utils"
 	"worker/internal/services"
@@ -21,10 +20,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	utils.InitTestViper(utils.EnvOption{
-		ConfigType: []string{"yaml"},
-		ConfigData: strings.NewReader(""),
-	})
+	utils.SetConfig(models.Config{})
 	if err := i18n.Init(); err != nil {
 		panic(err)
 	}
@@ -138,9 +134,7 @@ func TestSendWebhook_InvalidURLReturnsError(t *testing.T) {
 // ============= SendEmail =============
 
 func TestSendEmail_HappyPath(t *testing.T) {
-	utils.SetEnv("smtp.host", "localhost")
-	utils.SetEnv("smtp.username", "sender@example.com")
-	t.Cleanup(func() { utils.SetEnv("smtp.host", "") })
+	t.Cleanup(func() { utils.SetConfig(models.Config{}) })
 	server := smtpmock.New(smtpmock.ConfigurationAttr{
 		LogToStdout:       true,
 		LogServerActivity: true,
@@ -148,9 +142,11 @@ func TestSendEmail_HappyPath(t *testing.T) {
 	require.NoError(t, server.Start())
 	t.Cleanup(func() { _ = server.Stop() })
 
-	host, port := "127.0.0.1", server.PortNumber()
-	utils.SetEnv("smtp.host", host)
-	utils.SetEnv("smtp.port", fmt.Sprintf("%d", port))
+	utils.SetConfig(models.Config{SMTP: models.SMTPConfig{
+		Host:     "127.0.0.1",
+		Port:     server.PortNumber(),
+		Username: "sender@example.com",
+	}})
 
 	err := services.SendEmail("recipient@example.com", services.EmailTemplateData{
 		Locale:    "en",

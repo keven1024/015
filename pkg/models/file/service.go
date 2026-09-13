@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/redis/rueidis"
-	"github.com/spf13/cast"
 )
 
 func GetRedisFileInfo(fileId string) (*RedisFileInfo, error) {
@@ -33,7 +32,7 @@ func SetRedisFileInfo(fileId string, handler func(fileInfo *RedisFileInfo) *Redi
 		if oldFileInfo == nil {
 			oldFileInfo = &RedisFileInfo{
 				CreatedAt: time.Now().Unix(),
-				Expire:    cast.ToInt64(utils.GetEnvWithDefault("upload.remove_expire", "2")) * 3600,
+				Expire:    int64(utils.GetConfig().Upload.RemoveExpire) * 3600,
 			}
 		}
 		fileInfo = handler(oldFileInfo)

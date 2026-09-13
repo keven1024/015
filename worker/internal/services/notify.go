@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/samber/lo"
-	"github.com/spf13/cast"
 	mail "github.com/wneessen/go-mail"
 	"go.uber.org/zap"
 )
@@ -52,26 +51,22 @@ type EmailTemplateData struct {
 }
 
 func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
-	smtp := u.GetEnvMap("smtp")
-	if smtp["host"] == "" {
+	smtp := u.GetConfig().SMTP
+	if smtp.Host == "" {
 		zap.L().Warn("smtp host is empty, skip share notify email", zap.String("to", to))
 		return nil
 	}
 
-	host := cast.ToString(smtp["host"])
-	if host == "" {
-		return fmt.Errorf("smtp.host is required")
-	}
-	username := cast.ToString(smtp["username"])
+	username := smtp.Username
 	if username == "" {
 		return fmt.Errorf("smtp.username is required")
 	}
 	port := mail.DefaultPortSSL
-	if smtpPort := cast.ToInt(smtp["port"]); smtpPort != 0 {
-		port = smtpPort
+	if smtp.Port != 0 {
+		port = smtp.Port
 	}
 
-	p, err := url.Parse(u.GetEnv("site.url"))
+	p, err := url.Parse(u.GetConfig().Site.URL)
 	if err != nil {
 		return err
 	}
@@ -106,19 +101,19 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
 	}, options...)
 
-	password := cast.ToString(smtp["password"])
+	password := smtp.Password
 	if password != "" {
 		options = append(options, mail.WithPassword(password))
 	}
 
-	if cast.ToString(smtp["protocol"]) == "ssl" {
+	if smtp.Protocol == "ssl" {
 		options = append(options, mail.WithSSL())
 	}
-	if cast.ToString(smtp["protocol"]) == "tls" {
+	if smtp.Protocol == "tls" {
 		options = append(options, mail.WithTLSPortPolicy(mail.TLSMandatory))
 	}
 
-	client, err := mail.NewClient(host, options...)
+	client, err := mail.NewClient(smtp.Host, options...)
 	if err != nil {
 		return err
 	}

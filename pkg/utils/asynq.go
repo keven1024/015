@@ -10,7 +10,7 @@ var (
 )
 
 func InitAsynq() error {
-	opt, err := asynq.ParseRedisURI(GetEnv("redis.url"))
+	opt, err := asynq.ParseRedisURI(GetConfig().Redis.URL)
 	if err != nil {
 		return err
 	}

@@ -34,7 +34,7 @@ func GetFileSHA1(file io.Reader) (string, error) {
 }
 
 func GetUploadDirPath() (string, error) {
-	uploadPath := GetEnv("upload.path")
+	uploadPath := GetConfig().Upload.Path
 	if uploadPath == "" {
 		basepath, err := os.Getwd()
 		if err != nil {
