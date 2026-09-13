@@ -23,6 +23,7 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	utils.LoadConfig()
 	// redis
 	if err := utils.InitRedis(); err != nil {
 		logger.Fatal("redis init failed", zap.Error(err))
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	srv := asynq.NewServer(
-		utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")),
+		utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL),
 		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
 	)
 
@@ -55,7 +56,7 @@ func main() {
 	mux.HandleFunc("image:convert", tasks.ConvertImage)
 	mux.HandleFunc("text:translate", tasks.TranslateText)
 
-	scheduler := asynq.NewScheduler(utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")), nil)
+	scheduler := asynq.NewScheduler(utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL), nil)
 	if _, err := scheduler.Register("0 3 * * *", asynq.NewTask("file:janitor", nil)); err != nil {
 		log.Fatalf("could not register scheduler: %v", err)
 	}

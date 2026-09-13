@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/redis/rueidis"
-	"github.com/spf13/cast"
 )
 
 func GetRedisShareInfo(shareId string) (*RedisShareInfo, error) {
@@ -53,7 +52,7 @@ func SetRedisShareInfo(shareId string, handler func(shareInfo *RedisShareInfo) *
 			Value(jsonData).
 			// 分享过期后仍保留下载窗口期，供已签发的 token 下载。
 			Ex(time.Until(time.Unix(shareInfo.ExpireAt, 0).Add(
-				cast.ToDuration(utils.GetEnvWithDefault("share.download_window", "12")+"h"),
+				time.Duration(utils.GetConfig().Share.DownloadWindow)*time.Hour,
 			))).
 			Build(),
 	).Error(); err != nil {
