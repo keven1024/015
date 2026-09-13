@@ -1,8 +1,7 @@
 package utils
 
 import (
-	"bytes"
-	"fmt"
+	"pkg/models"
 	"testing"
 
 	"backend/internal/utils"
@@ -37,14 +36,7 @@ func TestGeneratePasswordHash(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// 设置环境变量
-			u.InitTestViper(u.EnvOption{
-				ConfigData: bytes.NewBuffer([]byte(fmt.Sprintf(`
-				share:
-					password_salt: %s
-				`, tt.salt))),
-			})
-			u.SetEnv("share.password_salt", tt.salt)
+			u.SetConfig(models.Config{Share: models.ShareConfig{PasswordSalt: tt.salt}})
 
 			hash, err := utils.GeneratePasswordHash(tt.password)
 
