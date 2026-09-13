@@ -1,6 +1,6 @@
 module pkg/services
 
-go 1.25.5
+go 1.26.0
 
 require github.com/hibiken/asynq v0.26.0
 

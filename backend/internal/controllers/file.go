@@ -51,7 +51,7 @@ func CreateUploadTask(c *echo.Context) error {
 			"chunks":     sliceList,
 		})
 	}
-	maxStorageSize, err := u.GetFileSize(u.GetEnv("upload.maximum"))
+	maxStorageSize, err := u.GetFileSize(u.GetConfig().Upload.Maximum)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

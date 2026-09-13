@@ -18,7 +18,6 @@ import (
 	"github.com/labstack/echo/v5"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/samber/lo"
-	"github.com/spf13/cast"
 )
 
 type CreateShareProps struct {
@@ -182,8 +181,7 @@ func CreateShareInfo(c *echo.Context) error {
 			return utils.HTTPErrorHandler(c, err)
 		}
 		// 这里延时分享过期时间基础上加下载窗口期后1小时删除，防止用户过期前几分钟才开始下载，下载一半文件不见了
-		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
-		deleteTime := time.Duration(r.Config.ExpireAt)*time.Minute + cast.ToDuration(downloadWindow+"h") + 1*time.Hour
+		deleteTime := time.Duration(r.Config.ExpireAt)*time.Minute + time.Duration(u.GetConfig().Share.DownloadWindow)*time.Hour + 1*time.Hour
 		taskID := "share:remove:" + id
 		_, err = client.Enqueue(asynq.NewTask("share:remove", payload), asynq.ProcessIn(deleteTime), asynq.TaskID(taskID))
 		if err != nil {
@@ -339,8 +337,7 @@ func DeleteShareInfo(c *echo.Context) error {
 			return err
 		}
 
-		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
-		deleteTime := cast.ToDuration(downloadWindow+"h") + time.Hour
+		deleteTime := time.Duration(u.GetConfig().Share.DownloadWindow)*time.Hour + time.Hour
 		_, err = u.GetQueueClient().Enqueue(
 			asynq.NewTask("share:remove", payload),
 			asynq.ProcessIn(deleteTime),

@@ -1,6 +1,6 @@
 module pkg/models
 
-go 1.25.5
+go 1.26.0
 
 require (
 	github.com/redis/rueidis v1.0.77
