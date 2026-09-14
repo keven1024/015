@@ -142,9 +142,9 @@ func TestSendEmail_HappyPath(t *testing.T) {
 	require.NoError(t, server.Start())
 	t.Cleanup(func() { _ = server.Stop() })
 
-	utils.SetConfig(models.Config{SMTP: models.SMTPConfig{
+	utils.SetConfig(models.Config{SMTP: &models.SMTPConfig{
 		Host:     "127.0.0.1",
-		Port:     server.PortNumber(),
+		Port:     uint(server.PortNumber()),
 		Username: "sender@example.com",
 	}})
 
