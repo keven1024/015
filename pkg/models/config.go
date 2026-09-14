@@ -1,64 +1,64 @@
 package models
 
 type Config struct {
-	Share    ShareConfig    `yaml:"share" mapstructure:"share"`
-	Upload   UploadConfig   `yaml:"upload" mapstructure:"upload"`
-	Redis    RedisConfig    `yaml:"redis" mapstructure:"redis"`
-	Features FeaturesConfig `yaml:"features" mapstructure:"features"`
-	Site     SiteConfig     `yaml:"site" mapstructure:"site"`
-	About    AboutConfig    `yaml:"about" mapstructure:"about"`
-	SMTP     SMTPConfig     `yaml:"smtp" mapstructure:"smtp"`
+	Share    ShareConfig    `mapstructure:"share"`
+	Upload   UploadConfig   `mapstructure:"upload"`
+	Redis    RedisConfig    `mapstructure:"redis"`
+	Features FeaturesConfig `mapstructure:"features"`
+	Site     SiteConfig     `mapstructure:"site"`
+	About    AboutConfig    `mapstructure:"about"`
+	SMTP     *SMTPConfig    `mapstructure:"smtp"`
 }
 
 type ShareConfig struct {
-	DownloadSecret string `yaml:"download_secret" mapstructure:"download_secret" validate:"required"` // 必填，下载 JWT 签名密钥。
-	DownloadWindow int    `yaml:"download_window" mapstructure:"download_window"`                     // 单位：小时，默认值需在加载配置时设置为 12。
-	PasswordSalt   string `yaml:"password_salt" mapstructure:"password_salt" validate:"required"`     // 必填，密码盐。
+	DownloadSecret string `mapstructure:"download_secret" validate:"required"` // 必填，下载 JWT 签名密钥。
+	DownloadWindow int    `mapstructure:"download_window"`                     // 单位：小时，默认值需在加载配置时设置为 12。
+	PasswordSalt   string `mapstructure:"password_salt" validate:"required"`   // 必填，密码盐。
 }
 
 type UploadConfig struct {
-	RemoveExpire int64  `yaml:"remove_expire" mapstructure:"remove_expire"` // 单位：小时。
-	Path         string `yaml:"path" mapstructure:"path"`
-	Maximum      string `yaml:"maximum" mapstructure:"maximum"` // 保留人类可读容量，例如 100GiB。
+	RemoveExpire int64  `mapstructure:"remove_expire"` // 单位：小时。
+	Path         string `mapstructure:"path"`
+	Maximum      string `mapstructure:"maximum"` // 保留人类可读容量，例如 100GiB。
 }
 
 type RedisConfig struct {
-	URL string `yaml:"url" mapstructure:"url"`
+	URL string `mapstructure:"url"`
 }
 
 type FeaturesConfig struct {
-	FileShare         FeatureConfig `yaml:"file-share" mapstructure:"file-share"`
-	TextShare         FeatureConfig `yaml:"text-share" mapstructure:"text-share"`
-	FileImageCompress FeatureConfig `yaml:"file-image-compress" mapstructure:"file-image-compress"`
-	FileImageConvert  FeatureConfig `yaml:"file-image-convert" mapstructure:"file-image-convert"`
+	FileShare         *FeatureConfig `mapstructure:"file-share"`
+	TextShare         *FeatureConfig `mapstructure:"text-share"`
+	FileImageCompress *FeatureConfig `mapstructure:"file-image-compress"`
+	FileImageConvert  *FeatureConfig `mapstructure:"file-image-convert"`
 }
 
 type FeatureConfig struct {
-	Enabled bool `yaml:"enabled" mapstructure:"enabled"`
+	Enabled *bool `mapstructure:"enabled"`
 }
 
 type SiteConfig struct {
-	URL      string            `yaml:"url" mapstructure:"url"`
-	Title    map[string]string `yaml:"title" mapstructure:"title"`
-	Desc     map[string]string `yaml:"desc" mapstructure:"desc"`
-	Icon     string            `yaml:"icon" mapstructure:"icon"`
-	BgURL    string            `yaml:"bg_url" mapstructure:"bg_url"`
-	EnableBg bool              `yaml:"enable_bg" mapstructure:"enable_bg"`
+	URL      string            `mapstructure:"url"`
+	Title    map[string]string `mapstructure:"title"`
+	Desc     map[string]string `mapstructure:"desc"`
+	Icon     string            `mapstructure:"icon"`
+	BgURL    string            `mapstructure:"bg_url"`
+	EnableBg *bool             `mapstructure:"enable_bg"`
 }
 
 type AboutConfig struct {
-	BgURL   string            `yaml:"bg_url" mapstructure:"bg_url"`
-	Content map[string]string `yaml:"content" mapstructure:"content"` // 语言代码对应 Markdown 内容。
-	Email   string            `yaml:"email" mapstructure:"email"`
-	Name    string            `yaml:"name" mapstructure:"name"`
-	URL     string            `yaml:"url" mapstructure:"url"`
-	Avatar  string            `yaml:"avatar" mapstructure:"avatar"`
+	BgURL   string            `mapstructure:"bg_url" validate:"omitempty,http_url"`
+	Content map[string]string `mapstructure:"content"` // 语言代码对应 Markdown 内容。
+	Email   string            `mapstructure:"email" validate:"omitempty,email"`
+	Name    string            `mapstructure:"name"`
+	URL     string            `mapstructure:"url" validate:"omitempty,http_url"`
+	Avatar  string            `mapstructure:"avatar"`
 }
 
 type SMTPConfig struct {
-	Host     string `yaml:"host" mapstructure:"host"`
-	Port     int    `yaml:"port" mapstructure:"port"`
-	Protocol string `yaml:"protocol" mapstructure:"protocol"` // ssl 或 tls。
-	Username string `yaml:"username" mapstructure:"username"`
-	Password string `yaml:"password" mapstructure:"password"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Protocol string `mapstructure:"protocol"` // ssl 或 tls。
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
 }
