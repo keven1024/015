@@ -1,12 +1,12 @@
-package main
+package internal
 
 import (
-	"backend/middleware"
+	"backend/internal/middleware"
 
 	"github.com/labstack/echo/v5"
 )
 
-var middlewares = []func() echo.MiddlewareFunc{
+var Middlewares = []func() echo.MiddlewareFunc{
 	middleware.SessionMiddleware,
 	middleware.AuthMiddleware,
 	middleware.RateLimiterMiddleware,
