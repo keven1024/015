@@ -26,14 +26,17 @@ type RedisConfig struct {
 	URL string `mapstructure:"url" validate:"required"`
 }
 
-type FeaturesConfig struct {
-	FileShare         *FeatureConfig `mapstructure:"file-share"`
-	TextShare         *FeatureConfig `mapstructure:"text-share"`
-	FileImageCompress *FeatureConfig `mapstructure:"file-image-compress"`
-	FileImageConvert  *FeatureConfig `mapstructure:"file-image-convert"`
-}
+type FeaturesConfig map[FeatureConfigKey]any
+type FeatureConfigKey string
 
-type FeatureConfig struct {
+const (
+	FeatureConfigKeyFileShare         FeatureConfigKey = "file-share"
+	FeatureConfigKeyTextShare         FeatureConfigKey = "text-share"
+	FeatureConfigKeyFileImageCompress FeatureConfigKey = "file-image-compress"
+	FeatureConfigKeyFileImageConvert  FeatureConfigKey = "file-image-convert"
+)
+
+type FeatureConfigBaseValue struct {
 	Enabled *bool `mapstructure:"enabled"`
 }
 

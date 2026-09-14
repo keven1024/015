@@ -23,6 +23,14 @@ func defaultConfig() models.Config {
 			BgURL:    "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302",
 			EnableBg: lo.ToPtr(true),
 		},
+		Features: models.FeaturesConfig{
+			models.FeatureConfigKeyFileShare: map[string]any{
+				"enabled": true,
+			},
+			models.FeatureConfigKeyTextShare: map[string]any{
+				"enabled": true,
+			},
+		},
 	}
 }
 

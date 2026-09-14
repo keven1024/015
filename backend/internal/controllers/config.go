@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"backend/internal/utils"
+	"pkg/models"
 	u "pkg/utils"
 	"time"
 
@@ -37,8 +38,8 @@ func GetConfig(c *echo.Context) error {
 	cfg := u.GetConfig()
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"site_title":     u.GetEnvMap("site.title"),
-		"site_desc":      u.GetEnvMap("site.desc"),
+		"site_title":     cfg.Site.Title,
+		"site_desc":      cfg.Site.Desc,
 		"site_url":       cfg.Site.URL,
 		"site_icon":      cfg.Site.Icon,
 		"site_bg_url":    cfg.Site.BgURL,
