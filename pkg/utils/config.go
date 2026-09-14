@@ -5,6 +5,7 @@ import (
 
 	"dario.cat/mergo"
 	"github.com/go-playground/validator/v10"
+	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -20,7 +21,7 @@ func defaultConfig() models.Config {
 		Site: models.SiteConfig{
 			Icon:     "/logo.png",
 			BgURL:    "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302",
-			EnableBg: true,
+			EnableBg: lo.ToPtr(true),
 		},
 	}
 }
