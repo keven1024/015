@@ -19,7 +19,7 @@ type ShareConfig struct {
 type UploadConfig struct {
 	RemoveExpire int64  `mapstructure:"remove_expire" validate:"gt=0"` // 单位：小时。
 	Path         string `mapstructure:"path" validate:"dirpath"`
-	Maximum      string `mapstructure:"maximum"` // 保留人类可读容量，例如 100GiB。
+	Maximum      string `mapstructure:"maximum" validate:"required,storage_size"` // 保留人类可读容量，例如 100GiB。
 }
 
 type RedisConfig struct {
