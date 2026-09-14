@@ -10,7 +10,8 @@ import (
 )
 
 func GetAbout(c *echo.Context) error {
-	maxStorageSize, err := u.GetFileSize(u.GetConfig().Upload.Maximum)
+	cfg := u.GetConfig()
+	maxStorageSize, err := u.GetFileSize(cfg.Upload.Maximum)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -29,12 +30,12 @@ func GetAbout(c *echo.Context) error {
 	}, 0)
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"bg_url":  u.GetConfig().About.BgURL,
+		"bg_url":  cfg.About.BgURL,
 		"content": u.GetEnvMap("about.content"),
-		"email":   u.GetConfig().About.Email,
-		"name":    u.GetConfig().About.Name,
-		"url":     u.GetConfig().About.URL,
-		"avatar":  u.GetConfig().About.Avatar,
+		"email":   cfg.About.Email,
+		"name":    cfg.About.Name,
+		"url":     cfg.About.URL,
+		"avatar":  cfg.About.Avatar,
 		"file": map[string]any{
 			"maximun": maxStorageSize,
 			"current": currentFileSize,

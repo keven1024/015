@@ -34,14 +34,15 @@ func GetConfig(c *echo.Context) error {
 	features := getEnabledKeys(featureConfig)
 	// textTranslateProviderConfig := u.GetEnvMap("features.text-translate.provider")
 	// textTranslateProviders := getEnabledKeys(textTranslateProviderConfig)
+	cfg := u.GetConfig()
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
 		"site_title":     u.GetEnvMap("site.title"),
 		"site_desc":      u.GetEnvMap("site.desc"),
-		"site_url":       u.GetConfig().Site.URL,
-		"site_icon":      u.GetConfig().Site.Icon,
-		"site_bg_url":    u.GetConfig().Site.BgURL,
-		"site_enable_bg": u.GetConfig().Site.EnableBg,
+		"site_url":       cfg.Site.URL,
+		"site_icon":      cfg.Site.Icon,
+		"site_bg_url":    cfg.Site.BgURL,
+		"site_enable_bg": lo.FromPtr(cfg.Site.EnableBg),
 		"version":        u.GetEnvWithDefault("VERSION", "dev"),
 		"build_time":     cast.ToInt(u.GetEnvWithDefault("BUILD_TIME", cast.ToString(time.Now().Unix()))),
 		"features":       features,
