@@ -87,10 +87,6 @@ func GetEnvWithDefault(key string, defaultValue string) string {
 	return GetEnv(key, WithDefaultValue(defaultValue))
 }
 
-func GetEnvMap(key string) map[string]any {
-	return GetViperClient().GetStringMap(key)
-}
-
 func SetEnv(key string, value string) {
 	GetViperClient().Set(key, value)
 }
