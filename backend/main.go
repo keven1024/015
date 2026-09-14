@@ -62,8 +62,9 @@ func run() int {
 		Address:         fmt.Sprintf(":%s", utils.GetEnvWithDefault("api.port", "5001")),
 		GracefulTimeout: 30 * time.Second,
 	}).Start(ctx, e); err != nil {
-		logger.Error("server failed", zap.Error(err))
+		logger.Error("backend failed", zap.Error(err))
 		return 1
 	}
+	logger.Info("backend stopped")
 	return 0
 }

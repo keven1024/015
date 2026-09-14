@@ -94,7 +94,7 @@ func run() int {
 
 	<-ctx.Done()
 	stop()
-	logger.Info("shutting down worker")
+	logger.Info("worker stopped")
 	srv.Stop()
 	return 0
 }
