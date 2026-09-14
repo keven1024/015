@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/samber/lo"
+	"github.com/spf13/cast"
 	mail "github.com/wneessen/go-mail"
 	"go.uber.org/zap"
 )
@@ -51,22 +52,21 @@ type EmailTemplateData struct {
 }
 
 func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
-	smtp := u.GetConfig().SMTP
-	if smtp.Host == "" {
+	cfg := u.GetConfig()
+	if cfg.SMTP == nil || cfg.SMTP.Host == "" {
 		zap.L().Warn("smtp host is empty, skip share notify email", zap.String("to", to))
 		return nil
 	}
 
-	username := smtp.Username
-	if username == "" {
+	if cfg.SMTP.Username == "" {
 		return fmt.Errorf("smtp.username is required")
 	}
 	port := mail.DefaultPortSSL
-	if smtp.Port != 0 {
-		port = smtp.Port
+	if cfg.SMTP.Port != 0 {
+		port = cast.ToInt(cfg.SMTP.Port)
 	}
 
-	p, err := url.Parse(u.GetConfig().Site.URL)
+	p, err := url.Parse(cfg.Site.URL)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 		return err
 	}
 	message := mail.NewMsg()
-	if err := message.From(username); err != nil {
+	if err := message.From(cfg.SMTP.Username); err != nil {
 		return err
 	}
 	if err := message.To(to); err != nil {
@@ -97,23 +97,22 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 
 	options = append([]mail.Option{
 		mail.WithPort(port),
-		mail.WithUsername(username),
+		mail.WithUsername(cfg.SMTP.Username),
 		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
 	}, options...)
 
-	password := smtp.Password
-	if password != "" {
-		options = append(options, mail.WithPassword(password))
+	if cfg.SMTP.Password != "" {
+		options = append(options, mail.WithPassword(cfg.SMTP.Password))
 	}
 
-	if smtp.Protocol == "ssl" {
+	if cfg.SMTP.Protocol == "ssl" {
 		options = append(options, mail.WithSSL())
 	}
-	if smtp.Protocol == "tls" {
+	if cfg.SMTP.Protocol == "tls" {
 		options = append(options, mail.WithTLSPortPolicy(mail.TLSMandatory))
 	}
 
-	client, err := mail.NewClient(smtp.Host, options...)
+	client, err := mail.NewClient(cfg.SMTP.Host, options...)
 	if err != nil {
 		return err
 	}
