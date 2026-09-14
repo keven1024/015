@@ -33,6 +33,9 @@ func loadConfig(v *viper.Viper) *models.Config {
 		return nil
 	}
 	validate := validator.New(validator.WithRequiredStructEnabled())
+	validate.RegisterValidation("required_en_key_content", func(fl validator.FieldLevel) bool {
+		return fl.Field().Interface().(models.MultiContent)["en"] != ""
+	})
 	if err := validate.Struct(cfg); err != nil {
 		zap.L().Error("validate config error", zap.Error(err))
 		return nil
