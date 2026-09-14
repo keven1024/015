@@ -5,8 +5,7 @@ import (
 	"pkg/geoip"
 	"pkg/i18n"
 	"pkg/utils"
-	"worker/internal/tasks"
-	"worker/middleware"
+	"worker/internal"
 
 	"github.com/hibiken/asynq"
 	"github.com/spf13/cast"
@@ -41,22 +40,23 @@ func main() {
 		log.Fatalf("failed to init geoip: %v", err)
 	}
 
+	cfg := utils.GetConfig()
+	redisConn := utils.RedisURI2AsynqOpt(cfg.Redis.URL)
+
 	srv := asynq.NewServer(
-		utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL),
+		redisConn,
 		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
 	)
 
 	mux := asynq.NewServeMux()
-	mux.Use(middleware.LoggerMiddleware)
-	mux.HandleFunc("share:remove", tasks.RemoveShare)
-	mux.HandleFunc("share:notify", tasks.ShareNotify)
-	mux.HandleFunc("file:remove", tasks.RemoveFile)
-	mux.HandleFunc("file:janitor", tasks.FileJanitor)
-	mux.HandleFunc("image:compress", tasks.CompressImage)
-	mux.HandleFunc("image:convert", tasks.ConvertImage)
-	mux.HandleFunc("text:translate", tasks.TranslateText)
+	for _, middleware := range internal.Middlewares {
+		mux.Use(middleware)
+	}
+	for _, route := range internal.Routes {
+		mux.HandleFunc(route.Path, route.Handler)
+	}
 
-	scheduler := asynq.NewScheduler(utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL), nil)
+	scheduler := asynq.NewScheduler(redisConn, nil)
 	if _, err := scheduler.Register("0 3 * * *", asynq.NewTask("file:janitor", nil)); err != nil {
 		log.Fatalf("could not register scheduler: %v", err)
 	}
