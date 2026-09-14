@@ -26,8 +26,8 @@ type RedisConfig struct {
 	URL string `mapstructure:"url" validate:"required"`
 }
 
-type FeaturesConfig map[FeatureConfigKey]any
 type FeatureConfigKey string
+type FeaturesConfig map[FeatureConfigKey]any
 
 const (
 	FeatureConfigKeyFileShare         FeatureConfigKey = "file-share"
