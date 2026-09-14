@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
+	"os"
+	"os/signal"
 	"pkg/geoip"
 	"pkg/i18n"
 	"pkg/utils"
+	"syscall"
+	"time"
 	"worker/internal"
 
 	"github.com/hibiken/asynq"
@@ -12,6 +17,10 @@ import (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	// 日志
 	var logger *zap.Logger
 	if utils.GetEnvWithDefault("NODE_ENV", "production") == "production" {
@@ -24,27 +33,37 @@ func main() {
 	utils.LoadConfig()
 	// redis
 	if err := utils.InitRedis(); err != nil {
-		logger.Fatal("redis init failed", zap.Error(err))
-		panic(err)
+		logger.Error("redis init failed", zap.Error(err))
+		return 1
 	}
+	defer utils.GetRedisClient().Close()
 	if err := utils.InitAsynq(); err != nil {
-		logger.Fatal("asynq init failed", zap.Error(err))
-		panic(err)
+		logger.Error("asynq init failed", zap.Error(err))
+		return 1
 	}
+	defer utils.GetQueueClient().Close()    //nolint:errcheck
+	defer utils.GetQueueInspector().Close() //nolint:errcheck
 
 	if err := i18n.Init(); err != nil {
-		logger.Fatal("failed to init i18n:", zap.Error(err))
+		logger.Error("failed to init i18n", zap.Error(err))
+		return 1
 	}
 	if err := geoip.Init(); err != nil {
-		logger.Fatal("failed to init geoip", zap.Error(err))
+		logger.Error("failed to init geoip", zap.Error(err))
+		return 1
 	}
 
-	cfg := utils.GetConfig()
-	redisConn := utils.RedisURI2AsynqOpt(cfg.Redis.URL)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	redisConn := utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL)
 
 	srv := asynq.NewServer(
 		redisConn,
-		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
+		asynq.Config{
+			Concurrency:     cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4")),
+			ShutdownTimeout: 30 * time.Second,
+		},
 	)
 
 	mux := asynq.NewServeMux()
@@ -54,19 +73,28 @@ func main() {
 	for _, route := range internal.Routes {
 		mux.HandleFunc(route.Path, route.Handler)
 	}
+	if err := srv.Start(mux); err != nil {
+		logger.Error("could not start server", zap.Error(err))
+		return 1
+	}
+	defer srv.Shutdown()
 
 	scheduler := asynq.NewScheduler(redisConn, nil)
 	for _, schedule := range internal.Schedules {
 		if _, err := scheduler.Register(schedule.Cron, schedule.Handle); err != nil {
-			logger.Fatal("could not register scheduler", zap.Error(err))
+			logger.Error("could not register scheduler", zap.Error(err))
+			return 1
 		}
 	}
 	if err := scheduler.Start(); err != nil {
-		logger.Fatal("could not start scheduler", zap.Error(err))
+		logger.Error("could not start scheduler", zap.Error(err))
+		return 1
 	}
 	defer scheduler.Shutdown()
 
-	if err := srv.Run(mux); err != nil {
-		logger.Fatal("could not run server", zap.Error(err))
-	}
+	<-ctx.Done()
+	stop()
+	logger.Info("shutting down worker")
+	srv.Stop()
+	return 0
 }
