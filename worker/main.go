@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"pkg/geoip"
 	"pkg/i18n"
 	"pkg/utils"
@@ -34,10 +33,10 @@ func main() {
 	}
 
 	if err := i18n.Init(); err != nil {
-		log.Fatalf("failed to init i18n: %v", err)
+		logger.Fatal("failed to init i18n:", zap.Error(err))
 	}
 	if err := geoip.Init(); err != nil {
-		log.Fatalf("failed to init geoip: %v", err)
+		logger.Fatal("failed to init geoip", zap.Error(err))
 	}
 
 	cfg := utils.GetConfig()
@@ -57,15 +56,17 @@ func main() {
 	}
 
 	scheduler := asynq.NewScheduler(redisConn, nil)
-	if _, err := scheduler.Register("0 3 * * *", asynq.NewTask("file:janitor", nil)); err != nil {
-		log.Fatalf("could not register scheduler: %v", err)
+	for _, schedule := range internal.Schedules {
+		if _, err := scheduler.Register(schedule.Cron, schedule.Handle); err != nil {
+			logger.Fatal("could not register scheduler", zap.Error(err))
+		}
 	}
 	if err := scheduler.Start(); err != nil {
-		log.Fatalf("could not start scheduler: %v", err)
+		logger.Fatal("could not start scheduler", zap.Error(err))
 	}
 	defer scheduler.Shutdown()
 
 	if err := srv.Run(mux); err != nil {
-		log.Fatalf("could not run server: %v", err)
+		logger.Fatal("could not run server", zap.Error(err))
 	}
 }
