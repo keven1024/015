@@ -39,7 +39,7 @@ func GetConfig(c *echo.Context) error {
 		"site_title":     u.GetEnvMap("site.title"),
 		"site_desc":      u.GetEnvMap("site.desc"),
 		"site_url":       u.GetEnv("site.url"),
-		"site_icon":      u.GetEnvWithDefault("site.icon", "/logo.png"),
+		"site_icon":      u.GetEnvWithDefault("site.icon", "/logo.webp"),
 		"site_bg_url":    u.GetEnvWithDefault("site.bg_url", "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302"),
 		"site_enable_bg": cast.ToBool(u.GetEnvWithDefault("site.enable_bg", "true")),
 		"version":        u.GetEnvWithDefault("VERSION", "dev"),
