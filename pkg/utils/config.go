@@ -19,7 +19,7 @@ func defaultConfig() models.Config {
 		Share:  models.ShareConfig{DownloadWindow: 12},
 		Upload: models.UploadConfig{RemoveExpire: 2},
 		Site: models.SiteConfig{
-			Icon:     "/logo.png",
+			Icon:     "/logo.webp",
 			BgURL:    "https://img.fudaoyuan.icu/api/1/random/?scale_min=1.5&webp=true&md=false&format=302",
 			EnableBg: lo.ToPtr(true),
 		},
