@@ -30,6 +30,8 @@ func main() {
 	}
 
 	e := echo.New()
+	// Without this, RealIP() returns 127.0.0.1 (Caddy's loopback proxy), not the real client.
+	e.IPExtractor = echo.ExtractIPFromXFFHeader(echo.TrustLoopback(true))
 	e.Filesystem = os.DirFS(utils.GetEnv("upload.path"))
 	for _, middleware := range middlewares {
 		e.Use(middleware())
