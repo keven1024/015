@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine AS mail-builder
+FROM node:26-alpine AS mail-builder
 RUN apk add --no-cache gcompat
 ENV CI=true
 WORKDIR /app
+RUN npm install --global corepack && corepack enable pnpm
 COPY . .
-RUN corepack enable pnpm && pnpm i && pnpm --dir pkg/mail export:ci
+RUN pnpm i && pnpm --dir pkg/mail export:ci
 
 FROM golang:1.27.2 AS builder
 
