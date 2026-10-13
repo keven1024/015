@@ -1,4 +1,4 @@
-FROM node:22-alpine AS front-base
+FROM node:26-alpine AS front-base
 WORKDIR /app
 
 # Install dependencies only when needed
@@ -9,7 +9,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY . .
 RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build
 
-FROM golang:1.26.3 AS backend-builder
+FROM golang:1.27.2 AS backend-builder
 WORKDIR /app
 # Workspace and module manifests for cache
 COPY go.work go.work.sum ./
