@@ -8,13 +8,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - uses: actions/setup-node@v7
+            - uses: pnpm/setup@v3
               with:
-                  node-version: 'latest'
-                  cache: pnpm
-            - name: Install dependencies
-              run: |
-                  pnpm install --frozen-lockfile
+                  cache: true
             - name: Run frontend lint
               run: pnpm lint:front
 
