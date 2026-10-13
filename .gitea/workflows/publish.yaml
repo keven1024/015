@@ -41,6 +41,8 @@ jobs:
                   build-args: |
                       VERSION=${{ gitea.ref_name || github.ref_name }}
                       BUILD_TIME=${{ steps.build-time.outputs.time }}
+                  cache-from: type=gha,scope=015-app
+                  cache-to: type=gha,scope=015-app,mode=max
 
     build-worker:
         runs-on: ubuntu-latest
@@ -74,6 +76,8 @@ jobs:
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=gha,scope=015-worker
+                  cache-to: type=gha,scope=015-worker,mode=max
 
     deploy:
         runs-on: ubuntu-latest

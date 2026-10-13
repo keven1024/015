@@ -22,6 +22,8 @@ jobs:
           build-args: |
             VERSION=${{ gitea.ref_name || github.ref_name }}
             BUILD_TIME=${{ steps.build-time.outputs.time }}
+          cache-from: type=gha,scope=015-app
+          cache-to: type=gha,scope=015-app,mode=max
       - name: build-worker
         uses: docker/build-push-action@v5
         with:
@@ -29,3 +31,5 @@ jobs:
           file: ./worker/Dockerfile
           push: false
           tags: 015-worker:test
+          cache-from: type=gha,scope=015-worker
+          cache-to: type=gha,scope=015-worker,mode=max
