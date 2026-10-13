@@ -1,5 +1,7 @@
 FROM node:26-alpine AS front-base
 WORKDIR /app
+# Corepack is no longer bundled with Node.js starting from Node 25.
+RUN npm install --global corepack && corepack enable pnpm
 
 # Install dependencies only when needed
 FROM front-base AS front-builder
@@ -7,7 +9,7 @@ RUN apk add --no-cache gcompat
 ENV CI=true
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY . .
-RUN corepack enable pnpm && pnpm i && pnpm --filter=015-front build
+RUN pnpm i && pnpm --filter=015-front build
 
 FROM golang:1.27.2 AS backend-builder
 WORKDIR /app
