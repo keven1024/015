@@ -46,6 +46,29 @@
         "emptyOptions": "Keine Ergebnisse"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "Markdown erkannt",
+                "parsePaste": "Markdown-Inhalt analysieren und einfügen?",
+                "confirm": "Ja"
+            },
+            "tiptap": {
+                "text": "Text",
+                "heading1": "Überschrift 1",
+                "heading2": "Überschrift 2",
+                "heading3": "Überschrift 3",
+                "heading4": "Überschrift 4",
+                "bulletList": "Aufzählungsliste",
+                "orderedList": "Nummerierte Liste",
+                "code": "Code",
+                "quote": "Zitat",
+                "plainText": "Klartext",
+                "convertTo": "Umwandeln in",
+                "language": "Sprache",
+                "insertBelow": "Darunter einfügen",
+                "delete": "Löschen"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "Datei hochladen",

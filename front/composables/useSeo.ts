@@ -6,6 +6,19 @@ type UseSeoProps = {
     seo?: Record<string, any>
     locale?: string
 }
+type OgImageMimeType = 'image/png' | 'image/jpeg' | 'image/gif'
+const imageMimeTypes: Record<string, OgImageMimeType> = {
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+}
+// webp/svg unsupported by unhead's type union; omit rather than mislabel
+const getImageMimeType = (path: string): OgImageMimeType | undefined => {
+    const ext = path.split('.').pop()?.toLowerCase() ?? ''
+    return imageMimeTypes[ext]
+}
+
 const useSeo = async (props: UseSeoProps = {}) => {
     const { head, seo, locale } = props || {}
     const seoMeta = ref<{
@@ -28,9 +41,9 @@ const useSeo = async (props: UseSeoProps = {}) => {
         await nuxtApp.runWithContext(() => {
             useHead({
                 link: [
-                    { rel: 'icon', href: seoMeta.value?.site_icon || '/logo.png', sizes: 'any' },
+                    { rel: 'icon', href: seoMeta.value?.site_icon || '/logo.webp', sizes: 'any' },
                     // { rel: 'icon', href: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
-                    { rel: 'apple-touch-icon', sizes: '180x180', href: seoMeta.value?.site_icon || '/logo.png' },
+                    { rel: 'apple-touch-icon', sizes: '180x180', href: seoMeta.value?.site_icon || '/logo.webp' },
                 ],
                 meta: [
                     // used on some mobile browsers
@@ -46,11 +59,11 @@ const useSeo = async (props: UseSeoProps = {}) => {
                 ogTitle: siteTitle.value,
                 ogDescription: siteDesc.value,
                 ogImage: {
-                    url: `${seoMeta?.value?.site_url}${seoMeta?.value?.site_icon || '/logo.png'}`,
+                    url: `${seoMeta?.value?.site_url}${seoMeta?.value?.site_icon || '/logo.webp'}`,
                     width: 1024,
                     height: 1024,
                     alt: 'logo',
-                    type: 'image/png',
+                    type: getImageMimeType(seoMeta?.value?.site_icon || '/logo.webp'),
                 },
                 twitterCard: 'summary',
             })

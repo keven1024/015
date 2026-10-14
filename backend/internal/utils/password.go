@@ -13,7 +13,7 @@ var (
 )
 
 func GeneratePasswordHash(password string) (string, error) {
-	salt := utils.GetEnv("share.password_salt")
+	salt := utils.GetConfig().Share.PasswordSalt
 	if salt == "" {
 		return "", ErrPasswordSaltNotSet
 	}

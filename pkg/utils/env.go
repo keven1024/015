@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"io"
 	"strings"
 	"sync"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
@@ -14,33 +14,25 @@ var (
 )
 
 func createViperInstance(props EnvOption) *viper.Viper {
-	instance := viper.New()
+	instance := viper.NewWithOptions(viper.ExperimentalBindStruct())
+	instance.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	instance.AutomaticEnv()
 	for _, viperConfigType := range props.ConfigType {
 		instance.SetConfigType(viperConfigType)
-	}
-	if props.ConfigData != nil {
-		instance.ReadConfig(props.ConfigData)
-		return instance
 	}
 	for _, name := range props.ConfigName {
 		instance.SetConfigName(name)
 	}
-	instance.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	for _, path := range props.ConfigPath {
 		instance.AddConfigPath(path)
 	}
-	instance.AutomaticEnv()
+	instance.OnConfigChange(func(_ fsnotify.Event) {
+		LoadConfig()
+	})
 	instance.WatchConfig()
 	if err := instance.ReadInConfig(); err != nil {
 		panic(err)
 	}
-	return instance
-}
-
-func InitTestViper(props EnvOption) *viper.Viper {
-	instance := createViperInstance(props)
-	v = instance
-	envOnce.Do(func() {}) // 消费 once，防止 GetViperClient 覆盖已注入的实例
 	return instance
 }
 
@@ -60,7 +52,6 @@ type EnvOption struct {
 	ConfigPath   []string
 	ConfigName   []string
 	ConfigType   []string
-	ConfigData   io.Reader // 测试环境使用
 }
 
 type WithDefaultValue string
@@ -94,10 +85,6 @@ func GetEnv(key string, options ...Option) string {
 
 func GetEnvWithDefault(key string, defaultValue string) string {
 	return GetEnv(key, WithDefaultValue(defaultValue))
-}
-
-func GetEnvMap(key string) map[string]any {
-	return GetViperClient().GetStringMap(key)
 }
 
 func SetEnv(key string, value string) {

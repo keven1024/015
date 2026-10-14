@@ -1,12 +1,15 @@
 package main
 
 import (
-	"log"
+	"context"
+	"os"
+	"os/signal"
 	"pkg/geoip"
 	"pkg/i18n"
 	"pkg/utils"
-	"worker/internal/tasks"
-	"worker/middleware"
+	"syscall"
+	"time"
+	"worker/internal"
 
 	"github.com/hibiken/asynq"
 	"github.com/spf13/cast"
@@ -14,6 +17,10 @@ import (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	// 日志
 	var logger *zap.Logger
 	if utils.GetEnvWithDefault("NODE_ENV", "production") == "production" {
@@ -23,48 +30,71 @@ func main() {
 	}
 	defer logger.Sync() //nolint:errcheck
 	zap.ReplaceGlobals(logger)
+	utils.LoadConfig()
 	// redis
 	if err := utils.InitRedis(); err != nil {
-		logger.Fatal("redis init failed", zap.Error(err))
-		panic(err)
+		logger.Error("redis init failed", zap.Error(err))
+		return 1
 	}
+	defer utils.GetRedisClient().Close()
 	if err := utils.InitAsynq(); err != nil {
-		logger.Fatal("asynq init failed", zap.Error(err))
-		panic(err)
+		logger.Error("asynq init failed", zap.Error(err))
+		return 1
 	}
+	defer utils.GetQueueClient().Close()    //nolint:errcheck
+	defer utils.GetQueueInspector().Close() //nolint:errcheck
 
 	if err := i18n.Init(); err != nil {
-		log.Fatalf("failed to init i18n: %v", err)
+		logger.Error("failed to init i18n", zap.Error(err))
+		return 1
 	}
 	if err := geoip.Init(); err != nil {
-		log.Fatalf("failed to init geoip: %v", err)
+		logger.Error("failed to init geoip", zap.Error(err))
+		return 1
 	}
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	redisConn := utils.RedisURI2AsynqOpt(utils.GetConfig().Redis.URL)
+
 	srv := asynq.NewServer(
-		utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")),
-		asynq.Config{Concurrency: cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4"))},
+		redisConn,
+		asynq.Config{
+			Concurrency:     cast.ToInt(utils.GetEnvWithDefault("worker.concurrency", "4")),
+			ShutdownTimeout: 30 * time.Second,
+		},
 	)
 
 	mux := asynq.NewServeMux()
-	mux.Use(middleware.LoggerMiddleware)
-	mux.HandleFunc("share:remove", tasks.RemoveShare)
-	mux.HandleFunc("share:notify", tasks.ShareNotify)
-	mux.HandleFunc("file:remove", tasks.RemoveFile)
-	mux.HandleFunc("file:janitor", tasks.FileJanitor)
-	mux.HandleFunc("image:compress", tasks.CompressImage)
-	mux.HandleFunc("image:convert", tasks.ConvertImage)
-	mux.HandleFunc("text:translate", tasks.TranslateText)
+	for _, middleware := range internal.Middlewares {
+		mux.Use(middleware)
+	}
+	for _, route := range internal.Routes {
+		mux.HandleFunc(route.Path, route.Handler)
+	}
+	if err := srv.Start(mux); err != nil {
+		logger.Error("could not start server", zap.Error(err))
+		return 1
+	}
+	defer srv.Shutdown()
 
-	scheduler := asynq.NewScheduler(utils.RedisURI2AsynqOpt(utils.GetEnv("redis.url")), nil)
-	if _, err := scheduler.Register("0 3 * * *", asynq.NewTask("file:janitor", nil)); err != nil {
-		log.Fatalf("could not register scheduler: %v", err)
+	scheduler := asynq.NewScheduler(redisConn, nil)
+	for _, schedule := range internal.Schedules {
+		if _, err := scheduler.Register(schedule.Cron, schedule.Handle); err != nil {
+			logger.Error("could not register scheduler", zap.Error(err))
+			return 1
+		}
 	}
 	if err := scheduler.Start(); err != nil {
-		log.Fatalf("could not start scheduler: %v", err)
+		logger.Error("could not start scheduler", zap.Error(err))
+		return 1
 	}
 	defer scheduler.Shutdown()
 
-	if err := srv.Run(mux); err != nil {
-		log.Fatalf("could not run server: %v", err)
-	}
+	<-ctx.Done()
+	stop()
+	logger.Info("worker stopped")
+	srv.Stop()
+	return 0
 }

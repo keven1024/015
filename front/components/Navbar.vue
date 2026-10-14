@@ -27,13 +27,14 @@ import { LucideGlobe, LucideClipboardType, LucidePaperclip } from '@lucide/vue'
 import showDrawer from '@/lib/showDrawer'
 import I18nSwitchDrawer from './Drawer/I18nSwitchDrawer.vue'
 const { t } = useI18n()
+const appConfig = useMyAppConfig()
 const routes = computed(() => [
     {
         key: 'about',
         icon: () =>
             h('img', {
                 class: 'size-10 rounded-full border-2 border-white/50',
-                src: '/logo.png',
+                src: appConfig.value?.site_icon ?? '/logo.webp',
             }),
         onClick: () => {
             router.push('/about')

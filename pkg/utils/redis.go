@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"math"
 	"time"
+
 	"github.com/redis/rueidis"
 )
 
@@ -18,7 +19,7 @@ const (
 )
 
 func InitRedis() error {
-	opt, err := rueidis.ParseURL(GetEnv("redis.url"))
+	opt, err := rueidis.ParseURL(GetConfig().Redis.URL)
 	if err != nil {
 		return fmt.Errorf("invalid redis url: %w", err)
 	}

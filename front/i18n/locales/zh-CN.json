@@ -46,6 +46,29 @@
         "emptyOptions": "搜索结果为空"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "检测到 Markdown",
+                "parsePaste": "是否解析并粘贴 Markdown 内容？",
+                "confirm": "是"
+            },
+            "tiptap": {
+                "text": "文本",
+                "heading1": "标题 1",
+                "heading2": "标题 2",
+                "heading3": "标题 3",
+                "heading4": "标题 4",
+                "bulletList": "项目符号列表",
+                "orderedList": "有序列表",
+                "code": "代码",
+                "quote": "引用",
+                "plainText": "纯文本",
+                "convertTo": "转换成",
+                "language": "语言",
+                "insertBelow": "向下插入",
+                "delete": "删除"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "上传文件",

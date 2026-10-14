@@ -52,26 +52,21 @@ type EmailTemplateData struct {
 }
 
 func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.Option) error {
-	smtp := u.GetEnvMap("smtp")
-	if smtp["host"] == "" {
+	cfg := u.GetConfig()
+	if cfg.SMTP == nil || cfg.SMTP.Host == "" {
 		zap.L().Warn("smtp host is empty, skip share notify email", zap.String("to", to))
 		return nil
 	}
 
-	host := cast.ToString(smtp["host"])
-	if host == "" {
-		return fmt.Errorf("smtp.host is required")
-	}
-	username := cast.ToString(smtp["username"])
-	if username == "" {
+	if cfg.SMTP.Username == "" {
 		return fmt.Errorf("smtp.username is required")
 	}
 	port := mail.DefaultPortSSL
-	if smtpPort := cast.ToInt(smtp["port"]); smtpPort != 0 {
-		port = smtpPort
+	if cfg.SMTP.Port != 0 {
+		port = cast.ToInt(cfg.SMTP.Port)
 	}
 
-	p, err := url.Parse(u.GetEnv("site.url"))
+	p, err := url.Parse(cfg.Site.URL)
 	if err != nil {
 		return err
 	}
@@ -91,7 +86,7 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 		return err
 	}
 	message := mail.NewMsg()
-	if err := message.From(username); err != nil {
+	if err := message.From(cfg.SMTP.Username); err != nil {
 		return err
 	}
 	if err := message.To(to); err != nil {
@@ -102,23 +97,22 @@ func SendEmail(to string, emailTemplateData EmailTemplateData, options ...mail.O
 
 	options = append([]mail.Option{
 		mail.WithPort(port),
-		mail.WithUsername(username),
+		mail.WithUsername(cfg.SMTP.Username),
 		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
 	}, options...)
 
-	password := cast.ToString(smtp["password"])
-	if password != "" {
-		options = append(options, mail.WithPassword(password))
+	if cfg.SMTP.Password != "" {
+		options = append(options, mail.WithPassword(cfg.SMTP.Password))
 	}
 
-	if cast.ToString(smtp["protocol"]) == "ssl" {
+	if cfg.SMTP.Protocol == "ssl" {
 		options = append(options, mail.WithSSL())
 	}
-	if cast.ToString(smtp["protocol"]) == "tls" {
+	if cfg.SMTP.Protocol == "tls" {
 		options = append(options, mail.WithTLSPortPolicy(mail.TLSMandatory))
 	}
 
-	client, err := mail.NewClient(host, options...)
+	client, err := mail.NewClient(cfg.SMTP.Host, options...)
 	if err != nil {
 		return err
 	}

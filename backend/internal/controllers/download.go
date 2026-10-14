@@ -18,7 +18,6 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v5"
 	"github.com/samber/lo"
-	"github.com/spf13/cast"
 )
 
 type DownloadShareClaims struct {
@@ -38,7 +37,7 @@ func DownloadShare(c *echo.Context) error {
 	}
 	claims := DownloadShareClaims{}
 	t, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(u.GetEnv("share.download_secret")), nil
+		return []byte(u.GetConfig().Share.DownloadSecret), nil
 	})
 	if err != nil || !t.Valid {
 		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrInvalidRequest))
@@ -155,16 +154,15 @@ func VaildateShare(c *echo.Context) error {
 				}
 			}
 		}
-		downloadWindow := u.GetEnvWithDefault("share.download_window", "12")
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
 			ShareId: r.ShareId,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(cast.ToDuration(downloadWindow + "h"))),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(u.GetConfig().Share.DownloadWindow) * time.Hour)),
 			},
 		})
 
 		// Sign and get the complete encoded token as a string using the secret
-		downloadToken, err := token.SignedString([]byte(u.GetEnv("share.download_secret")))
+		downloadToken, err := token.SignedString([]byte(u.GetConfig().Share.DownloadSecret))
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}

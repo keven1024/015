@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"backend/internal/controllers"
@@ -12,7 +12,7 @@ type Route struct {
 	Handler func(c *echo.Context) error
 }
 
-var routes = []Route{
+var Routes = []Route{
 	{Method: []string{"POST"}, Path: "/file/create", Handler: controllers.CreateUploadTask},
 	{Method: []string{"POST"}, Path: "/file/slice", Handler: controllers.UploadFileSlice},
 	{Method: []string{"POST"}, Path: "/file/finish", Handler: controllers.FinishUploadTask},

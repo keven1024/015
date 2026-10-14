@@ -78,6 +78,7 @@ const handleShowDelete = () => {
                 title: t('page.shareManage.deleteConfirmTitle'),
                 desc: t('page.shareManage.deleteConfirmDescription'),
                 btnLabel: t('page.shareManage.confirmDelete'),
+                btnClass: 'bg-destructive text-white hover:bg-destructive/90',
                 onClick: () => handleDelete(hide),
             }),
     })

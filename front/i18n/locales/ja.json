@@ -46,6 +46,29 @@
         "emptyOptions": "検索結果がありません"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "Markdown を検出しました",
+                "parsePaste": "Markdown の内容を解析して貼り付けますか？",
+                "confirm": "はい"
+            },
+            "tiptap": {
+                "text": "テキスト",
+                "heading1": "見出し 1",
+                "heading2": "見出し 2",
+                "heading3": "見出し 3",
+                "heading4": "見出し 4",
+                "bulletList": "箇条書きリスト",
+                "orderedList": "番号付きリスト",
+                "code": "コード",
+                "quote": "引用",
+                "plainText": "プレーンテキスト",
+                "convertTo": "変換",
+                "language": "言語",
+                "insertBelow": "下に挿入",
+                "delete": "削除"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "ファイルをアップロード",

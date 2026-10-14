@@ -46,6 +46,29 @@
         "emptyOptions": "검색 결과가 없습니다"
     },
     "page": {
+        "editor": {
+            "markdown": {
+                "detected": "Markdown이 감지되었습니다",
+                "parsePaste": "Markdown 내용을 파싱하여 붙여넣을까요?",
+                "confirm": "예"
+            },
+            "tiptap": {
+                "text": "텍스트",
+                "heading1": "제목 1",
+                "heading2": "제목 2",
+                "heading3": "제목 3",
+                "heading4": "제목 4",
+                "bulletList": "글머리 기호 목록",
+                "orderedList": "번호 목록",
+                "code": "코드",
+                "quote": "인용",
+                "plainText": "일반 텍스트",
+                "convertTo": "변환",
+                "language": "언어",
+                "insertBelow": "아래에 삽입",
+                "delete": "삭제"
+            }
+        },
         "upload": {
             "file": {
                 "uploadFile": "파일 업로드",
