@@ -6,8 +6,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	filemodel "pkg/models/file"
 	sharemodel "pkg/models/share"
 	statmodel "pkg/models/stat"
@@ -62,10 +60,11 @@ func DownloadShare(c *echo.Context) error {
 		if len(shareFiles) == 0 {
 			return utils.HTTPErrorHandler(c, ErrInvalidShareFileData)
 		}
-		uploadPath, err := u.GetUploadDirPath()
+		root, err := u.GetUploadDir()
 		if err != nil {
 			return err
 		}
+		defer root.Close() //nolint:errcheck
 		for index, file := range shareFiles {
 			fileInfo, err := filemodel.GetRedisFileInfo(file.Id)
 			if err != nil {
@@ -86,11 +85,11 @@ func DownloadShare(c *echo.Context) error {
 		if !lo.Contains([]string{"zip", "tar.gz", "tar.zst", "tar.s2", "tar.snappy"}, target) {
 			target = "zip"
 		}
-		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, uploadPath, target)
+		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, root, target)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		defer os.Remove(filepath.Join(uploadPath, compressFullName)) //nolint:errcheck
+		defer root.Remove(compressFullName) //nolint:errcheck
 		return c.Attachment(compressFullName, fmt.Sprintf("%s.%s", claims.ShareId, target))
 	}
 	return utils.HTTPSuccessHandler(c, map[string]any{

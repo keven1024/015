@@ -5,7 +5,6 @@ import (
 	"backend/internal/utils"
 	"math"
 	"mime/multipart"
-	"os"
 	filemodel "pkg/models/file"
 	statmodel "pkg/models/stat"
 	s "pkg/services"
@@ -35,11 +34,12 @@ func CreateUploadTask(c *echo.Context) error {
 	}
 
 	if fileInfo != nil {
-		uploadPath, err := u.GetUploadDirPath()
+		root, err := u.GetUploadDir()
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		sliceList, err := services.GetFileSliceList(fileId, uploadPath)
+		defer root.Close() //nolint:errcheck
+		sliceList, err := services.GetFileSliceList(fileId, root)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
@@ -152,12 +152,13 @@ func UploadFileSlice(c *echo.Context) error {
 	}
 	defer file.Close() //nolint:errcheck
 
-	uploadPath, err := u.GetUploadDirPath()
+	root, err := u.GetUploadDir()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
+	defer root.Close() //nolint:errcheck
 
-	if _, err := services.CreateFileSlice(r.FileId, uploadPath, file, r.FileIndex); err != nil {
+	if _, err := services.CreateFileSlice(r.FileId, root, file, r.FileIndex); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
@@ -194,12 +195,13 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrUploadTaskExpired)
 	}
 
-	uploadPath, err := u.GetUploadDirPath()
+	root, err := u.GetUploadDir()
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
+	defer root.Close() //nolint:errcheck
 
-	fileSliceList, err := services.GetFileSliceList(r.FileId, uploadPath)
+	fileSliceList, err := services.GetFileSliceList(r.FileId, root)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -208,14 +210,12 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrIncompleteFileSlices)
 	}
 
-	// 最终合并后的文件路径
-	mergeFilePath, err := services.MergeFileSlices(r.FileId, uploadPath)
-	if err != nil {
+	if err = services.MergeFileSlices(r.FileId, root, fileSliceList); err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
 	// 计算文件SHA1
-	file, err := os.Open(mergeFilePath)
+	file, err := root.Open(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
@@ -223,7 +223,7 @@ func FinishUploadTask(c *echo.Context) error {
 
 	file_hash, err := u.GetFileSHA1(file)
 	if err != nil || file_hash != fileInfo.FileHash {
-		defer os.Remove(mergeFilePath) //nolint:errcheck
+		defer root.Remove(r.FileId) //nolint:errcheck
 		if err == nil {
 			return utils.HTTPErrorHandler(c, ErrFileHashMismatch)
 		}
