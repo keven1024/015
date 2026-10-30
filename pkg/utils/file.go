@@ -59,6 +59,14 @@ func GetUploadDirPath() (string, error) {
 	return uploadPath, nil
 }
 
+func GetUploadDir() (*os.Root, error) {
+	path, err := GetUploadDirPath()
+	if err != nil {
+		return nil, err
+	}
+	return os.OpenRoot(path)
+}
+
 func GetFileSize(size string) (uint64, error) {
 	return humanize.ParseBytes(size)
 }
