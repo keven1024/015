@@ -15,6 +15,6 @@ const appConfig = useMyAppConfig()
         <div v-if="appConfig?.build_time">
             {{ `Build at ${dayjs(appConfig?.build_time * 1000).format('YYYY-MM-DD')}` }}
         </div>
-        <div>Designed by <NuxtLink href="https://fudaoyuan.icu" target="_blank" class="text-primary hover:underline">keven1024</NuxtLink></div>
+        <div>Designed by <NuxtLink href="https://keven.fyi" target="_blank" class="text-primary hover:underline">keven1024</NuxtLink></div>
     </div>
 </template>
