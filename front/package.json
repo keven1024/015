@@ -55,7 +55,7 @@
         "markdown-it-async": "^2.2.0",
         "motion-v": "^2.6.0",
         "nanoid": "^5.1.16",
-        "nuxt": "4.4.8",
+        "nuxt": "4.6.2",
         "nuxt-lucide-icons": "2.1.0",
         "pinia": "^3.0.4",
         "pixi.js": "^8.22.0",
