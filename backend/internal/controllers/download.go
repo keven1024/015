@@ -74,7 +74,10 @@ func DownloadShare(c *echo.Context) error {
 			if fileInfo == nil {
 				return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
 			}
-			shareFiles[index].Id = u.GetFileId(fileInfo.FileHash, fileInfo.FileSize)
+			shareFiles[index].Id, err = u.GetFileId(fileInfo.FileHash, fileInfo.FileSize)
+			if err != nil {
+				return utils.HTTPErrorHandler(c, err)
+			}
 		}
 		if len(shareFiles) == 1 {
 			return c.Attachment(shareFiles[0].Id, shareFiles[0].FileName)

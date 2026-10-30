@@ -36,7 +36,10 @@ func GenStandardFile(filePath string, mimeType string) (GenStandardFileReturn, e
 		return GenStandardFileReturn{}, err
 	}
 
-	fileId := u.GetFileId(fileHash, fileSize)
+	fileId, err := u.GetFileId(fileHash, fileSize)
+	if err != nil {
+		return GenStandardFileReturn{}, err
+	}
 
 	uploadPath, err := u.GetUploadDirPath()
 	if err != nil {

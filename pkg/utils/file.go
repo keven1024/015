@@ -7,12 +7,23 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/dustin/go-humanize"
 )
 
-func GetFileId(fileHash string, fileSize int64) string {
-	return fmt.Sprintf("%s_%d", fileHash, fileSize)
+var fileIDPattern = regexp.MustCompile(`^[0-9a-f]{40}_[0-9]+$`)
+
+func VaildFileId(fileID string) bool {
+	return fileIDPattern.MatchString(fileID)
+}
+
+func GetFileId(fileHash string, fileSize int64) (string, error) {
+	fileID := fmt.Sprintf("%s_%d", fileHash, fileSize)
+	if !VaildFileId(fileID) {
+		return "", fmt.Errorf("invalid file id")
+	}
+	return fileID, nil
 }
 
 func GetFileSHA1(file io.Reader) (string, error) {

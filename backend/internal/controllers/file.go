@@ -25,7 +25,10 @@ func CreateUploadTask(c *echo.Context) error {
 	if r.FileSize == 0 || r.MimeType == "" || r.FileHash == "" {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
-	fileId := u.GetFileId(r.FileHash, r.FileSize)
+	fileId, err := u.GetFileId(r.FileHash, r.FileSize)
+	if err != nil {
+		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	}
 	fileInfo, err := filemodel.GetRedisFileInfo(fileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
@@ -118,7 +121,7 @@ func UploadFileSlice(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil {
+	if r.FileId == "" || r.FileIndex == 0 || r.FileSlice == nil || !u.VaildFileId(r.FileId) {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 	fileInfo, err := filemodel.GetRedisFileInfo(r.FileId)
@@ -173,7 +176,7 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	if r.FileId == "" {
+	if r.FileId == "" || !u.VaildFileId(r.FileId) {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
