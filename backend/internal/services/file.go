@@ -54,13 +54,13 @@ func GetFileSliceList(fileId string, root *os.Root) ([]int, error) {
 }
 
 // MergeFileSlices 合并文件切片
-func MergeFileSlices(fileId string, root *os.Root, fileSliceList []int) (string, error) {
+func MergeFileSlices(fileId string, root *os.Root, fileSliceList []int) error {
 	slicesPath := fmt.Sprintf("%s_%s", fileId, "tmp")
 	defer root.RemoveAll(slicesPath) //nolint:errcheck
 	// 创建最终文件
 	destFile, err := root.Create(fileId)
 	if err != nil {
-		return "", fmt.Errorf("%w: %w", ErrCreateMergeFile, err)
+		return fmt.Errorf("%w: %w", ErrCreateMergeFile, err)
 	}
 	defer destFile.Close() //nolint:errcheck
 
@@ -87,9 +87,9 @@ func MergeFileSlices(fileId string, root *os.Root, fileSliceList []int) (string,
 		}
 		return true
 	}) {
-		return "", ErrMergeFileSlices
+		return ErrMergeFileSlices
 	}
-	return filepath.Join(root.Name(), fileId), nil
+	return nil
 }
 
 func GenerateCompressFiles(shareId string, shareFileData []sharemodel.ShareFileData, root *os.Root, target string) (string, error) {

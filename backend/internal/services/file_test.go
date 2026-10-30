@@ -16,8 +16,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// 测试生成不同格式的压缩文件并验证解压内容
 func TestGenerateCompressedTarFiles(t *testing.T) {
 	uploadPath := t.TempDir()
+	root, err := os.OpenRoot(uploadPath)
+	require.NoError(t, err)
+	defer root.Close() //nolint:errcheck
 	require.NoError(t, os.WriteFile(filepath.Join(uploadPath, "stored-file"), []byte("archive content"), 0600))
 	files := []sharemodel.ShareFileData{{Id: "stored-file", FileName: "download.txt"}}
 
@@ -51,7 +55,7 @@ func TestGenerateCompressedTarFiles(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			archiveName, err := GenerateCompressFiles("share", files, uploadPath, test.target)
+			archiveName, err := GenerateCompressFiles("share", files, root, test.target)
 			require.NoError(t, err)
 			require.True(t, strings.HasSuffix(archiveName, "."+test.target))
 
@@ -72,11 +76,15 @@ func TestGenerateCompressedTarFiles(t *testing.T) {
 	}
 }
 
+// 测试文件切片的创建和重复写入
 func TestCreateFileSlice(t *testing.T) {
 	uploadPath := t.TempDir()
+	root, err := os.OpenRoot(uploadPath)
+	require.NoError(t, err)
+	defer root.Close() //nolint:errcheck
 	fileId := "file-1"
 
-	filePath, err := CreateFileSlice(fileId, uploadPath, bytes.NewReader([]byte("slice-0")), 0)
+	filePath, err := CreateFileSlice(fileId, root, bytes.NewReader([]byte("slice-0")), 0)
 	require.NoError(t, err)
 	require.Equal(t, filepath.Join(uploadPath, fileId+"_tmp"), filePath)
 
@@ -85,15 +93,19 @@ func TestCreateFileSlice(t *testing.T) {
 	require.Equal(t, "slice-0", string(content))
 
 	// 再次写入不同索引，目录应已存在且可继续写入
-	_, err = CreateFileSlice(fileId, uploadPath, bytes.NewReader([]byte("slice-1")), 1)
+	_, err = CreateFileSlice(fileId, root, bytes.NewReader([]byte("slice-1")), 1)
 	require.NoError(t, err)
 	content, err = os.ReadFile(filepath.Join(filePath, "1"))
 	require.NoError(t, err)
 	require.Equal(t, "slice-1", string(content))
 }
 
+// 测试切片列表的排序、空目录和非法文件名处理
 func TestGetFileSliceList(t *testing.T) {
 	uploadPath := t.TempDir()
+	root, err := os.OpenRoot(uploadPath)
+	require.NoError(t, err)
+	defer root.Close() //nolint:errcheck
 	fileId := "file-2"
 	slicesPath := filepath.Join(uploadPath, fileId+"_tmp")
 	require.NoError(t, os.MkdirAll(slicesPath, 0755))
@@ -103,25 +115,30 @@ func TestGetFileSliceList(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(slicesPath, name), []byte(name), 0600))
 	}
 
-	list, err := GetFileSliceList(fileId, uploadPath)
+	list, err := GetFileSliceList(fileId, root)
 	require.NoError(t, err)
 	require.Equal(t, []int{0, 1, 2, 10}, list)
 
 	// 目录不存在时应返回空列表而非错误
-	list, err = GetFileSliceList("not-exist", uploadPath)
+	list, err = GetFileSliceList("not-exist", root)
 	require.NoError(t, err)
 	require.Empty(t, list)
 
-	// 非法切片文件名应报错
+	// 非法切片文件名应被忽略
 	badPath := filepath.Join(uploadPath, "bad-file_tmp")
 	require.NoError(t, os.MkdirAll(badPath, 0755))
 	require.NoError(t, os.WriteFile(filepath.Join(badPath, "abc"), []byte("x"), 0600))
-	_, err = GetFileSliceList("bad-file", uploadPath)
-	require.Error(t, err)
+	list, err = GetFileSliceList("bad-file", root)
+	require.NoError(t, err)
+	require.Empty(t, list)
 }
 
+// 测试文件切片合并及临时目录清理
 func TestMergeFileSlices(t *testing.T) {
 	uploadPath := t.TempDir()
+	root, err := os.OpenRoot(uploadPath)
+	require.NoError(t, err)
+	defer root.Close() //nolint:errcheck
 	fileId := "file-3"
 	slicesPath := filepath.Join(uploadPath, fileId+"_tmp")
 	require.NoError(t, os.MkdirAll(slicesPath, 0755))
@@ -131,15 +148,31 @@ func TestMergeFileSlices(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(slicesPath, name), []byte(content), 0600))
 	}
 
-	mergeFilePath, err := MergeFileSlices(fileId, uploadPath)
+	err = MergeFileSlices(fileId, root, []int{0, 1, 2})
 	require.NoError(t, err)
-	require.Equal(t, filepath.Join(uploadPath, fileId), mergeFilePath)
 
-	merged, err := os.ReadFile(mergeFilePath)
+	merged, err := os.ReadFile(filepath.Join(uploadPath, fileId))
 	require.NoError(t, err)
 	require.Equal(t, "hello merge world", string(merged))
 
 	// 合并完成后临时切片目录应被清理
 	_, err = os.Stat(slicesPath)
 	require.True(t, os.IsNotExist(err))
+}
+
+// 测试文件 ID 路径穿越时被拒绝
+func TestFileIDPathTraversal(t *testing.T) {
+	root, err := os.OpenRoot(t.TempDir())
+	require.NoError(t, err)
+	defer root.Close() //nolint:errcheck
+
+	fileId := "../outside"
+	_, err = CreateFileSlice(fileId, root, bytes.NewReader([]byte("data")), 0)
+	require.Error(t, err)
+
+	_, err = GetFileSliceList(fileId, root)
+	require.Error(t, err)
+
+	err = MergeFileSlices(fileId, root, []int{0})
+	require.Error(t, err)
 }
