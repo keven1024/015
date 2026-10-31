@@ -21,6 +21,7 @@ const { t } = useI18n()
             async () => {
                 await copy(props?.value)
                 isCopy = true
+                // @ts-ignore vue-sonner's template binding is incorrectly unwrapped by vue-tsc
                 toast.success(t('common.copySuccess'))
                 await asyncWait(3000)
                 isCopy = false
