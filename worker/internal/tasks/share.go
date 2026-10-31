@@ -63,8 +63,11 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 	shareInfo, err := sharemodel.GetRedisShareInfo(payload.ShareId)
-	if err != nil || shareInfo == nil {
+	if err != nil {
 		return err
+	}
+	if shareInfo == nil {
+		return nil
 	}
 
 	lo.Reduce(shareInfo.NotifyWebhooks, func(ok bool, webhook sharemodel.NotifyWebhook, _ int) bool {
