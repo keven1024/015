@@ -52,36 +52,28 @@ const chartTabs = computed(() => {
     return [
         {
             label: t('page.about.file'),
-            value: 'storage',
-            total: data.value?.chart?.storage
-                ? Object.values(data.value.chart.storage).reduce((acc: number, curr: StatChartData) => acc + curr.file_num, 0)
-                : 0,
+            value: 'file',
+            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.file.count, 0),
         },
         {
             label: t('page.about.share'),
             value: 'share',
-            total: data.value?.chart?.storage
-                ? Object.values(data.value.chart.storage).reduce((acc: number, curr: StatChartData) => acc + curr.share_num, 0)
-                : 0,
+            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.share.count, 0),
         },
         {
             label: t('page.about.download'),
             value: 'download',
-            total: data.value?.chart?.storage
-                ? Object.values(data.value.chart.storage).reduce((acc: number, curr: StatChartData) => acc + curr.download_num, 0)
-                : 0,
+            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.download.count, 0),
         },
         {
             label: t('page.about.task'),
-            value: 'queue',
-            total: data.value?.chart?.queue
-                ? Object.values(data.value.chart.queue).reduce((acc: number, curr: QueueChartData) => acc + curr.processed + curr.failed, 0)
-                : 0,
+            value: 'worker',
+            total: Object.values(chartStats.value).reduce((acc, curr) => acc + Object.values(curr.worker).reduce((sum, count) => sum + count, 0), 0),
         },
     ]
 })
 
-const currentChartTab = ref<'storage' | 'queue' | 'share' | 'download'>('storage')
+const currentChartTab = ref<'file' | 'worker' | 'share' | 'download'>('file')
 const currentChartData = computed((): AreaChartConfig => {
     const { storage, queue } = data.value?.chart || {}
     if (currentChartTab.value === 'queue') {
@@ -167,7 +159,7 @@ const currentChartData = computed((): AreaChartConfig => {
                     :key="tab.value"
                     @click="
                         () => {
-                            currentChartTab = tab.value as 'storage' | 'queue'
+                            currentChartTab = tab.value as 'file' | 'worker' | 'share' | 'download'
                         }
                     "
                 >
