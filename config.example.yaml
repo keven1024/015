@@ -5,6 +5,8 @@ share:
     download_window: 12
     # (必填)设置密码时会把密码加盐
     password_salt: your-passwall-salt
+    # (必填)Session Cookie 签名密钥
+    session_salt: your-session-salt
 
 upload:
     # 上传文件保存路径

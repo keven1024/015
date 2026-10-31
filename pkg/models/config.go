@@ -14,6 +14,7 @@ type ShareConfig struct {
 	DownloadSecret string `mapstructure:"download_secret" validate:"required"` // 必填，下载 JWT 签名密钥。
 	DownloadWindow int    `mapstructure:"download_window" validate:"gt=0"`     // 单位：小时，默认值需在加载配置时设置为 12。
 	PasswordSalt   string `mapstructure:"password_salt" validate:"required"`   // 必填，密码盐。
+	SessionSalt    string `mapstructure:"session_salt" validate:"required"`    // 必填，Session Cookie 密钥。
 }
 
 type UploadConfig struct {
