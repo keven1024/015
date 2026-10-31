@@ -4,11 +4,9 @@ import (
 	"archive/tar"
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	sharemodel "pkg/models/share"
-	"sort"
 	"time"
 
 	"github.com/klauspost/compress/gzip"
@@ -17,7 +15,6 @@ import (
 	"github.com/klauspost/compress/zip"
 	"github.com/klauspost/compress/zstd"
 	"github.com/samber/lo"
-	"github.com/spf13/cast"
 	"go.uber.org/zap"
 )
 
@@ -38,19 +35,6 @@ func CreateFileSlice(fileId string, root *os.Root, fileSlice io.Reader, fileInde
 	}
 
 	return filepath.Join(root.Name(), filePath), nil
-}
-
-func GetFileSliceList(fileId string, root *os.Root) ([]int, error) {
-	files, err := fs.ReadDir(root.FS(), fmt.Sprintf("%s_%s", fileId, "tmp"))
-	if err != nil && !os.IsNotExist(err) {
-		return nil, fmt.Errorf("%w: %w", ErrReadFileSliceDir, err)
-	}
-	fileSliceList := lo.FilterMap(files, func(file os.DirEntry, _ int) (int, bool) {
-		index, err := cast.ToIntE(file.Name())
-		return index, err == nil
-	})
-	sort.Ints(fileSliceList)
-	return fileSliceList, nil
 }
 
 // MergeFileSlices 合并文件切片
