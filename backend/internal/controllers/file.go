@@ -39,7 +39,7 @@ func CreateUploadTask(c *echo.Context) error {
 			return utils.HTTPErrorHandler(c, err)
 		}
 		defer root.Close() //nolint:errcheck
-		sliceList, err := services.GetFileSliceList(fileId, root)
+		sliceList, err := s.GetFileSliceList(fileId, root)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
@@ -201,7 +201,7 @@ func FinishUploadTask(c *echo.Context) error {
 	}
 	defer root.Close() //nolint:errcheck
 
-	fileSliceList, err := services.GetFileSliceList(r.FileId, root)
+	fileSliceList, err := s.GetFileSliceList(r.FileId, root)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

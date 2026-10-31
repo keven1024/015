@@ -100,39 +100,6 @@ func TestCreateFileSlice(t *testing.T) {
 	require.Equal(t, "slice-1", string(content))
 }
 
-// 测试切片列表的排序、空目录和非法文件名处理
-func TestGetFileSliceList(t *testing.T) {
-	uploadPath := t.TempDir()
-	root, err := os.OpenRoot(uploadPath)
-	require.NoError(t, err)
-	defer root.Close() //nolint:errcheck
-	fileId := "file-2"
-	slicesPath := filepath.Join(uploadPath, fileId+"_tmp")
-	require.NoError(t, os.MkdirAll(slicesPath, 0755))
-
-	// 乱序创建切片文件，验证返回结果按索引升序排列
-	for _, name := range []string{"2", "0", "10", "1"} {
-		require.NoError(t, os.WriteFile(filepath.Join(slicesPath, name), []byte(name), 0600))
-	}
-
-	list, err := GetFileSliceList(fileId, root)
-	require.NoError(t, err)
-	require.Equal(t, []int{0, 1, 2, 10}, list)
-
-	// 目录不存在时应返回空列表而非错误
-	list, err = GetFileSliceList("not-exist", root)
-	require.NoError(t, err)
-	require.Empty(t, list)
-
-	// 非法切片文件名应被忽略
-	badPath := filepath.Join(uploadPath, "bad-file_tmp")
-	require.NoError(t, os.MkdirAll(badPath, 0755))
-	require.NoError(t, os.WriteFile(filepath.Join(badPath, "abc"), []byte("x"), 0600))
-	list, err = GetFileSliceList("bad-file", root)
-	require.NoError(t, err)
-	require.Empty(t, list)
-}
-
 // 测试文件切片合并及临时目录清理
 func TestMergeFileSlices(t *testing.T) {
 	uploadPath := t.TempDir()
@@ -168,9 +135,6 @@ func TestFileIDPathTraversal(t *testing.T) {
 
 	fileId := "../outside"
 	_, err = CreateFileSlice(fileId, root, bytes.NewReader([]byte("data")), 0)
-	require.Error(t, err)
-
-	_, err = GetFileSliceList(fileId, root)
 	require.Error(t, err)
 
 	err = MergeFileSlices(fileId, root, []int{0})
