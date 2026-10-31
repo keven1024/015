@@ -7,6 +7,9 @@ var (
 	ErrInvalidRequest   = errors.New("InvalidRequest")   // 调用接口参数错误
 	ErrPermissionDenied = errors.New("PermissionDenied") // 没有权限
 
+	// 文件信息相关
+	ErrFileInfoNotFound = errors.New("FileInfoNotFound") // 文件信息不存在
+
 	// 任务相关
 	ErrTaskNotFound = errors.New("TaskNotFound") // 任务不存在
 	ErrTaskExpired  = errors.New("TaskExpired")  // 任务已过期

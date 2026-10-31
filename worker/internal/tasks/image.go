@@ -21,7 +21,10 @@ func CompressImage(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	originalFileInfo, _ := filemodel.GetRedisFileInfo(payload.FileId)
+	originalFileInfo, err := filemodel.GetRedisFileInfo(payload.FileId)
+	if err != nil {
+		return err
+	}
 	if originalFileInfo == nil || originalFileInfo.FileType != filemodel.FileTypeUpload {
 		return ErrNotFoundFile
 	}
@@ -69,7 +72,10 @@ func ConvertImage(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	originalFileInfo, _ := filemodel.GetRedisFileInfo(payload.FileId)
+	originalFileInfo, err := filemodel.GetRedisFileInfo(payload.FileId)
+	if err != nil {
+		return err
+	}
 	if originalFileInfo == nil || originalFileInfo.FileType != filemodel.FileTypeUpload {
 		return ErrNotFoundFile
 	}

@@ -37,8 +37,11 @@ func DownloadShare(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	shareInfo, err := sharemodel.GetRedisShareInfo(claims.ShareId)
-	if err != nil || shareInfo == nil {
-		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	if shareInfo == nil {
+		return utils.HTTPErrorHandler(c, ErrShareNotFound)
 	}
 	if shareInfo.Type == sharemodel.ShareTypeFile {
 		if len(fileIds) > 0 {
@@ -127,8 +130,11 @@ func VaildateShare(c *echo.Context) error {
 	}
 	return u.WithLocker(context.Background(), "015:shareInfoMap:"+r.ShareId, 0, func(ctx context.Context) error {
 		shareInfo, err := sharemodel.GetRedisShareInfo(r.ShareId)
-		if err != nil || shareInfo == nil {
-			return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		if shareInfo == nil {
+			return utils.HTTPErrorHandler(c, ErrShareNotFound)
 		}
 		if shareInfo.ExpireAt <= time.Now().Unix() {
 			return utils.HTTPErrorHandler(c, ErrShareNotFound)

@@ -128,6 +128,9 @@ func UploadFileSlice(c *echo.Context) error {
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
+	if fileInfo == nil {
+		return utils.HTTPErrorHandler(c, ErrFileInfoNotFound)
+	}
 
 	now := time.Now().Unix()
 	if fileInfo.CreatedAt+fileInfo.Expire < now {
@@ -184,6 +187,9 @@ func FinishUploadTask(c *echo.Context) error {
 	fileInfo, err := filemodel.GetRedisFileInfo(r.FileId)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
+	}
+	if fileInfo == nil {
+		return utils.HTTPErrorHandler(c, ErrFileInfoNotFound)
 	}
 
 	if fileInfo.FileType != filemodel.FileTypeInit {
