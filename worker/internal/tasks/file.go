@@ -3,6 +3,7 @@ package tasks
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	filemodel "pkg/models/file"
@@ -24,11 +25,8 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 	if err != nil {
 		return err
 	}
-	if fileInfo == nil {
-		return nil
-	}
 	// 如果文件是上传文件，则需要检查是否还有分享，考虑到比如文件转换这些一次性任务产生的文件需要销毁
-	if fileInfo.FileType == filemodel.FileTypeUpload {
+	if fileInfo != nil && fileInfo.FileType == filemodel.FileTypeUpload {
 		shareIDs, err := relationmodel.GetRedisFileShareRelational(payload.FileId)
 		if err != nil {
 			return err
@@ -38,19 +36,19 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 		}
 	}
 
-	uploadPath, err := u.GetUploadDirPath()
+	root, err := u.GetUploadDir()
 	if err != nil {
 		return err
 	}
-	filePath := filepath.Join(uploadPath, payload.FileId)
-	// 如果是临时文件删除文件夹
-	if fileInfo.FileType == filemodel.FileTypeInit {
-		filePath += "_tmp"
-	}
+
 	if err := filemodel.DelRedisFileInfo(payload.FileId); err != nil {
 		return err
 	}
-	if err := os.RemoveAll(filePath); err != nil {
+	// 删除可能的文件路径
+	if err := root.RemoveAll(payload.FileId); err != nil {
+		return err
+	}
+	if err := root.RemoveAll(fmt.Sprintf("%s_tmp", payload.FileId)); err != nil {
 		return err
 	}
 	return nil

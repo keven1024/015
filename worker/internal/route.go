@@ -16,6 +16,7 @@ var Routes = []Route{
 	{Path: "share:remove", Handler: tasks.RemoveShare},
 	{Path: "share:notify", Handler: tasks.ShareNotify},
 	{Path: "file:remove", Handler: tasks.RemoveFile},
+	{Path: "upload:remove", Handler: tasks.RemoveUpload},
 	{Path: "file:janitor", Handler: tasks.FileJanitor},
 	{Path: "image:compress", Handler: tasks.CompressImage},
 	{Path: "image:convert", Handler: tasks.ConvertImage},
