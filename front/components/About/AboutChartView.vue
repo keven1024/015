@@ -31,6 +31,11 @@ type AreaChartConfig = {
     config: ChartConfig
 }
 
+const dateRange = ref<DateRange>({
+    start: dayjs().subtract(7, 'day').startOf('day').toDate(),
+    end: dayjs().endOf('day').toDate(),
+})
+
 const { data, isLoading } = useQuery({
     queryKey: ['stat'],
     queryFn: async () => {
@@ -168,7 +173,7 @@ const currentChartData = computed((): AreaChartConfig => {
                 </div>
             </div>
             <ChartContainer :config="currentChartData.config" class="h-64 w-full p-5" :cursor="false">
-                <VisXYContainer :data="currentChartData.data" :x-domain="[dayjs().toDate(), dayjs().subtract(29, 'day').toDate()]">
+                <VisXYContainer :data="currentChartData.data" :x-domain="[statRange.end.toDate(), statRange.start.toDate()]">
                     <VisArea
                         :key="currentChartTab"
                         :x="(d: ChartDataItem) => d.date"
