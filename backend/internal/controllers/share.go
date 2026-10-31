@@ -114,6 +114,15 @@ func CreateShareInfo(c *echo.Context) error {
 			notifyEmails = r.Config.NotifyEmails
 		}
 		if lo.Contains(r.Config.NotifyTypes, "webhook") {
+			if !lo.EveryBy(r.Config.NotifyWebhooks, func(webhook sharemodel.NotifyWebhook) bool {
+				validURL, parsedURL := u.IsVaildURL(webhook.URL)
+				if !validURL || parsedURL == nil {
+					return false
+				}
+				return u.IsVaildIP(parsedURL.Hostname())
+			}) {
+				return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+			}
 			notifyWebhooks = r.Config.NotifyWebhooks
 		}
 	}
