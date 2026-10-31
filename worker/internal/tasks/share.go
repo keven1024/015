@@ -3,7 +3,6 @@ package tasks
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"pkg/geoip"
 	relationmodel "pkg/models/file_share_relational"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/samber/lo"
+	"go.uber.org/zap"
 )
 
 type ShareRemoveTaskPayload struct {
@@ -25,26 +25,39 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
 		return err
 	}
-	var errs []error
-	for _, fileId := range payload.FileIds {
+	if ok := lo.EveryBy(payload.FileIds, func(fileId string) bool {
 		shareIDs, err := relationmodel.SetRedisFileShareRelational(fileId, func(shareIDs []string) []string {
 			return lo.Filter(shareIDs, func(x string, _ int) bool {
 				return x != payload.ShareId
 			})
 		})
 		if err != nil {
-			errs = append(errs, fmt.Errorf("remove share relation for file %s: %w", fileId, err))
-			continue
+			zap.L().Error("remove share relation failed",
+				zap.String("file_id", fileId),
+				zap.String("share_id", payload.ShareId),
+				zap.Error(err),
+			)
+			return false
 		}
 		if len(shareIDs) == 0 {
 			if err := pkgservices.SetFileRemoveTask(fileId, 0); err != nil {
-				errs = append(errs, fmt.Errorf("enqueue remove task for file %s: %w", fileId, err))
+				zap.L().Error("enqueue file removal task failed",
+					zap.String("file_id", fileId),
+					zap.String("share_id", payload.ShareId),
+					zap.Error(err),
+				)
+				return false
 			}
 		}
+		return true
+	}); !ok {
+		return fmt.Errorf("remove share files failed for share %s", payload.ShareId)
 	}
-	return errors.Join(errs...)
+	return nil
 }
 
+// 通知策略：Webhook 和 Email 分别尝试，任一渠道至少有一个目标发送成功，
+// 就认为本次通知成功；只有两个渠道全部发送失败时才返回错误并触发重试。
 func ShareNotify(ctx context.Context, task *asynq.Task) error {
 	var payload ShareNotifyTaskPayload
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
@@ -55,16 +68,17 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 
-	var errs []error
-	successCount := 0
-
-	for _, webhook := range shareInfo.NotifyWebhooks {
+	webhookOK := lo.Reduce(shareInfo.NotifyWebhooks, func(ok bool, webhook sharemodel.NotifyWebhook, _ int) bool {
 		if err := services.SendWebhook(webhook); err != nil {
-			errs = append(errs, err)
-			continue
+			zap.L().Error("send share notification webhook failed",
+				zap.String("share_id", payload.ShareId),
+				zap.String("url", webhook.URL),
+				zap.Error(err),
+			)
+			return ok
 		}
-		successCount++
-	}
+		return true
+	}, false)
 
 	region := "-"
 	if info := geoip.GetIpGeoInfo(payload.IP); info != nil {
@@ -76,7 +90,7 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		displayName = shareInfo.Files[0].FileName
 	}
 
-	for _, email := range shareInfo.NotifyEmails {
+	emailOK := lo.Reduce(shareInfo.NotifyEmails, func(ok bool, email string, _ int) bool {
 		if err := services.SendEmail(email, services.EmailTemplateData{
 			Locale:    shareInfo.Locale,
 			FileName:  displayName,
@@ -84,14 +98,19 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 			Region:    region,
 			ShareType: shareInfo.Type,
 		}); err != nil {
-			errs = append(errs, err)
-			continue
+			zap.L().Error("send share notification email failed",
+				zap.String("share_id", payload.ShareId),
+				zap.String("email", email),
+				zap.Error(err),
+			)
+			return ok
 		}
-		successCount++
-	}
+		return true
+	}, false)
 
-	if successCount > 0 || len(errs) == 0 {
-		return nil
+	// 只有所有通知目标都失败时才让 Asynq 重试；部分成功视为成功。
+	if !webhookOK && !emailOK {
+		return fmt.Errorf("share notification failed for share %s", payload.ShareId)
 	}
-	return fmt.Errorf("all share notify targets failed: %w", errors.Join(errs...))
+	return nil
 }
