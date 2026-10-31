@@ -2,10 +2,10 @@ package stat
 
 import (
 	"context"
-	"fmt"
 	"pkg/utils"
 	"strconv"
 
+	"github.com/redis/rueidis"
 	"github.com/samber/lo"
 )
 
@@ -38,23 +38,15 @@ func GetRedisStatRange(key StatZSetKey, startTimestamp int64, endTimestamp int64
 			Max(strconv.FormatInt(endTimestamp, 10)).
 			Withscores().
 			Build(),
-	).AsStrSlice()
+	).AsZScores()
 	if err != nil {
 		return nil, err
 	}
-	if len(values)%2 != 0 {
-		return nil, fmt.Errorf("invalid redis stat range result")
-	}
-
-	entries := lo.FilterMap(lo.Chunk(values, 2), func(values []string, _ int) (RedisStatDataItem, bool) {
-		score, err := strconv.ParseFloat(values[1], 64)
-		if err != nil {
-			return RedisStatDataItem{}, false
-		}
+	entries := lo.Map(values, func(value rueidis.ZScore, _ int) RedisStatDataItem {
 		return RedisStatDataItem{
-			Timestamp: int64(score),
-			Data:      values[0],
-		}, true
+			Timestamp: int64(value.Score),
+			Data:      value.Member,
+		}
 	})
 	return entries, nil
 }
