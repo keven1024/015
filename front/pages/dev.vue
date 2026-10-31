@@ -61,6 +61,7 @@ if (!isDev) {
                                     ),
                                 ]),
                         })
+                        // @ts-ignore vue-sonner's template binding is incorrectly unwrapped by vue-tsc
                         toast.success('被关闭')
                     }
                 "
@@ -71,6 +72,7 @@ if (!isDev) {
                 @click="
                     async () => {
                         await asyncWait(3000)
+                        // @ts-ignore vue-sonner's template binding is incorrectly unwrapped by vue-tsc
                         toast.success('成功')
                     }
                 "

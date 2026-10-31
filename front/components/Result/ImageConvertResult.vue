@@ -178,6 +178,7 @@ const totalExt = computed(() => {
                             try {
                                 await downloadFileByShareId(id, new_file.id)
                             } catch (error: any) {
+                                // @ts-ignore vue-sonner's template binding is incorrectly unwrapped by vue-tsc
                                 toast.error(error?.data?.message || error?.message || error)
                             }
                         }
