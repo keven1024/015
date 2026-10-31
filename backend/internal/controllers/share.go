@@ -259,7 +259,7 @@ func GetShareInfo(c *echo.Context) error {
 				return utils.HTTPErrorHandler(c, ErrInvalidShareFileState)
 			}
 			files = append(files, map[string]any{
-				"id":        file.Id,
+				"id":        utils.PublicFileID(file.Id),
 				"file_name": file.FileName,
 				"size":      fileInfo.FileSize,
 				"mime_type": fileInfo.MimeType,
