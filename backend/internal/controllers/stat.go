@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"backend/internal/utils"
+	"pkg/models/stat"
 	statmodel "pkg/models/stat"
 	"time"
 
 	"github.com/labstack/echo/v5"
+	"github.com/samber/lo"
+	"github.com/spf13/cast"
 )
 
 const (
@@ -18,9 +21,9 @@ type StatRequest struct {
 	End   *int64 `json:"end"`
 }
 
-type StatResultEntry struct {
-	Timestamp int64 `json:"timestamp"`
-	Data      any   `json:"data"`
+type HourlyData struct {
+	Count int64  `json:"count"`
+	Size  *int64 `json:"size,omitempty"`
 }
 
 func GetStat(c *echo.Context) error {
@@ -30,7 +33,12 @@ func GetStat(c *echo.Context) error {
 	}
 
 	key := statmodel.StatZSetKey(r.Type)
-	if !isStatZSetKey(key) {
+	if !lo.Contains([]statmodel.StatZSetKey{
+		statmodel.FileZSetKey,
+		statmodel.ShareZSetKey,
+		statmodel.DownloadZSetKey,
+		statmodel.WorkerZSetKey,
+	}, key) {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
@@ -47,64 +55,48 @@ func GetStat(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
 
-	entries, err := statmodel.GetRedisStatRange(key, start, end)
+	data, err := statmodel.GetRedisStatRange(key, start, end)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	result := make([]StatResultEntry, 0, len(entries))
-	for _, entry := range entries {
-		data, err := decodeStatData(key, entry.Data)
-		if err != nil {
-			return utils.HTTPErrorHandler(c, err)
+	result := lo.MapValues(lo.GroupBy(data, func(item statmodel.RedisStatDataItem) string {
+		return cast.ToString(time.Unix(item.Timestamp, 0).Truncate(time.Hour).Unix())
+	}), func(values []stat.RedisStatDataItem, _ string) any {
+
+		if key == statmodel.FileZSetKey {
+			return map[string]any{
+				"count": len(values),
+				"size": lo.SumBy(values, func(item statmodel.RedisStatDataItem) int64 {
+					data, err := statmodel.JsonFileStatDataToDomain(item.Data)
+					if err != nil || data == nil {
+						return 0
+					}
+					return data.FileSize
+				}),
+			}
 		}
-		result = append(result, StatResultEntry{
-			Timestamp: entry.Timestamp,
-			Data:      data,
-		})
-	}
 
-	return utils.HTTPSuccessHandler(c, map[string]any{
-		"type":  request.Type,
-		"start": startTimestamp,
-		"end":   endTimestamp,
-		"data":  result,
+		if key == statmodel.WorkerZSetKey {
+			return lo.GroupBy(lo.FilterMap(values, func(
+				item statmodel.RedisStatDataItem,
+				_ int,
+			) (*statmodel.WorkerStatData, bool) {
+				data, err := statmodel.JsonWorkerStatDataToDomain(item.Data)
+				if err != nil || data == nil {
+					return nil, false
+				}
+
+				return data, true
+			}), func(data *statmodel.WorkerStatData) string {
+				return data.TaskType
+			})
+		}
+
+		return map[string]any{
+			"count": len(values),
+		}
 	})
-}
 
-func isStatZSetKey(key statmodel.StatZSetKey) bool {
-	switch key {
-	case statmodel.FileZSetKey, statmodel.ShareZSetKey, statmodel.DownloadZSetKey, statmodel.WorkerZSetKey:
-		return true
-	default:
-		return false
-	}
-}
-
-func getStatTimeRange(request *StatRequest) (int64, int64) {
-	now := time.Now().Unix()
-	startTimestamp := now - int64(StatDefaultDays*24*60*60)
-	endTimestamp := now
-	if request.Start != nil {
-		startTimestamp = *request.Start
-	}
-	if request.End != nil {
-		endTimestamp = *request.End
-	}
-	return startTimestamp, endTimestamp
-}
-
-func decodeStatData(statType statmodel.StatZSetKey, raw string) (any, error) {
-	switch statType {
-	case statmodel.FileZSetKey:
-		return statmodel.JsonFileStatDataToDomain(raw)
-	case statmodel.ShareZSetKey:
-		return statmodel.JsonShareStatDataToDomain(raw)
-	case statmodel.DownloadZSetKey:
-		return statmodel.JsonDownloadStatDataToDomain(raw)
-	case statmodel.WorkerZSetKey:
-		return statmodel.JsonWorkerStatDataToDomain(raw)
-	default:
-		return nil, ErrInvalidRequest
-	}
+	return utils.HTTPSuccessHandler(c, result)
 }
