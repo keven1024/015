@@ -2,54 +2,59 @@ package stat
 
 import (
 	"context"
+	"fmt"
 	"pkg/utils"
+	"strconv"
 
-	"github.com/redis/rueidis"
+	"github.com/samber/lo"
 )
 
-func GetRedisStat(key string) (*StatData, error) {
+func getRedisStatKey(key StatZSetKey) string {
+	return modelName + ":" + string(key)
+}
+
+// AppendRedisStat 将一条统计数据追加到指定的 zset 中。
+// timestamp 作为 zset score，data 作为 zset member，通常传入对应结构体的 JSON。
+func AppendRedisStat(key StatZSetKey, timestamp int64, data string) error {
 	rdb := utils.GetRedisClient()
-	ctx := context.Background()
-	statData, err := rdb.Do(ctx, rdb.B().Hget().Key(modelName).Field(key).Build()).ToString()
-	if rueidis.IsRedisNil(err) {
-		return nil, nil
-	}
+	return rdb.Do(
+		context.Background(),
+		rdb.B().Zadd().
+			Key(getRedisStatKey(key)).
+			ScoreMember().
+			ScoreMember(float64(timestamp), data).
+			Build(),
+	).Error()
+}
+
+// GetRedisStatRange 获取指定时间戳范围内的统计数据及其 zset score。
+func GetRedisStatRange(key StatZSetKey, startTimestamp int64, endTimestamp int64) ([]RedisStatDataItem, error) {
+	rdb := utils.GetRedisClient()
+	values, err := rdb.Do(
+		context.Background(),
+		rdb.B().Zrangebyscore().
+			Key(getRedisStatKey(key)).
+			Min(strconv.FormatInt(startTimestamp, 10)).
+			Max(strconv.FormatInt(endTimestamp, 10)).
+			Withscores().
+			Build(),
+	).AsStrSlice()
 	if err != nil {
 		return nil, err
 	}
-	return JsonStatDataToDomain(statData)
-}
+	if len(values)%2 != 0 {
+		return nil, fmt.Errorf("invalid redis stat range result")
+	}
 
-func SetRedisStat(key string, handler func(stat *StatData) *StatData) (*StatData, error) {
-	var updatedStat *StatData
-	err := utils.WithLocker(context.Background(), modelName+":"+key, 0, func(ctx context.Context) error {
-		rdb := utils.GetRedisClient()
-		oldStat, err := GetRedisStat(key)
+	entries := lo.FilterMap(lo.Chunk(values, 2), func(values []string, _ int) (RedisStatDataItem, bool) {
+		score, err := strconv.ParseFloat(values[1], 64)
 		if err != nil {
-			return err
+			return RedisStatDataItem{}, false
 		}
-		if oldStat == nil {
-			oldStat = &StatData{}
-		}
-		stat := handler(oldStat)
-		jsonData, err := DomainStatDataToJson(stat)
-		if err != nil {
-			return err
-		}
-		if err := rdb.Do(ctx, rdb.B().Hset().Key(modelName).FieldValue().FieldValue(key, jsonData).Build()).Error(); err != nil {
-			return err
-		}
-		updatedStat = stat
-		return nil
+		return RedisStatDataItem{
+			Timestamp: int64(score),
+			Data:      values[0],
+		}, true
 	})
-	if err != nil {
-		return nil, err
-	}
-	return updatedStat, nil
-}
-
-func GetRedisStatAll() (map[string]string, error) {
-	rdb := utils.GetRedisClient()
-	ctx := context.Background()
-	return rdb.Do(ctx, rdb.B().Hgetall().Key(modelName).Build()).AsStrMap()
+	return entries, nil
 }

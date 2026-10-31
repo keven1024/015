@@ -211,11 +211,13 @@ func CreateShareInfo(c *echo.Context) error {
 	}
 
 	// 统计分享数
-	currentDate := time.Now().Format("2006-01-02")
-	_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
-		stat.ShareNum += 1
-		return stat
+	statData, err := statmodel.DomainShareStatDataToJson(&statmodel.ShareStatData{
+		ShareID: id,
 	})
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	err = statmodel.AppendRedisStat(statmodel.ShareZSetKey, time.Now().Unix(), statData)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}

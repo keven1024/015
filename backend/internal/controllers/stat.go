@@ -3,71 +3,108 @@ package controllers
 import (
 	"backend/internal/utils"
 	statmodel "pkg/models/stat"
-	u "pkg/utils"
+	"time"
 
 	"github.com/labstack/echo/v5"
 )
 
 const (
-	DateLayout       = "2006-01-02"
-	DaysToAnalyze    = 30
-	QueueHistoryDays = 30
+	StatDefaultDays = 7
 )
 
-type StatChartData struct {
-	FileSize    int64 `json:"file_size"`
-	FileNum     int64 `json:"file_num"`
-	ShareNum    int64 `json:"share_num"`
-	DownloadNum int64 `json:"download_num"`
+type StatRequest struct {
+	Type  string `json:"type"`
+	Start *int64 `json:"start"`
+	End   *int64 `json:"end"`
 }
 
-type QueueChartData struct {
-	Processed int `json:"processed"`
-	Failed    int `json:"failed"`
+type StatResultEntry struct {
+	Timestamp int64 `json:"timestamp"`
+	Data      any   `json:"data"`
 }
 
 func GetStat(c *echo.Context) error {
-	statInfoMap, err := statmodel.GetRedisStatAll()
+	r := new(StatRequest)
+	if err := c.Bind(r); err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+
+	key := statmodel.StatZSetKey(r.Type)
+	if !isStatZSetKey(key) {
+		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	}
+
+	now := time.Now().Unix()
+	start := now - int64(StatDefaultDays*24*60*60)
+	end := now
+	if r.Start != nil {
+		start = *r.Start
+	}
+	if r.End != nil {
+		end = *r.End
+	}
+	if start > end {
+		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	}
+
+	entries, err := statmodel.GetRedisStatRange(key, start, end)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	statChartData := make(map[string]StatChartData)
-	for key, value := range statInfoMap {
-		statData, err := statmodel.JsonStatDataToDomain(value)
+	result := make([]StatResultEntry, 0, len(entries))
+	for _, entry := range entries {
+		data, err := decodeStatData(key, entry.Data)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
-		statChartData[key] = StatChartData{
-			FileSize:    statData.FileSize,
-			FileNum:     statData.FileNum,
-			ShareNum:    statData.ShareNum,
-			DownloadNum: statData.DownloadNum,
-		}
-	}
-
-	queueInspector := u.GetQueueInspector()
-	queues, err := queueInspector.History("default", QueueHistoryDays)
-	if err != nil {
-		return utils.HTTPErrorHandler(c, err)
-	}
-
-	queuesChartData := make(map[string]QueueChartData)
-	for _, item := range queues {
-		dateKey := item.Date.Format(DateLayout)
-		if item.Processed == 0 && item.Failed == 0 {
-			continue
-		}
-		queuesChartData[dateKey] = QueueChartData{
-			Processed: item.Processed,
-			Failed:    item.Failed,
-		}
+		result = append(result, StatResultEntry{
+			Timestamp: entry.Timestamp,
+			Data:      data,
+		})
 	}
 
 	return utils.HTTPSuccessHandler(c, map[string]any{
-		"chart": map[string]any{
-			"storage": statChartData,
-			"queue":   queuesChartData,
-		},
+		"type":  request.Type,
+		"start": startTimestamp,
+		"end":   endTimestamp,
+		"data":  result,
 	})
+}
+
+func isStatZSetKey(key statmodel.StatZSetKey) bool {
+	switch key {
+	case statmodel.FileZSetKey, statmodel.ShareZSetKey, statmodel.DownloadZSetKey, statmodel.WorkerZSetKey:
+		return true
+	default:
+		return false
+	}
+}
+
+func getStatTimeRange(request *StatRequest) (int64, int64) {
+	now := time.Now().Unix()
+	startTimestamp := now - int64(StatDefaultDays*24*60*60)
+	endTimestamp := now
+	if request.Start != nil {
+		startTimestamp = *request.Start
+	}
+	if request.End != nil {
+		endTimestamp = *request.End
+	}
+	return startTimestamp, endTimestamp
+}
+
+func decodeStatData(statType statmodel.StatZSetKey, raw string) (any, error) {
+	switch statType {
+	case statmodel.FileZSetKey:
+		return statmodel.JsonFileStatDataToDomain(raw)
+	case statmodel.ShareZSetKey:
+		return statmodel.JsonShareStatDataToDomain(raw)
+	case statmodel.DownloadZSetKey:
+		return statmodel.JsonDownloadStatDataToDomain(raw)
+	case statmodel.WorkerZSetKey:
+		return statmodel.JsonWorkerStatDataToDomain(raw)
+	default:
+		return nil, ErrInvalidRequest
+	}
 }

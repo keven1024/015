@@ -245,12 +245,14 @@ func FinishUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 	// 统计
-	currentDate := time.Now().Format("2006-01-02")
-	_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
-		stat.FileSize += fileInfo.FileSize
-		stat.FileNum += 1
-		return stat
+	statData, err := statmodel.DomainFileStatDataToJson(&statmodel.FileStatData{
+		FileSize: fileInfo.FileSize,
+		FileID:   r.FileId,
 	})
+	if err != nil {
+		return utils.HTTPErrorHandler(c, err)
+	}
+	err = statmodel.AppendRedisStat(statmodel.FileZSetKey, time.Now().Unix(), statData)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
