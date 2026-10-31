@@ -93,7 +93,7 @@ func CreateUploadTask(c *echo.Context) error {
 		return utils.HTTPErrorHandler(c, err)
 	}
 
-	err = s.SetFileRemoveTask(fileId, time.Duration(redisFileInfo.Expire)*time.Second)
+	err = s.SetUploadRemoveTask(fileId, time.Duration(redisFileInfo.Expire)*time.Second)
 	if err != nil {
 		return utils.HTTPErrorHandler(c, err)
 	}
