@@ -5,6 +5,7 @@ import (
 	"backend/internal/utils"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	filemodel "pkg/models/file"
 	sharemodel "pkg/models/share"
@@ -18,11 +19,6 @@ import (
 	"github.com/samber/lo"
 )
 
-type DownloadShareClaims struct {
-	ShareId string `json:"share_id"`
-	jwt.RegisteredClaims
-}
-
 func DownloadShare(c *echo.Context) error {
 	req := c.Request()
 	if err := req.ParseForm(); err != nil {
@@ -33,31 +29,29 @@ func DownloadShare(c *echo.Context) error {
 	if token == "" {
 		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 	}
-	claims := DownloadShareClaims{}
-	t, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(u.GetConfig().Share.DownloadSecret), nil
-	})
-	if err != nil || !t.Valid {
-		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrInvalidRequest))
-	}
-	if claims.ShareId == "" {
-		return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+	claims, err := services.ParseDownloadToken(token)
+	if err != nil {
+		if errors.Is(err, services.ErrInvalidDownloadToken) {
+			err = ErrInvalidRequest
+		}
+		return utils.HTTPErrorHandler(c, err)
 	}
 	shareInfo, err := sharemodel.GetRedisShareInfo(claims.ShareId)
 	if err != nil || shareInfo == nil {
 		return utils.HTTPErrorHandler(c, lo.Ternary(err != nil, err, ErrShareNotFound))
 	}
 	if shareInfo.Type == sharemodel.ShareTypeFile {
-		shareFiles := shareInfo.Files
 		if len(fileIds) > 0 {
-			shareFiles = lo.Filter(shareFiles, func(file sharemodel.ShareFileData, _ int) bool {
-				return lo.Contains(fileIds, file.Id)
+			shareInfo.Files = lo.Filter(shareInfo.Files, func(file sharemodel.ShareFileData, _ int) bool {
+				return lo.ContainsBy(fileIds, func(fileID string) bool {
+					return fileID == utils.PublicFileID(file.Id)
+				})
 			})
-			if len(shareFiles) != len(fileIds) {
+			if len(shareInfo.Files) != len(fileIds) {
 				return utils.HTTPErrorHandler(c, ErrInvalidShareFileData)
 			}
 		}
-		if len(shareFiles) == 0 {
+		if len(shareInfo.Files) == 0 {
 			return utils.HTTPErrorHandler(c, ErrInvalidShareFileData)
 		}
 		root, err := u.GetUploadDir()
@@ -65,7 +59,7 @@ func DownloadShare(c *echo.Context) error {
 			return err
 		}
 		defer root.Close() //nolint:errcheck
-		for index, file := range shareFiles {
+		for index, file := range shareInfo.Files {
 			fileInfo, err := filemodel.GetRedisFileInfo(file.Id)
 			if err != nil {
 				return utils.HTTPErrorHandler(c, err)
@@ -73,19 +67,19 @@ func DownloadShare(c *echo.Context) error {
 			if fileInfo == nil {
 				return utils.HTTPErrorHandler(c, ErrShareFileNotFound)
 			}
-			shareFiles[index].Id, err = u.GetFileId(fileInfo.FileHash, fileInfo.FileSize)
+			shareInfo.Files[index].Id, err = u.GetFileId(fileInfo.FileHash, fileInfo.FileSize)
 			if err != nil {
 				return utils.HTTPErrorHandler(c, err)
 			}
 		}
-		if len(shareFiles) == 1 {
-			return c.Attachment(shareFiles[0].Id, shareFiles[0].FileName)
+		if len(shareInfo.Files) == 1 {
+			return c.Attachment(shareInfo.Files[0].Id, shareInfo.Files[0].FileName)
 		}
 		target := c.FormValue("target")
 		if !lo.Contains([]string{"zip", "tar.gz", "tar.zst", "tar.s2", "tar.snappy"}, target) {
 			target = "zip"
 		}
-		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareFiles, root, target)
+		compressFullName, err := services.GenerateCompressFiles(claims.ShareId, shareInfo.Files, root, target)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
@@ -156,7 +150,7 @@ func VaildateShare(c *echo.Context) error {
 				}
 			}
 		}
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, DownloadShareClaims{
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, services.DownloadShareClaims{
 			ShareId: r.ShareId,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(u.GetConfig().Share.DownloadWindow) * time.Hour)),
