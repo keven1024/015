@@ -22,7 +22,14 @@ func SendWebhook(webhook sharemodel.NotifyWebhook) error {
 		method = "POST"
 	}
 
-	request := resty.New().R()
+	// 验证url 防止内网攻击
+	validURL, parsedURL := u.IsVaildURL(webhook.URL)
+	if !validURL || parsedURL == nil || !u.IsVaildIP(parsedURL.Hostname()) {
+		return fmt.Errorf("webhook target is not allowed: %s", webhook.URL)
+	}
+
+	// 禁止重定向
+	request := resty.New().SetRedirectPolicy(resty.NoRedirectPolicy()).R()
 	if strings.EqualFold(webhook.BodyType, "form-data") {
 		request.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 	}
