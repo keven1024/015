@@ -2,12 +2,18 @@ package utils
 
 import (
 	"net"
+	"net/mail"
 	"net/url"
 	"slices"
 	"strings"
 
 	"github.com/samber/lo"
 )
+
+func IsVaildEmail(email string) bool {
+	parsedEmail, err := mail.ParseAddress(email)
+	return err == nil && parsedEmail.Address == email
+}
 
 func IsVaildURL(rawURL string) (bool, *url.URL) {
 	parsedURL, err := url.Parse(rawURL)
