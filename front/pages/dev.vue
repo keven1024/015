@@ -12,7 +12,7 @@ import MultiSelectField from '@/components/Field/MultiSelectField.vue'
 import ComboboxField from '@/components/Field/ComboboxField.vue'
 import MultiComboboxField from '@/components/Field/MultiComboboxField.vue'
 import SwitchField from '@/components/Field/SwitchField.vue'
-import dayjs from 'dayjs'
+import DateRangePickerField from '@/components/Field/DateRangePickerField.vue'
 
 const { NODE_ENV } = process.env || {}
 const isDev = NODE_ENV === 'development'
@@ -131,6 +131,9 @@ if (!isDev) {
                         ]"
                         rules="required"
                     />
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <DateRangePickerField name="dateRange" />
                 </div>
                 <SwitchField name="switch" label="我同意xxx" :rules="(v: any) => !!v" />
                 <FormButton

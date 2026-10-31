@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { DateRange, DateValue } from 'reka-ui'
+import { parseDate } from '@internationalized/date'
+import type { DateRange as RekaDateRange, DateValue } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import { CalendarDays, ChevronDown } from '@lucide/vue'
-import { ref } from 'vue'
+import dayjs from 'dayjs'
+import { computed, ref } from 'vue'
 import { RangeCalendar } from '@/components/ui/range-calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
@@ -10,6 +12,11 @@ import { cn } from '@/lib/utils'
 defineOptions({
     inheritAttrs: false,
 })
+
+export type DateRange = {
+    start?: Date
+    end?: Date
+}
 
 const props = withDefaults(
     defineProps<{
@@ -21,7 +28,7 @@ const props = withDefaults(
     }
 )
 
-const model = defineModel<DateRange>('value', {
+const model = defineModel<DateRange>({
     default: () => ({
         start: undefined,
         end: undefined,
@@ -29,13 +36,25 @@ const model = defineModel<DateRange>('value', {
 })
 const open = ref(false)
 
-function formatDate(value?: DateValue) {
+const calendarRange = computed<RekaDateRange>(() => ({
+    start: model.value.start ? parseDate(dayjs(model.value.start).format('YYYY-MM-DD')) : undefined,
+    end: model.value.end ? parseDate(dayjs(model.value.end).format('YYYY-MM-DD')) : undefined,
+}))
+
+function formatDate(value?: Date) {
     if (!value) return ''
 
-    return [value.year, value.month.toString().padStart(2, '0'), value.day.toString().padStart(2, '0')].join('-')
+    return dayjs(value).format('YYYY-MM-DD')
 }
 
-function onRangeChange(value: DateRange) {
+function onRangeChange(value: RekaDateRange) {
+    const nextValue: DateRange = {
+        start: value?.start ? dayjs(value.start.toString()).toDate() : undefined,
+        end: value?.end ? dayjs(value.end.toString()).toDate() : undefined,
+    }
+
+    model.value = nextValue
+
     if (value.start && value.end) {
         open.value = false
     }
@@ -69,7 +88,7 @@ function onRangeChange(value: DateRange) {
         </PopoverTrigger>
 
         <PopoverContent class="w-auto p-0">
-            <RangeCalendar v-model="model" @update:model-value="onRangeChange" />
+            <RangeCalendar :model-value="calendarRange" @update:model-value="onRangeChange" />
         </PopoverContent>
     </Popover>
 </template>
