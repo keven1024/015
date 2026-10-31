@@ -56,8 +56,7 @@ func RemoveShare(ctx context.Context, task *asynq.Task) error {
 	return nil
 }
 
-// 通知策略：Webhook 和 Email 分别尝试，任一渠道至少有一个目标发送成功，
-// 就认为本次通知成功；只有两个渠道全部发送失败时才返回错误并触发重试。
+// 通知策略：Webhook 和 Email 只发送一次，不尝试重试，防止smtp被判定滥用
 func ShareNotify(ctx context.Context, task *asynq.Task) error {
 	var payload ShareNotifyTaskPayload
 	if err := json.Unmarshal(task.Payload(), &payload); err != nil {
@@ -68,7 +67,7 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		return err
 	}
 
-	webhookOK := lo.Reduce(shareInfo.NotifyWebhooks, func(ok bool, webhook sharemodel.NotifyWebhook, _ int) bool {
+	lo.Reduce(shareInfo.NotifyWebhooks, func(ok bool, webhook sharemodel.NotifyWebhook, _ int) bool {
 		if err := services.SendWebhook(webhook); err != nil {
 			zap.L().Error("send share notification webhook failed",
 				zap.String("share_id", payload.ShareId),
@@ -90,7 +89,7 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		displayName = shareInfo.Files[0].FileName
 	}
 
-	emailOK := lo.Reduce(shareInfo.NotifyEmails, func(ok bool, email string, _ int) bool {
+	lo.Reduce(shareInfo.NotifyEmails, func(ok bool, email string, _ int) bool {
 		if err := services.SendEmail(email, services.EmailTemplateData{
 			Locale:    shareInfo.Locale,
 			FileName:  displayName,
@@ -107,10 +106,5 @@ func ShareNotify(ctx context.Context, task *asynq.Task) error {
 		}
 		return true
 	}, false)
-
-	// 只有所有通知目标都失败时才让 Asynq 重试；部分成功视为成功。
-	if !webhookOK && !emailOK {
-		return fmt.Errorf("share notification failed for share %s", payload.ShareId)
-	}
 	return nil
 }
