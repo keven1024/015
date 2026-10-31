@@ -35,19 +35,29 @@ const dateRange = ref<DateRange>({
     start: dayjs().subtract(7, 'day').startOf('day').toDate(),
     end: dayjs().endOf('day').toDate(),
 })
-
 const { data, isLoading } = useQuery({
-    queryKey: ['stat'],
+    queryKey: computed(() => ['stat', dateRange?.value?.start?.getTime(), dateRange?.value?.end?.getTime()]),
     queryFn: async () => {
-        const response = await $fetch<{
-            data: {
-                chart: {
-                    storage: Record<string, StatChartData>
-                    queue: Record<string, QueueChartData>
-                }
-            }
-        }>('/api/stat')
-        return response.data
+        const fetchStat = async <T,>(type: StatType) => {
+            const response = await $fetch<StatApiResponse<T>>('/api/stat', {
+                method: 'POST',
+                body: {
+                    type,
+                    start: dateRange.value.start ? Math.floor(dateRange.value.start.getTime() / 1000) : undefined,
+                    end: dateRange.value.end ? Math.floor(dateRange.value.end.getTime() / 1000) : undefined,
+                },
+            })
+            return response.data
+        }
+
+        const [file, share, download, workerResponse] = await Promise.all([
+            fetchStat<Record<string, StatData>>('file'),
+            fetchStat<Record<string, StatData>>('share'),
+            fetchStat<Record<string, StatData>>('download'),
+            fetchStat<Record<string, WorkerApiBucket>>('worker'),
+        ])
+
+        return { file, share, download, worker: workerResponse }
     },
 })
 
@@ -149,7 +159,10 @@ const currentChartData = computed((): AreaChartConfig => {
 </script>
 
 <template>
-    <div class="font-semibold">{{ t('page.about.analysis') }}</div>
+    <div class="flex items-center justify-between gap-3">
+        <div class="font-semibold">{{ t('page.about.analysis') }}</div>
+        <DateRangePicker v-model="dateRange" class="bg-white/50" />
+    </div>
     <template v-if="isLoading">
         <div class="flex flex-row gap-2">
             <Skeleton class="w-full h-96 rounded-xl" />
@@ -173,7 +186,7 @@ const currentChartData = computed((): AreaChartConfig => {
                 </div>
             </div>
             <ChartContainer :config="currentChartData.config" class="h-64 w-full p-5" :cursor="false">
-                <VisXYContainer :data="currentChartData.data" :x-domain="[statRange.end.toDate(), statRange.start.toDate()]">
+                <VisXYContainer :data="currentChartData.data" :x-domain="chartDomain">
                     <VisArea
                         :key="currentChartTab"
                         :x="(d: ChartDataItem) => d.date"
