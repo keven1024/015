@@ -25,7 +25,7 @@ var Routes = []Route{
 	{Method: []string{"POST"}, Path: "/download", Handler: controllers.VaildateShare},
 	{Method: []string{"GET"}, Path: "/share/pickup/:code", Handler: controllers.GetShareByPickupCode},
 
-	{Method: []string{"GET"}, Path: "/stat", Handler: controllers.GetStat},
+	{Method: []string{"POST"}, Path: "/stat", Handler: controllers.GetStat},
 	{Method: []string{"GET"}, Path: "/config", Handler: controllers.GetConfig},
 	{Method: []string{"GET"}, Path: "/about", Handler: controllers.GetAbout},
 

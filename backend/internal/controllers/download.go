@@ -177,12 +177,15 @@ func VaildateShare(c *echo.Context) error {
 			return utils.HTTPErrorHandler(c, err)
 		}
 
-		// 统计分享数
-		currentDate := time.Now().Format("2006-01-02")
-		_, err = statmodel.SetRedisStat(currentDate, func(stat *statmodel.StatData) *statmodel.StatData {
-			stat.DownloadNum += 1
-			return stat
+		// 统计下载数
+		statData, err := statmodel.DomainDownloadStatDataToJson(&statmodel.DownloadStatData{
+			ShareID: r.ShareId,
+			IP:      c.RealIP(),
 		})
+		if err != nil {
+			return utils.HTTPErrorHandler(c, err)
+		}
+		err = statmodel.AppendRedisStat(statmodel.DownloadZSetKey, time.Now().Unix(), statData)
 		if err != nil {
 			return utils.HTTPErrorHandler(c, err)
 		}
