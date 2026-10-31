@@ -78,7 +78,7 @@ func GetStat(c *echo.Context) error {
 		}
 
 		if key == statmodel.WorkerZSetKey {
-			return lo.GroupBy(lo.FilterMap(values, func(
+			return lo.MapValues(lo.GroupBy(lo.FilterMap(values, func(
 				item statmodel.RedisStatDataItem,
 				_ int,
 			) (*statmodel.WorkerStatData, bool) {
@@ -90,6 +90,8 @@ func GetStat(c *echo.Context) error {
 				return data, true
 			}), func(data *statmodel.WorkerStatData) string {
 				return data.TaskType
+			}), func(items []*statmodel.WorkerStatData, _ string) int64 {
+				return int64(len(items))
 			})
 		}
 
