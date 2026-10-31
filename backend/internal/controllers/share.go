@@ -11,6 +11,7 @@ import (
 	sharemodel "pkg/models/share"
 	statmodel "pkg/models/stat"
 	u "pkg/utils"
+	"slices"
 	"strings"
 	"time"
 
@@ -111,10 +112,21 @@ func CreateShareInfo(c *echo.Context) error {
 			return utils.HTTPErrorHandler(c, ErrInvalidRequest)
 		}
 		if lo.Contains(r.Config.NotifyTypes, "email") {
+			if !lo.EveryBy(r.Config.NotifyEmails, u.IsVaildEmail) {
+				return utils.HTTPErrorHandler(c, ErrInvalidRequest)
+			}
 			notifyEmails = r.Config.NotifyEmails
 		}
 		if lo.Contains(r.Config.NotifyTypes, "webhook") {
 			if !lo.EveryBy(r.Config.NotifyWebhooks, func(webhook sharemodel.NotifyWebhook) bool {
+				method := strings.ToUpper(webhook.Method)
+				if method == "" {
+					method = "POST"
+				}
+				if !slices.Contains([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}, method) {
+					return false
+				}
+
 				validURL, parsedURL := u.IsVaildURL(webhook.URL)
 				if !validURL || parsedURL == nil {
 					return false
