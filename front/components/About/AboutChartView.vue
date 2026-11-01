@@ -31,10 +31,20 @@ type AreaChartConfig = {
     config: ChartConfig
 }
 
-const dateRange = ref<DateRange>({
-    start: dayjs().subtract(7, 'day').startOf('day').toDate(),
-    end: dayjs().endOf('day').toDate(),
-})
+function calcDateRange(days: number): DateRange {
+    return {
+        start: dayjs().subtract(days - 1, 'day').startOf('hour').add(1, 'hour').toDate(),
+        end: dayjs().startOf('hour').add(1, 'hour').toDate(),
+    }
+}
+
+const dateRangeOptions = [
+    { label: '最近1天', value: calcDateRange(1) },
+    { label: '最近7天', value: calcDateRange(7) },
+    { label: '最近30天', value: calcDateRange(30) },
+]
+
+const dateRange = ref<DateRange>(calcDateRange(7))
 const { data, isLoading } = useQuery({
     queryKey: computed(() => ['stat', dateRange?.value?.start?.getTime(), dateRange?.value?.end?.getTime()]),
     queryFn: async () => {
@@ -105,57 +115,29 @@ const currentChartData = computed((): AreaChartConfig => {
         return {
             data: queueData,
             index: 'date' as const,
-            config: {
-                processed: { color: '#4ade80', label: t('page.about.processed') },
-                failed: { color: '#f87171', label: t('page.about.failed') },
-            },
-        }
-    }
-    const storageData = times(30, (i) => {
-        const base = { date: dayjs().subtract(i, 'day').toDate() }
-        if (currentChartTab.value === 'share') {
-            return {
-                ...base,
-                share_num: storage?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.share_num || 0,
-            }
-        }
-        if (currentChartTab.value === 'download') {
-            return {
-                ...base,
-                download_num: storage?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.download_num || 0,
-            }
-        }
+    if (['share', 'download']?.includes(currentChartTab.value)) {
         return {
-            ...base,
-            file_size: storage?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.file_size || 0,
-            file_num: storage?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.file_num || 0,
-        }
-    })
-
-    if (currentChartTab.value === 'share') {
-        return {
-            data: storageData as ChartDataItem[],
+            data: times(diffHours, (index) => {
+                const date = dayjs(dateRange.value.end).subtract(index, 'hour')
+                const { count = 0, size } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
+                return { date: date.toDate(), count }
+            }),
             index: 'date' as const,
             config: {
-                share_num: { color: '#ea580c', label: t('page.about.share') },
-            },
-        }
-    }
-    if (currentChartTab.value === 'download') {
-        return {
-            data: storageData as ChartDataItem[],
-            index: 'date' as const,
-            config: {
-                download_num: { color: '#a3e635', label: t('page.about.download') },
+                count: currentChartTab.value === 'share' ? { color: '#ea580c', label: t('page.about.share') } : { color: '#a3e635', label: t('page.about.download') },
             },
         }
     }
     return {
-        data: storageData as ChartDataItem[],
+        data: times(diffHours, (index) => {
+            const date = dayjs(dateRange.value.end).subtract(index, 'hour')
+            const { count = 0, size } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
+            return { date: date.toDate(), count, size }
+        }),
         index: 'date' as const,
         config: {
-            file_size: { color: '#38bdf8', label: t('page.about.fileSize') },
-            file_num: { color: '#a78bfa', label: t('page.about.fileNum') },
+            size: { color: '#38bdf8', label: t('page.about.fileSize') },
+            count: { color: '#a78bfa', label: t('page.about.fileNum') },
         },
     }
 })
@@ -164,7 +146,7 @@ const currentChartData = computed((): AreaChartConfig => {
 <template>
     <div class="flex items-center justify-between gap-3">
         <div class="font-semibold">{{ t('page.about.analysis') }}</div>
-        <DateRangePicker v-model="dateRange" class="bg-white/50" />
+        <DateRangePicker v-model="dateRange" :options="dateRangeOptions" class="bg-white/50" />
     </div>
     <template v-if="isLoading">
         <div class="flex flex-row gap-2">
@@ -189,7 +171,7 @@ const currentChartData = computed((): AreaChartConfig => {
                 </div>
             </div>
             <ChartContainer :config="currentChartData.config" class="h-64 w-full p-5" :cursor="false">
-                <VisXYContainer :data="currentChartData.data" :x-domain="chartDomain">
+                <VisXYContainer :data="currentChartData.data" :x-domain="[dateRange.end, dateRange.start]">
                     <VisArea
                         :key="currentChartTab"
                         :x="(d: ChartDataItem) => d.date"
@@ -210,13 +192,12 @@ const currentChartData = computed((): AreaChartConfig => {
                         :tick-line="false"
                         :domain-line="false"
                         :grid-line="false"
-                        :num-ticks="6"
+                        :num-ticks="12"
                         :tick-format="
                             (d: Date) => {
-                                return dayjs(d).format('MMM')
+                                return dayjs(d).format('MM-DD HH:00')
                             }
                         "
-                        :tick-values="currentChartData.data.map((d) => d.date)"
                     />
                     <ChartTooltip />
                     <ChartCrosshair
@@ -225,10 +206,10 @@ const currentChartData = computed((): AreaChartConfig => {
                             componentToString(currentChartData.config, ChartTooltipContent, {
                                 class: 'w-[14rem]',
                                 labelFormatter: (d) => {
-                                    return dayjs(d).format('MM-DD')
+                                    return dayjs(d).format('MM-DD HH:00')
                                 },
                                 valueFormatter: (value, key) => {
-                                    if (key === 'file_size' && typeof value === 'number') {
+                                    if (key === 'size' && typeof value === 'number') {
                                         return filesize(value)
                                     }
                                     return String(value)
