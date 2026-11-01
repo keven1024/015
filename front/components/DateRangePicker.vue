@@ -53,6 +53,18 @@ function formatDate(value?: Date) {
     return dayjs(value).format('YYYY-MM-DD')
 }
 
+function formatRange(value: DateRange) {
+    return [formatDate(value.start), formatDate(value.end)].filter(Boolean).join(' - ')
+}
+
+function onOptionSelect(value: DateRange) {
+    model.value = {
+        start: value.start,
+        end: value.end,
+    }
+    open.value = false
+}
+
 function onRangeChange(value: RekaDateRange) {
     const nextValue: DateRange = {
         start: value?.start ? dayjs(value.start.toString()).toDate() : undefined,
@@ -94,7 +106,18 @@ function onRangeChange(value: RekaDateRange) {
         </PopoverTrigger>
 
         <PopoverContent class="w-auto p-0">
-            <RangeCalendar :model-value="calendarRange" @update:model-value="onRangeChange" />
+            <div v-if="options?.length" class="flex flex-row flex-wrap gap-2 p-2">
+                <Button
+                    v-for="(option, index) in options"
+                    :key="option.label ?? `${formatRange(option.value)}-${index}`"
+                    size="sm"
+                    variant="secondary"
+                    @click="onOptionSelect(option.value)"
+                >
+                    {{ option.label ?? formatRange(option.value) }}
+                </Button>
+            </div>
+            <RangeCalendar :model-value="calendarRange" @update:model-value="onRangeChange" :number-of-months="2" disable-days-outside-current-view />
         </PopoverContent>
     </Popover>
 </template>
