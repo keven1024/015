@@ -15,9 +15,9 @@ const props = withDefaults(
 const pixiRef = ref<PixiExpose>()
 const width = computed(() => pixiRef.value?.width || 0)
 const height = computed(() => pixiRef.value?.height || 0)
-watchEffect(() => {
-    console.log('data', props.data)
-})
+// watchEffect(() => {
+//     console.log('data', props.data)
+// })
 const renderGraphics = (graphics: Graphics) => {
     graphics.clear()
     Object.entries(props?.data?.chunks || {})?.map(([index, item]) => {
@@ -39,6 +39,6 @@ const renderGraphics = (graphics: Graphics) => {
 
 <template>
     <Pixi ref="pixiRef">
-        <graphics @render="renderGraphics" />
+        <graphics @effect="renderGraphics" />
     </Pixi>
 </template>
