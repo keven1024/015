@@ -4,26 +4,28 @@ import { useQuery } from '@tanstack/vue-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
 import { filesize } from 'filesize'
-import { times } from 'lodash-es'
 import type { ChartConfig } from '@/components/ui/chart'
 import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
 import { ChartContainer, ChartTooltip, ChartCrosshair, ChartLegendContent, componentToString, ChartTooltipContent } from '@/components/ui/chart'
+import DateRangePicker from '@/components/DateRangePicker.vue'
+import type { DateRange } from '@/components/DateRangePicker.vue'
+import { times, uniq } from 'lodash-es'
 
-interface StatChartData {
-    file_size: number
-    file_num: number
-    share_num: number
-    download_num: number
-    date: Date
+interface BaseStatChartData {
+    count: number
+    size?: number
 }
 
-interface QueueChartData {
-    processed: number
-    failed: number
-    date: Date
+type StatChartType = 'file' | 'share' | 'download' | 'worker'
+
+interface StatApiResponse<T> {
+    data: T
 }
 
-type ChartDataItem = StatChartData | QueueChartData
+type ChartDataItem = {
+    date: Date
+    [key: string]: any
+}
 
 type AreaChartConfig = {
     data: ChartDataItem[]
@@ -33,7 +35,11 @@ type AreaChartConfig = {
 
 function calcDateRange(days: number): DateRange {
     return {
-        start: dayjs().subtract(days - 1, 'day').startOf('hour').add(1, 'hour').toDate(),
+        start: dayjs()
+            .subtract(days - 1, 'day')
+            .startOf('hour')
+            .add(1, 'hour')
+            .toDate(),
         end: dayjs().startOf('hour').add(1, 'hour').toDate(),
     }
 }
@@ -48,7 +54,7 @@ const dateRange = ref<DateRange>(calcDateRange(7))
 const { data, isLoading } = useQuery({
     queryKey: computed(() => ['stat', dateRange?.value?.start?.getTime(), dateRange?.value?.end?.getTime()]),
     queryFn: async () => {
-        const fetchStat = async <T,>(type: StatType) => {
+        const fetchStat = async <T,>(type: StatChartType) => {
             const response = await $fetch<StatApiResponse<T>>('/api/stat', {
                 method: 'POST',
                 body: {
@@ -61,10 +67,10 @@ const { data, isLoading } = useQuery({
         }
 
         const [file, share, download, workerResponse] = await Promise.all([
-            fetchStat<Record<string, StatData>>('file'),
-            fetchStat<Record<string, StatData>>('share'),
-            fetchStat<Record<string, StatData>>('download'),
-            fetchStat<Record<string, WorkerApiBucket>>('worker'),
+            fetchStat<Record<string, BaseStatChartData>>('file'),
+            fetchStat<Record<string, BaseStatChartData>>('share'),
+            fetchStat<Record<string, BaseStatChartData>>('download'),
+            fetchStat<Record<string, Record<string, number>>>('worker'),
         ])
 
         return { file, share, download, worker: workerResponse }
@@ -101,20 +107,32 @@ const chartTabs = computed(() => {
     ]
 })
 
-const currentChartTab = ref<'file' | 'worker' | 'share' | 'download'>('file')
+const currentChartTab = ref<StatChartType>('file')
 const currentChartData = computed((): AreaChartConfig => {
-    const { storage, queue } = data.value?.chart || {}
-    if (currentChartTab.value === 'queue') {
-        const queueData = times(30, (i) => {
-            return {
-                date: dayjs().subtract(i, 'day').toDate(),
-                processed: queue?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.processed || 0,
-                failed: queue?.[dayjs().subtract(i, 'day').format('YYYY-MM-DD')]?.failed || 0,
-            }
-        })
+    const diffHours = dayjs(dateRange.value.end).diff(dayjs(dateRange.value.start), 'hour')
+
+    if (['worker']?.includes(currentChartTab.value)) {
+        const workerData = data.value?.worker ?? {}
+        const taskTypes = uniq(Object.values(workerData).flatMap((item) => Object.keys(item)))
+        const config: ChartConfig = Object.fromEntries(
+            taskTypes.map((item, index) => [item, { color: ['#4ade80', '#f87171', '#38bdf8', '#a78bfa', '#ea580c'][index % 5], label: item }])
+        )
+
         return {
-            data: queueData,
+            data: times(diffHours, (index) => {
+                const date = dayjs(dateRange.value.end).subtract(index, 'hour')
+                const item = workerData[date.unix()] ?? {}
+
+                return {
+                    date: date.toDate(),
+                    ...Object.fromEntries(taskTypes.map((taskType) => [taskType, item[taskType] ?? 0])),
+                }
+            }),
             index: 'date' as const,
+            config,
+        }
+    }
+
     if (['share', 'download']?.includes(currentChartTab.value)) {
         return {
             data: times(diffHours, (index) => {
@@ -124,7 +142,10 @@ const currentChartData = computed((): AreaChartConfig => {
             }),
             index: 'date' as const,
             config: {
-                count: currentChartTab.value === 'share' ? { color: '#ea580c', label: t('page.about.share') } : { color: '#a3e635', label: t('page.about.download') },
+                count:
+                    currentChartTab.value === 'share'
+                        ? { color: '#ea580c', label: t('page.about.share') }
+                        : { color: '#a3e635', label: t('page.about.download') },
             },
         }
     }
