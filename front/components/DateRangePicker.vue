@@ -18,10 +18,16 @@ export type DateRange = {
     end?: Date
 }
 
+export type DateRangeOption = {
+    label?: string
+    value: DateRange
+}
+
 const props = withDefaults(
     defineProps<{
         placeholder?: string
         class?: HTMLAttributes['class']
+        options?: DateRangeOption[]
     }>(),
     {
         placeholder: '-',
