@@ -36,22 +36,28 @@ watchEffect(() => {
 
 const renderGraphics = (graphics: Graphics) => {
     graphics.clear()
-    Object.entries(props?.data?.chunks || {})?.map(([index, item]) => {
-        const { status, createdAt } = item || {}
-        const row = Math.floor(Number(index) / itemsPerRow.value)
-        const col = Number(index) % itemsPerRow.value
+    const chunkLength = props.data?.chunkLength || 0
+    if (!chunkLength || !itemsPerRow.value) return
+
+    for (let index = 0; index < chunkLength; index++) {
+        const status = props.data?.chunks?.[index]?.status
+        const row = Math.floor(index / itemsPerRow.value)
+        const col = index % itemsPerRow.value
         const x = col * (size.value + gap.value)
         const y = row * (size.value + gap.value)
         graphics.roundRect(x, y, size.value, size.value, 4)
-        let color = 0x60a5fa
+        let color = 0xd4d4d8
         if (status === 'success') {
             color = 0x4ade80
         }
         if (status === 'error') {
             color = 0xf87171
         }
+        if (status === 'processing') {
+            color = 0x60a5fa
+        }
         graphics.fill(color)
-    })
+    }
 }
 </script>
 
