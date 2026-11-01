@@ -68,22 +68,25 @@ const chartTabs = computed(() => {
         {
             label: t('page.about.file'),
             value: 'file',
-            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.file.count, 0),
+            total: Object.values(data.value?.file || {}).reduce((acc, curr) => acc + curr.count, 0),
         },
         {
             label: t('page.about.share'),
             value: 'share',
-            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.share.count, 0),
+            total: Object.values(data.value?.share || {}).reduce((acc, curr) => acc + curr.count, 0),
         },
         {
             label: t('page.about.download'),
             value: 'download',
-            total: Object.values(chartStats.value).reduce((acc, curr) => acc + curr.download.count, 0),
+            total: Object.values(data.value?.download || {}).reduce((acc, curr) => acc + curr.count, 0),
         },
         {
             label: t('page.about.task'),
             value: 'worker',
-            total: Object.values(chartStats.value).reduce((acc, curr) => acc + Object.values(curr.worker).reduce((sum, count) => sum + count, 0), 0),
+            total: Object.values(data.value?.worker || {}).reduce(
+                (sum, taskGroups) => sum + Object.values(taskGroups).reduce((count, taskCount) => count + taskCount, 0),
+                0
+            ),
         },
     ]
 })
