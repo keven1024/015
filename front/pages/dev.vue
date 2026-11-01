@@ -13,6 +13,37 @@ import ComboboxField from '@/components/Field/ComboboxField.vue'
 import MultiComboboxField from '@/components/Field/MultiComboboxField.vue'
 import SwitchField from '@/components/Field/SwitchField.vue'
 import DateRangePickerField from '@/components/Field/DateRangePickerField.vue'
+import FileUploadBlockProgressView from '@/components/FileUploadBlockProgressView.vue'
+import FileUploadHeatMapView from '@/components/FileUploadHeatMapView.vue'
+
+type DevChunkStatus = 'success' | 'error' | 'processing'
+
+type DevUploadInfo = {
+    chunks: Record<number, { status: DevChunkStatus; createdAt: number }>
+    chunkLength: number
+}
+
+const createDevChunks = (chunkLength: number, uploadedChunkLength = chunkLength) => {
+    const statuses: DevChunkStatus[] = ['success', 'error', 'processing']
+    return Object.fromEntries(
+        Array.from({ length: Math.min(chunkLength, uploadedChunkLength) }, (_, index) => [
+            index,
+            {
+                status: statuses[Math.floor(Math.random() * statuses.length)]!,
+                createdAt: Date.now() - Math.floor(Math.random() * chunkLength) * 1000,
+            },
+        ])
+    ) as Record<number, { status: DevChunkStatus; createdAt: number }>
+}
+
+const devUploadInfo = reactive<DevUploadInfo>({
+    chunkLength: 300,
+    chunks: createDevChunks(300, 150),
+})
+
+const randomizeDevUploadInfo = () => {
+    devUploadInfo.chunks = createDevChunks(devUploadInfo.chunkLength, Math.floor(devUploadInfo.chunkLength / 2))
+}
 
 const { NODE_ENV } = process.env || {}
 const isDev = NODE_ENV === 'development'
@@ -147,6 +178,20 @@ if (!isDev) {
                 </FormButton>
             </div>
         </VeeForm>
+
+        <div class="flex flex-col gap-3 rounded-xl bg-white p-5">
+            <div class="flex items-center justify-between gap-3">
+                <div class="font-semibold">FileUploadBlockProgressView</div>
+                <Button size="sm" variant="outline" @click="randomizeDevUploadInfo">随机更新</Button>
+            </div>
+            <div class="h-7 w-full">
+                <FileUploadBlockProgressView :data="devUploadInfo" />
+            </div>
+            <div class="font-semibold">FileUploadHeatMapView</div>
+            <div class="h-36 w-full rounded bg-black/5 p-2">
+                <FileUploadHeatMapView :size="12" :data="devUploadInfo" />
+            </div>
+        </div>
     </BaseCard>
 </template>
 <style scoped></style>
