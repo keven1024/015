@@ -57,6 +57,6 @@ const renderGraphics = (graphics: Graphics) => {
 
 <template>
     <Pixi ref="pixiRef">
-        <graphics @render="renderGraphics" />
+        <graphics @effect="renderGraphics" />
     </Pixi>
 </template>
