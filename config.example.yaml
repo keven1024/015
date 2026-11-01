@@ -8,7 +8,7 @@ share:
 
 upload:
     # 上传文件保存路径
-    path: /upload
+    path: /uploads
     # 指定实例最大上传容量，支持填写人类可读的值，比如1TiB，500GiB等，注意填写GiB而不是GB, Gib按1024字节计算，Gb按1000字节计算
     maximum: 100GiB
 
