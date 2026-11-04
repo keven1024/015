@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	filemodel "pkg/models/file"
 	relationmodel "pkg/models/file_share_relational"
 	pkgservices "pkg/services"
@@ -55,12 +53,19 @@ func RemoveFile(ctx context.Context, task *asynq.Task) error {
 }
 
 func FileJanitor(_ context.Context, _ *asynq.Task) error {
-	uploadPath, err := u.GetUploadDirPath()
+	root, err := u.GetUploadDir()
 	if err != nil {
 		return err
 	}
+	defer root.Close() //nolint:errcheck
 
-	entries, err := os.ReadDir(uploadPath)
+	dir, err := root.Open(".")
+	if err != nil {
+		return err
+	}
+	defer dir.Close() //nolint:errcheck
+
+	entries, err := dir.ReadDir(-1)
 	if err != nil {
 		return err
 	}
@@ -75,7 +80,7 @@ func FileJanitor(_ context.Context, _ *asynq.Task) error {
 		name := entry.Name()
 		fileId := strings.TrimSuffix(name, "_tmp")
 		if _, exists := allFileInfo[fileId]; !exists {
-			if err := os.RemoveAll(filepath.Join(uploadPath, name)); err != nil {
+			if err := root.RemoveAll(name); err != nil {
 				return err
 			}
 		}
