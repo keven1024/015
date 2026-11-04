@@ -33,6 +33,8 @@ type AreaChartConfig = {
     config: ChartConfig
 }
 
+const BYTES_PER_MB = 1024 * 1024
+
 function calcDateRange(days: number): DateRange {
     return {
         start: dayjs()
@@ -137,7 +139,7 @@ const currentChartData = computed((): AreaChartConfig => {
         return {
             data: times(diffHours, (index) => {
                 const date = dayjs(dateRange.value.end).subtract(index, 'hour')
-                const { count = 0, size } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
+                const { count = 0 } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
                 return { date: date.toDate(), count }
             }),
             index: 'date' as const,
@@ -152,8 +154,8 @@ const currentChartData = computed((): AreaChartConfig => {
     return {
         data: times(diffHours, (index) => {
             const date = dayjs(dateRange.value.end).subtract(index, 'hour')
-            const { count = 0, size } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
-            return { date: date.toDate(), count, size }
+            const { count = 0, size = 0 } = data?.value?.[currentChartTab.value]?.[date?.unix()] || {}
+            return { date: date.toDate(), count, size: size / BYTES_PER_MB }
         }),
         index: 'date' as const,
         config: {
@@ -161,6 +163,17 @@ const currentChartData = computed((): AreaChartConfig => {
             count: { color: '#a78bfa', label: t('page.about.fileNum') },
         },
     }
+})
+
+const currentChartYDomain = computed<[number, number] | undefined>(() => {
+    if (currentChartTab.value !== 'file') return undefined
+
+    const maxValue = Math.max(
+        0,
+        ...currentChartData.value.data.flatMap((item) => Object.keys(currentChartData.value.config).map((key) => Number(item[key] ?? 0)))
+    )
+
+    return [0, Math.max(10, maxValue)]
 })
 </script>
 
@@ -192,7 +205,7 @@ const currentChartData = computed((): AreaChartConfig => {
                 </div>
             </div>
             <ChartContainer :config="currentChartData.config" class="h-64 w-full p-5" :cursor="false">
-                <VisXYContainer :data="currentChartData.data" :x-domain="[dateRange.end, dateRange.start]">
+                <VisXYContainer :data="currentChartData.data" :x-domain="[dateRange.end, dateRange.start]" :y-domain="currentChartYDomain">
                     <VisArea
                         :key="currentChartTab"
                         :x="(d: ChartDataItem) => d.date"
@@ -231,7 +244,7 @@ const currentChartData = computed((): AreaChartConfig => {
                                 },
                                 valueFormatter: (value, key) => {
                                     if (key === 'size' && typeof value === 'number') {
-                                        return filesize(value)
+                                        return filesize(value * BYTES_PER_MB, { standard: 'jedec' })
                                     }
                                     return String(value)
                                 },
